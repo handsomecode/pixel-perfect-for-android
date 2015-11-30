@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:id="@+id/pixel_perfect_cancel_frame_layout"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="@dimen/pixel_perfect_options_cancel_size"
+            android:layout_height="@dimen/pixel_perfect_options_cancel_size"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_pixel_perfect_options_cancel"/>
+
+    </FrameLayout>
+
+    <is.handsome.pixelperfectsample.library.ui.PixelPerfectMoveModeView
+        android:id="@+id/pixel_perfect_options_move_mode_text_view"
+        android:layout_width="@dimen/pixel_perfect_action_button_size"
+        android:layout_height="@dimen/pixel_perfect_action_button_size"
+        android:background="@drawable/bg_pixelperfect_move_mode_button"
+        android:gravity="center"
+        android:text="ALL"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/pixel_perfect_options_opacity_text_view"
+        android:layout_width="@dimen/pixel_perfect_action_button_size"
+        android:layout_height="@dimen/pixel_perfect_action_button_size"
+        android:background="@drawable/bg_pixelperfect_opacity_button"
+        android:gravity="center"
+        android:text="OP"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/pixel_perfect_options_models_text_view"
+        android:layout_width="@dimen/pixel_perfect_action_button_size"
+        android:layout_height="@dimen/pixel_perfect_action_button_size"
+        android:background="@drawable/bg_pixelperfect_models_button"
+        android:gravity="center"
+        android:text="IM"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+
+</merge>

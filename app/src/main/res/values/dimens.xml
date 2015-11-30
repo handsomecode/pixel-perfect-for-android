@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pixel_perfect_action_button_size">60dp</dimen>
+    <dimen name="pixel_perfect_options_cancel_size">30dp</dimen>
+    <dimen name="pixel_perfect_options_view_width">220dp</dimen>
+    <dimen name="pixel_perfect_options_view_height">220dp</dimen>
+    <dimen name="pixel_perfect_options_radius_size">90dp</dimen>
+</resources>
