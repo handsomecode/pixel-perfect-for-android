@@ -197,7 +197,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
     public void setImageVisible(boolean visible) {
         if (visible && pixelPerfectOverlayImageView.getDrawable() == null) {
-            updateImage("pixelperfect/eventlist.png");
+            updateImage(null);
         }
         pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : INVISIBLE);
         pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : INVISIBLE);

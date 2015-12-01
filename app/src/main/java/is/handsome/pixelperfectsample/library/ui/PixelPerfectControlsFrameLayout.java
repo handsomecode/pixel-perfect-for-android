@@ -202,8 +202,9 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
 
     private void initModelsWidget() {
         pixelPerfectModelsFrameLayout = (FrameLayout) findViewById(R.id.pixel_perfect_models_frame_layout);
-        ((Spinner) pixelPerfectModelsFrameLayout.findViewById(R.id.pixel_perfect_models_spinner)).setAdapter(new ScreensNamesAdapter(getContext()));
-        ((Spinner) pixelPerfectModelsFrameLayout.findViewById(R.id.pixel_perfect_models_spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner spinner = (Spinner) pixelPerfectModelsFrameLayout.findViewById(R.id.pixel_perfect_models_spinner);
+        spinner.setAdapter(new ScreensNamesAdapter(getContext()));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String fullName = (String) parent.getItemAtPosition(position);
@@ -217,6 +218,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
 
             }
         });
+        spinner.setSelection(1, true);
     }
 
     @Override
