@@ -6,20 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ToggleButton;
 
-import is.handsome.pixelperfectsample.library.ui.PixelPerfectLayout;
+import is.handsome.pixelperfectsample.library.PixelPerfect;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private PixelPerfectLayout pixelPerfectLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        pixelPerfectLayout = (PixelPerfectLayout) findViewById(R.id.home_pixel_perfect_layout);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
@@ -37,7 +33,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setPixelPerfectToolVisibility(boolean enabled) {
-        pixelPerfectLayout.setImageVisible(enabled);
-        pixelPerfectLayout.setControlsLayerVisible(enabled);
+        if (enabled) {
+            PixelPerfect.create().show(getApplicationContext());
+        } else {
+            PixelPerfect.hide(getApplicationContext());
+        }
     }
 }

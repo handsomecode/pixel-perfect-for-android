@@ -10,11 +10,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import is.handsome.pixelperfectsample.library.BitmapUtils;
 import is.handsome.pixelperfectsample.library.PixelPerfectCallbacks;
+import timber.log.Timber;
 
 public class PixelPerfectLayout extends FrameLayout {
 
@@ -51,42 +53,6 @@ public class PixelPerfectLayout extends FrameLayout {
     public PixelPerfectLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        initOverlay();
-
-        pixelPerfectControlsFrameLayout = new PixelPerfectControlsFrameLayout(getContext());
-        addView(pixelPerfectControlsFrameLayout,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        pixelPerfectControlsFrameLayout.setControlsListener(new PixelPerfectCallbacks.ControlsListener() {
-
-            @Override
-            public void onSetImageAlpha(float alpha) {
-                setImageAlpha(alpha);
-            }
-
-            @Override
-            public void onUpdateImage(String fullName) {
-                updateImage(fullName);
-            }
-
-            @Override
-            public void onChangePixelPerfectContext() {
-                pixelPerfectContext = !pixelPerfectContext;
-                if (getChildCount() > 0 && getChildAt(0) != null) {
-                    getChildAt(0).dispatchTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_CANCEL, 0, 0, 0));
-                }
-            }
-
-            @Override
-            public void onChangeMoveMode(MoveMode changedMoveMode) {
-                moveMode = changedMoveMode;
-            }
-        });
-        pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
     }
 
     private void initOverlay() {
@@ -190,6 +156,11 @@ public class PixelPerfectLayout extends FrameLayout {
                     pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
                 }
                 return true;
+            case KeyEvent.KEYCODE_BACK:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    Timber.w("On Back");
+                }
+                return true;
             default:
                 return super.dispatchKeyEvent(event);
         }
@@ -199,8 +170,8 @@ public class PixelPerfectLayout extends FrameLayout {
         if (visible && pixelPerfectOverlayImageView.getDrawable() == null) {
             updateImage(null);
         }
-        pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : INVISIBLE);
-        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : INVISIBLE);
+        pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : GONE);
+        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
     }
 
     public void setControlsLayerVisible(boolean visible) {
@@ -220,7 +191,57 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
+    public void setPixelPerfectContext() {
+        setPixelPerfectContext(!pixelPerfectContext);
+    }
+
+    private void setPixelPerfectContext(boolean newValue) {
+        pixelPerfectContext = newValue;
+        if (pixelPerfectContext) {
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) PixelPerfectLayout.this.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+            WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            windowManager.updateViewLayout(this, layoutParams);
+        } else {
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) PixelPerfectLayout.this.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            windowManager.updateViewLayout(this, layoutParams);
+        }
+    }
+
     private void init() {
         touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        initOverlay();
+
+        pixelPerfectControlsFrameLayout = new PixelPerfectControlsFrameLayout(getContext());
+        addView(pixelPerfectControlsFrameLayout,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        pixelPerfectControlsFrameLayout.setControlsListener(new PixelPerfectCallbacks.ControlsListener() {
+
+            @Override
+            public void onSetImageAlpha(float alpha) {
+                setImageAlpha(alpha);
+            }
+
+            @Override
+            public void onUpdateImage(String fullName) {
+                updateImage(fullName);
+            }
+
+            @Override
+            public void onChangePixelPerfectContext() {
+                pixelPerfectContext = !pixelPerfectContext;
+                if (getChildCount() > 0 && getChildAt(0) != null) {
+                    getChildAt(0).dispatchTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_CANCEL, 0, 0, 0));
+                }
+            }
+
+            @Override
+            public void onChangeMoveMode(MoveMode changedMoveMode) {
+                moveMode = changedMoveMode;
+            }
+        });
+        pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
     }
 }
