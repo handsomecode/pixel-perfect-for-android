@@ -26,7 +26,7 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
 
     public PixelPerfectActionsView(Context context) {
         super(context);
-        inflate(getContext(), R.layout.layout_pixel_perfect_options_view, this);
+        inflate(getContext(), R.layout.view_pixel_perfect_actions_menu, this);
 
         moveModeView = (PixelPerfectMoveModeView) findViewById(R.id.pixel_perfect_options_move_mode_text_view);
         moveModeView.setOnClickListener(this);
@@ -36,7 +36,6 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
 
         modelsTextView = (TextView) findViewById(R.id.pixel_perfect_options_models_text_view);
         modelsTextView.setOnClickListener(this);
-        modelsTextView.setSelected(true);
 
         cancelView = findViewById(R.id.pixel_perfect_cancel_frame_layout);
         cancelView.setOnClickListener(this);

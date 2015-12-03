@@ -10,7 +10,7 @@ public class PixelPerfectCallbacks {
 
         void onUpdateImage(String fullName);
 
-        void onChangePixelPerfectContext();
+        void onCloseActionsView();
 
         void onChangeMoveMode(PixelPerfectLayout.MoveMode moveMode);
     }
@@ -18,8 +18,16 @@ public class PixelPerfectCallbacks {
     public interface ActionsListener {
 
         void onOpacityClicked(boolean isSelected);
+
         void onModelsClicked(boolean isSelected);
+
         void onMoveModeClicked(PixelPerfectLayout.MoveMode moveMode);
+
         void onCancelClicked();
+    }
+
+    public interface LayoutListener {
+
+        void onCloseActionsView();
     }
 }

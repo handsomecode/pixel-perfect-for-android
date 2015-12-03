@@ -12,14 +12,15 @@
         android:layout_marginBottom="100dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:background="@color/black_70_alpha">
+        android:background="@color/black_70_alpha"
+        android:visibility="invisible">
 
-    <SeekBar
-        android:id="@+id/pixel_perfect_opacity_seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="25dp"
-        android:progress="50"/>
+        <SeekBar
+            android:id="@+id/pixel_perfect_opacity_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:progress="50"/>
     </FrameLayout>
 
     <FrameLayout
@@ -30,7 +31,8 @@
         android:layout_marginBottom="100dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:background="@color/black_70_alpha">
+        android:background="@color/black_70_alpha"
+        android:visibility="invisible">
 
         <Spinner
             android:id="@+id/pixel_perfect_models_spinner"
@@ -38,18 +40,5 @@
             android:layout_height="wrap_content"
             android:progress="50"/>
     </FrameLayout>
-
-    <ToggleButton
-        android:id="@+id/pixel_perfect_toolbar_switch_context_toggle_button"
-        android:layout_width="@dimen/pixel_perfect_action_button_size"
-        android:layout_height="@dimen/pixel_perfect_action_button_size"
-        android:layout_gravity="right|bottom"
-        android:layout_margin="25dp"
-        android:textOff="PP"
-        android:textOn="APP"
-        android:background="@drawable/bg_pixelperfect_toolbar_button"
-        android:tag="tag"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
 
 </FrameLayout>

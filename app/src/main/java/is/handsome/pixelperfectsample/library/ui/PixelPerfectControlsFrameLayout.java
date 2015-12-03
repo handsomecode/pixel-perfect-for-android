@@ -3,66 +3,26 @@ package is.handsome.pixelperfectsample.library.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.ToggleButton;
 
 import is.handsome.pixelperfectsample.R;
 import is.handsome.pixelperfectsample.library.PixelPerfectCallbacks;
 import is.handsome.pixelperfectsample.library.PixelPerfectHelper;
 import is.handsome.pixelperfectsample.library.ScreensNamesAdapter;
 
-public class PixelPerfectControlsFrameLayout extends FrameLayout implements View.OnLongClickListener {
+public class PixelPerfectControlsFrameLayout extends FrameLayout {
 
-    private ToggleButton actionsFloatingToggleButton;
+    private PixelPerfectActionsView pixelPerfectActionsView;
     private FrameLayout pixelPerfectOpacityFrameLayout;
     private FrameLayout pixelPerfectModelsFrameLayout;
-    private PixelPerfectActionsView pixelPerfectActionsView;
 
     private PixelPerfectCallbacks.ControlsListener controlsListener;
-
-    private final OnTouchListener emptyTouchListener = new OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent rawEvent) {
-            return false;
-        }
-    };
-
-    private final OnTouchListener floatingButtonTouchListener = new OnTouchListener() {
-        int pointX, pointY;
-        int offsetX, offsetY;
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    pointX = (int) event.getX();
-                    pointY = (int) event.getY();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    if (pointX == 0 && pointY == 0) {
-                        pointX = (int) event.getX();
-                        pointY = (int) event.getY();
-                    }
-                    offsetX = (int) event.getRawX() - pointX;
-                    offsetY = (int) event.getRawY() - pointY;
-                    actionsFloatingToggleButton.setX(offsetX);
-                    actionsFloatingToggleButton.setY(offsetY);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    actionsFloatingToggleButton.setOnTouchListener(emptyTouchListener);
-                    break;
-            }
-            return true;
-        }
-    };
 
     public PixelPerfectControlsFrameLayout(Context context) {
         super(context);
@@ -92,50 +52,12 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
     private void init() {
         inflate(getContext(), R.layout.layout_pixel_perfect_controls_layer, this);
 
-        initFloatingToggleButton();
-
         pixelPerfectActionsView = new PixelPerfectActionsView(getContext());
         addView(pixelPerfectActionsView, new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         addActionsListeners();
 
         initOpacityWidget();
         initModelsWidget();
-    }
-
-    private void initFloatingToggleButton() {
-        actionsFloatingToggleButton = (ToggleButton) findViewById(R.id.pixel_perfect_toolbar_switch_context_toggle_button);
-        actionsFloatingToggleButton.setOnLongClickListener(this);
-        actionsFloatingToggleButton.setOnClickListener(createClickAndDoubleClickListener());
-    }
-
-    private OnClickListener createClickAndDoubleClickListener() {
-        return new OnClickListener() {
-            int clickCounter = 0;
-
-            @Override
-            public void onClick(View v) {
-                clickCounter++;
-                Handler handler = new Handler();
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (clickCounter == 1) {
-                            showOptionsView();
-                            hideToggleButton();
-                        }
-                        clickCounter = 0;
-                    }
-                };
-                if (clickCounter == 1) {
-                    actionsFloatingToggleButton.setChecked(!actionsFloatingToggleButton.isChecked());
-                    handler.postDelayed(runnable, 250);
-                } else if (clickCounter >= 2) {
-                    if (controlsListener != null) {
-                        controlsListener.onChangePixelPerfectContext();
-                    }
-                }
-            }
-        };
     }
 
     private void addActionsListeners() {
@@ -172,7 +94,9 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
             public void onCancelClicked() {
                 hideOpacityView();
                 hideModelsView();
-                showToggleButton();
+                if (controlsListener != null) {
+                    controlsListener.onCloseActionsView();
+                }
             }
         });
     }
@@ -197,7 +121,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
 
             }
         });
-        pixelPerfectOpacityFrameLayout.setVisibility(INVISIBLE);
     }
 
     private void initModelsWidget() {
@@ -221,38 +144,20 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
         spinner.setSelection(1, true);
     }
 
-    @Override
-    public boolean onLongClick(View view) {
-        actionsFloatingToggleButton.setOnTouchListener(floatingButtonTouchListener);
-        return true;
-    }
-
-    private PixelPerfectActionsView.Corner getCorner(float size) {
-        if (actionsFloatingToggleButton.getY() + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2 - getHeight() * 0.05 < size) {
-            return PixelPerfectActionsView.Corner.TOP;
-        } else if (actionsFloatingToggleButton.getY() + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2 + size > getHeight() * 0.95) {
-            return PixelPerfectActionsView.Corner.BOTTOM;
-        }
-        return null;
-    }
-
-    private void showOptionsView() {
-        pixelPerfectActionsView.setX(actionsFloatingToggleButton.getX() - getResources().getDimension(R.dimen.pixel_perfect_options_view_width) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
-        pixelPerfectActionsView.setY(actionsFloatingToggleButton.getY() - getResources().getDimension(R.dimen.pixel_perfect_options_view_height) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
-        pixelPerfectActionsView.animate(actionsFloatingToggleButton.getX() < getWidth() / 2, getCorner(getResources().getDimension(R.dimen.pixel_perfect_options_radius_size)));
+    public void showActionsView(int pointX, int pointY) {
+        pixelPerfectActionsView.setX(pointX - getResources().getDimension(R.dimen.pixel_perfect_options_view_width) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
+        pixelPerfectActionsView.setY(pointY - getResources().getDimension(R.dimen.pixel_perfect_options_view_height) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
+        pixelPerfectActionsView.animate(pointX < getWidth() / 2, getCorner(pointY, getResources().getDimension(R.dimen.pixel_perfect_options_radius_size)));
         pixelPerfectActionsView.setVisibility(VISIBLE);
     }
 
-    private void hideToggleButton() {
-        actionsFloatingToggleButton.setAlpha(0f);
-        actionsFloatingToggleButton.setScaleX(0.1f);
-        actionsFloatingToggleButton.setScaleY(0.1f);
-        actionsFloatingToggleButton.setVisibility(View.INVISIBLE);
-    }
-
-    private void showToggleButton() {
-        actionsFloatingToggleButton.setVisibility(VISIBLE);
-        actionsFloatingToggleButton.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(100);
+    private PixelPerfectActionsView.Corner getCorner(int pointY, float size) {
+        if (pointY + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2 - getHeight() * 0.05 < size) {
+            return PixelPerfectActionsView.Corner.TOP;
+        } else if (pointY + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2 + size > getHeight() * 0.95) {
+            return PixelPerfectActionsView.Corner.BOTTOM;
+        }
+        return null;
     }
 
     private void showModelsView() {
@@ -290,10 +195,8 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout implements View
     }
 
     public boolean inBounds(int x, int y) {
-        return actionsFloatingToggleButton.getVisibility() == VISIBLE && PixelPerfectHelper.inViewBounds(actionsFloatingToggleButton, x, y)
-                || pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
+        return pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
                 || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectHelper.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)
                 || pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE && PixelPerfectHelper.inViewBounds(pixelPerfectModelsFrameLayout, x, y);
-
     }
 }

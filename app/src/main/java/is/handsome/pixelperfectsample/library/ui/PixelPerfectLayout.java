@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -26,6 +25,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private ImageView pixelPerfectOverlayImageView;
     private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
+    private PixelPerfectCallbacks.LayoutListener layoutListener;
 
     private MotionEvent lastMotionEvent;
     private int touchSlop;
@@ -53,6 +53,10 @@ public class PixelPerfectLayout extends FrameLayout {
     public PixelPerfectLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
+    }
+
+    public void setLayoutListener(PixelPerfectCallbacks.LayoutListener listener) {
+        layoutListener = listener;
     }
 
     private void initOverlay() {
@@ -191,23 +195,12 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    public void setPixelPerfectContext() {
-        setPixelPerfectContext(!pixelPerfectContext);
+    public void setPixelPerfectContext(boolean isPixelPerfectContext) {
+        pixelPerfectContext = isPixelPerfectContext;
     }
 
-    private void setPixelPerfectContext(boolean newValue) {
-        pixelPerfectContext = newValue;
-        if (pixelPerfectContext) {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) PixelPerfectLayout.this.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
-            WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            windowManager.updateViewLayout(this, layoutParams);
-        } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) PixelPerfectLayout.this.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-            WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            windowManager.updateViewLayout(this, layoutParams);
-        }
+    public boolean isPixelPerfectContext() {
+        return pixelPerfectContext;
     }
 
     private void init() {
@@ -230,10 +223,9 @@ public class PixelPerfectLayout extends FrameLayout {
             }
 
             @Override
-            public void onChangePixelPerfectContext() {
-                pixelPerfectContext = !pixelPerfectContext;
-                if (getChildCount() > 0 && getChildAt(0) != null) {
-                    getChildAt(0).dispatchTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_CANCEL, 0, 0, 0));
+            public void onCloseActionsView() {
+                if (layoutListener != null) {
+                    layoutListener.onCloseActionsView();
                 }
             }
 
@@ -243,5 +235,9 @@ public class PixelPerfectLayout extends FrameLayout {
             }
         });
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+    }
+
+    public void showActionsView(int poinX, int pointY) {
+        pixelPerfectControlsFrameLayout.showActionsView(poinX, pointY);
     }
 }
