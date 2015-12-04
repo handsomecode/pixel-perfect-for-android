@@ -1,6 +1,5 @@
 package is.handsome.pixelperfectsample;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +10,8 @@ import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
+
+    private boolean pixelPerfetOpened;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,9 @@ public class HomeActivity extends AppCompatActivity {
         setPixelPerfectToolVisibility(((ToggleButton) view).isChecked());
     }
 
-    public void startSecondActivity(View view) {
-        Intent intent = new Intent(this, SecondActivity.class);
-        startActivity(intent);
+    public void onImageClick(View view) {
+        pixelPerfetOpened = !pixelPerfetOpened;
+        setPixelPerfectToolVisibility(pixelPerfetOpened);
     }
 
     private void setPixelPerfectToolVisibility(boolean enabled) {

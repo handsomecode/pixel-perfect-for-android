@@ -1,1 +1,1 @@
-include ':app', ':pixelperfect'
+include ':sample', ':pixelperfect'
