@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library;
+package is.handsome.pixelperfect;
 
 import android.app.Application;
 import android.content.Context;
@@ -86,7 +86,7 @@ public class PixelPerfectBuilder {
      */
     private boolean overlayPermRequest(Context context) {
         boolean permNeeded = false;
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(context)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + context.getPackageName()));

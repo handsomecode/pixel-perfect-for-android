@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library;
+package is.handsome.pixelperfect;
 
 import android.content.Context;
 

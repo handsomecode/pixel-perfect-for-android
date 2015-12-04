@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library.ui;
+package is.handsome.pixelperfect.ui;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -8,9 +8,9 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import is.handsome.pixelperfectsample.R;
-import is.handsome.pixelperfectsample.library.PixelPerfectCallbacks;
-import is.handsome.pixelperfectsample.library.PixelPerfectHelper;
+import is.handsome.pixelperfect.PixelPerfectCallbacks;
+import is.handsome.pixelperfect.PixelPerfectHelper;
+import is.handsome.pixelperfect.R;
 
 public class PixelPerfectActionsView extends FrameLayout implements View.OnClickListener {
 
@@ -51,39 +51,38 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.pixel_perfect_options_models_text_view:
-                view.setSelected(!view.isSelected());
-                if (view.isSelected() && opacityTextView.isSelected()) {
-                    opacityTextView.setSelected(false);
-                }
-                if (actionsListener != null) {
-                    actionsListener.onModelsClicked(view.isSelected());
-                }
-                break;
-            case R.id.pixel_perfect_options_opacity_text_view:
-                view.setSelected(!view.isSelected());
-                if (view.isSelected() && modelsTextView.isSelected()) {
-                    modelsTextView.setSelected(false);
-                }
-                if (actionsListener != null) {
-                    actionsListener.onOpacityClicked(view.isSelected());
-                }
-                break;
-            case R.id.pixel_perfect_options_move_mode_text_view:
-                moveModeView.toNextState();
-                if (actionsListener != null) {
-                    actionsListener.onMoveModeClicked(moveModeView.getState());
-                }
-                break;
-            case R.id.pixel_perfect_cancel_frame_layout:
-                modelsTextView.setSelected(false);
+        if (view == modelsTextView) {
+            view.setSelected(!view.isSelected());
+            if (view.isSelected() && opacityTextView.isSelected()) {
                 opacityTextView.setSelected(false);
-                setVisibility(GONE);
-                if (actionsListener != null) {
-                    actionsListener.onCancelClicked();
-                }
-                break;
+            }
+            if (actionsListener != null) {
+                actionsListener.onModelsClicked(view.isSelected());
+            }
+
+        } else if (view == opacityTextView) {
+            view.setSelected(!view.isSelected());
+            if (view.isSelected() && modelsTextView.isSelected()) {
+                modelsTextView.setSelected(false);
+            }
+            if (actionsListener != null) {
+                actionsListener.onOpacityClicked(view.isSelected());
+            }
+
+        } else if (view == moveModeView) {
+            moveModeView.toNextState();
+            if (actionsListener != null) {
+                actionsListener.onMoveModeClicked(moveModeView.getState());
+            }
+
+        } else if (view == cancelView) {
+            modelsTextView.setSelected(false);
+            opacityTextView.setSelected(false);
+            setVisibility(GONE);
+            if (actionsListener != null) {
+                actionsListener.onCancelClicked();
+            }
+
         }
     }
 

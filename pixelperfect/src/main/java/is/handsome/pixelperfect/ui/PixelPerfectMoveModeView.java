@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library.ui;
+package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;

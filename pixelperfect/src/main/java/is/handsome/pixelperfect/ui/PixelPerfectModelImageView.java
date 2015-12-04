@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library.ui;
+package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -10,22 +10,22 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-public class FixedXImageView extends ImageView {
-    public FixedXImageView(Context context) {
+public class PixelPerfectModelImageView extends ImageView {
+    public PixelPerfectModelImageView(Context context) {
         super(context);
     }
 
-    public FixedXImageView(Context context, AttributeSet attrs) {
+    public PixelPerfectModelImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public FixedXImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PixelPerfectModelImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FixedXImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PixelPerfectModelImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }

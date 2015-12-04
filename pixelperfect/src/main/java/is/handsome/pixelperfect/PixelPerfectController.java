@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library;
+package is.handsome.pixelperfect;
 
 import android.app.Application;
 import android.app.Service;
@@ -14,9 +14,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ToggleButton;
 
-import is.handsome.pixelperfectsample.R;
-import is.handsome.pixelperfectsample.library.ui.PixelPerfectLayout;
-import timber.log.Timber;
+import is.handsome.pixelperfect.ui.PixelPerfectLayout;
 
 public class PixelPerfectController implements View.OnLongClickListener {
 
@@ -44,7 +42,6 @@ public class PixelPerfectController implements View.OnLongClickListener {
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    Timber.v("Down");
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (downTouchX == -1) {
@@ -94,6 +91,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
         windowManager.addView(pixelPerfectLayout, params);
 
         pixelPerfectLayout.setLayoutListener(new PixelPerfectCallbacks.LayoutListener() {
+
             @Override
             public void onCloseActionsView() {
                 showToggleButton();

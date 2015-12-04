@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ToggleButton;
 
-import is.handsome.pixelperfectsample.library.PixelPerfect;
+import is.handsome.pixelperfect.PixelPerfect;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 

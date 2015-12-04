@@ -1,6 +1,6 @@
-package is.handsome.pixelperfectsample.library;
+package is.handsome.pixelperfect;
 
-import is.handsome.pixelperfectsample.library.ui.PixelPerfectLayout;
+import is.handsome.pixelperfect.ui.PixelPerfectLayout;
 
 public class PixelPerfectCallbacks {
 

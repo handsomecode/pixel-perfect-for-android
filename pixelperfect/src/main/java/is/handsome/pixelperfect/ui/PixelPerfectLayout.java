@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library.ui;
+package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,10 +12,10 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import is.handsome.pixelperfectsample.library.BitmapUtils;
-import is.handsome.pixelperfectsample.library.PixelPerfectCallbacks;
-import timber.log.Timber;
+import is.handsome.pixelperfect.BitmapUtils;
+import is.handsome.pixelperfect.PixelPerfectCallbacks;
 
 public class PixelPerfectLayout extends FrameLayout {
 
@@ -60,7 +60,7 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private void initOverlay() {
-        pixelPerfectOverlayImageView = new FixedXImageView(getContext());
+        pixelPerfectOverlayImageView = new PixelPerfectModelImageView(getContext());
         pixelPerfectOverlayImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         pixelPerfectOverlayImageView.setAdjustViewBounds(true);
@@ -162,7 +162,7 @@ public class PixelPerfectLayout extends FrameLayout {
                 return true;
             case KeyEvent.KEYCODE_BACK:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    Timber.w("On Back");
+                    Toast.makeText(getContext(), "On Back", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:

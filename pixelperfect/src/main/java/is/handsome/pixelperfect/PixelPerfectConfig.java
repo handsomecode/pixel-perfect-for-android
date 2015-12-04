@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library;
+package is.handsome.pixelperfect;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package is.handsome.pixelperfectsample.library.ui;
+package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -11,10 +11,11 @@ import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 
-import is.handsome.pixelperfectsample.R;
-import is.handsome.pixelperfectsample.library.PixelPerfectCallbacks;
-import is.handsome.pixelperfectsample.library.PixelPerfectHelper;
-import is.handsome.pixelperfectsample.library.ScreensNamesAdapter;
+import is.handsome.pixelperfect.PixelPerfectCallbacks;
+import is.handsome.pixelperfect.PixelPerfectHelper;
+import is.handsome.pixelperfect.R;
+import is.handsome.pixelperfect.ScreensNamesAdapter;
+
 
 public class PixelPerfectControlsFrameLayout extends FrameLayout {
 
