@@ -14,8 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import is.handsome.pixelperfect.BitmapUtils;
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
+import is.handsome.pixelperfect.PixelPerfectUtils;
 
 public class PixelPerfectLayout extends FrameLayout {
 
@@ -191,7 +191,7 @@ public class PixelPerfectLayout extends FrameLayout {
         if (TextUtils.isEmpty(fullName)) {
             pixelPerfectOverlayImageView.setImageDrawable(null);
         } else {
-            pixelPerfectOverlayImageView.setImageBitmap(BitmapUtils.getBitmapFromAssets(getContext(), fullName));
+            pixelPerfectOverlayImageView.setImageBitmap(PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName));
         }
     }
 

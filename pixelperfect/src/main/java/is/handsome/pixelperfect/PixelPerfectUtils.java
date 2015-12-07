@@ -3,17 +3,43 @@ package is.handsome.pixelperfect;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.view.View;
+import android.view.WindowManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BitmapUtils {
+public class PixelPerfectUtils {
 
-    public static Bitmap getBitmapFromAssets(Context context, String fullname) {
+    private static Rect outRect = new Rect();
+    private static int[] location = new int[2];
+
+    public static boolean inViewBounds(View view, int x, int y) {
+        view.getDrawingRect(outRect);
+        view.getLocationOnScreen(location);
+        outRect.offset(location[0], location[1]);
+        return outRect.contains(x, y);
+    }
+
+    public static int getWindowWidth(WindowManager windowManager) {
+        Point displaySize = new Point();
+        windowManager.getDefaultDisplay().getSize(displaySize);
+        return displaySize.x;
+    }
+
+    public static int getWindowHeight(WindowManager windowManager) {
+        Point displaySize = new Point();
+        windowManager.getDefaultDisplay().getSize(displaySize);
+        return displaySize.y;
+    }
+
+    public static Bitmap getBitmapFromAssets(Context context, String fullName) {
         int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
         InputStream inputStream = null;
         try {
-            inputStream = context.getAssets().open(fullname);
+            inputStream = context.getAssets().open(fullName);
             return decodeSampledBitmapFromInputStream(inputStream, screenWidth);
         } catch (IOException e) {
             return null;
@@ -55,7 +81,7 @@ public class BitmapUtils {
         return inSampleSize;
     }
 
-    private BitmapUtils() {
+    private PixelPerfectUtils() {
         throw new AssertionError("no instances");
     }
 }

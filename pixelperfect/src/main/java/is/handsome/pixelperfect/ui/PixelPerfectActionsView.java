@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
-import is.handsome.pixelperfect.PixelPerfectHelper;
+import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
 
 public class PixelPerfectActionsView extends FrameLayout implements View.OnClickListener {
@@ -87,10 +87,10 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
     }
 
     public boolean inBounds(int x, int y) {
-        return (PixelPerfectHelper.inViewBounds(moveModeView, x, y)
-                || PixelPerfectHelper.inViewBounds(opacityTextView, x, y)
-                || PixelPerfectHelper.inViewBounds(modelsTextView, x, y)
-                || PixelPerfectHelper.inViewBounds(cancelView, x, y));
+        return (PixelPerfectUtils.inViewBounds(moveModeView, x, y)
+                || PixelPerfectUtils.inViewBounds(opacityTextView, x, y)
+                || PixelPerfectUtils.inViewBounds(modelsTextView, x, y)
+                || PixelPerfectUtils.inViewBounds(cancelView, x, y));
     }
 
     public void animate(final boolean toRight, final Corner corner) {

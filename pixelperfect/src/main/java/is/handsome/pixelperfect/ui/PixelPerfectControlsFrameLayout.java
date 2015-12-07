@@ -12,7 +12,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
-import is.handsome.pixelperfect.PixelPerfectHelper;
+import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
 import is.handsome.pixelperfect.ScreensNamesAdapter;
 
@@ -197,7 +197,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
 
     public boolean inBounds(int x, int y) {
         return pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
-                || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectHelper.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)
-                || pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE && PixelPerfectHelper.inViewBounds(pixelPerfectModelsFrameLayout, x, y);
+                || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)
+                || pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectModelsFrameLayout, x, y);
     }
 }

@@ -108,10 +108,10 @@ public class PixelPerfectController implements View.OnLongClickListener {
                 PixelFormat.TRANSLUCENT);
 
         floatingButtonParams.gravity = Gravity.TOP | Gravity.START;
-        floatingButtonParams.x = PixelPerfectHelper.getWindowWidth(windowManager)
+        floatingButtonParams.x = PixelPerfectUtils.getWindowWidth(windowManager)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin);
-        floatingButtonParams.y = PixelPerfectHelper.getWindowHeight(windowManager)
+        floatingButtonParams.y = PixelPerfectUtils.getWindowHeight(windowManager)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin) - 72;
 
