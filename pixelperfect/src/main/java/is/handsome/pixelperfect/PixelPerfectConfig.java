@@ -1,12 +1,21 @@
 package is.handsome.pixelperfect;
 
-import java.io.Serializable;
+public class PixelPerfectConfig {
 
-public class PixelPerfectConfig implements Serializable
-{
+    private static PixelPerfectConfig instance = null;
+
     public boolean useVolumeButtons;
 
-    public boolean isUseVolumeButton() {
+    public boolean useVolumeButtons() {
         return useVolumeButtons;
     }
+
+    public static PixelPerfectConfig get() {
+        if (instance == null) {
+            instance = new PixelPerfectConfig();
+        }
+        return instance;
+    }
+
+    private PixelPerfectConfig () {}
 }

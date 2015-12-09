@@ -21,9 +21,9 @@ public class PixelPerfectController implements View.OnLongClickListener {
     private final WindowManager windowManager;
     private Context context;
 
-    private PixelPerfectConfig pixelPerfectConfig;
     private PixelPerfectLayout pixelPerfectLayout;
     private FrameLayout floatingButton;
+    private PixelPerfectCallbacks.ControllerListener listener;
 
     private WindowManager.LayoutParams floatingButtonParams;
 
@@ -62,16 +62,18 @@ public class PixelPerfectController implements View.OnLongClickListener {
         }
     };
 
-    public PixelPerfectController(Application context, PixelPerfectConfig config) {
-
+    public PixelPerfectController(Application context) {
         this.context = context;
-        this.pixelPerfectConfig = config;
 
         pixelPerfectLayout = new PixelPerfectLayout(context);
         floatingButton = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_pixel_perfect_floating_button, null);
 
         windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow();
+    }
+
+    public void setListener(PixelPerfectCallbacks.ControllerListener listener) {
+        this.listener = listener;
     }
 
     private void addViewsToWindow() {
@@ -95,6 +97,13 @@ public class PixelPerfectController implements View.OnLongClickListener {
             @Override
             public void onCloseActionsView() {
                 showToggleButton();
+            }
+
+            @Override
+            public void onClosePixelPerfect() {
+                if (listener != null) {
+                    listener.onClosePixelPerfect();
+                }
             }
         });
     }

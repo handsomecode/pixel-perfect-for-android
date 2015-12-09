@@ -12,9 +12,9 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
+import is.handsome.pixelperfect.PixelPerfectConfig;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 
 public class PixelPerfectLayout extends FrameLayout {
@@ -92,14 +92,14 @@ public class PixelPerfectLayout extends FrameLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (pixelPerfectOverlayImageView.getVisibility() == VISIBLE && pixelPerfectContext) {
-            return handleTouchOnePointer(event);
+            return handleTouch(event);
         }
         wasClick = false;
         justClick = false;
         return false;
     }
 
-    private boolean handleTouchOnePointer(MotionEvent event) {
+    private boolean handleTouch(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             wasClick = true;
             justClick = true;
@@ -149,25 +149,27 @@ public class PixelPerfectLayout extends FrameLayout {
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action = event.getAction();
         int keyCode = event.getKeyCode();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                if (action == KeyEvent.ACTION_DOWN) {
-                    pixelPerfectOverlayImageView.setAlpha(Math.min(1, pixelPerfectOverlayImageView.getAlpha() + 0.05f));
-                }
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (action == KeyEvent.ACTION_DOWN) {
-                    pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
-                }
-                return true;
-            case KeyEvent.KEYCODE_BACK:
-                if (action == KeyEvent.ACTION_DOWN) {
-                    Toast.makeText(getContext(), "On Back", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            default:
-                return super.dispatchKeyEvent(event);
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
+            layoutListener.onClosePixelPerfect();
         }
+
+        if (PixelPerfectConfig.get().useVolumeButtons()) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_VOLUME_UP:
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        pixelPerfectOverlayImageView.setAlpha(Math.min(1, pixelPerfectOverlayImageView.getAlpha() + 0.05f));
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
+                    }
+                    return true;
+            }
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     public void setImageVisible(boolean visible) {

@@ -10,7 +10,6 @@ import android.util.Log;
 
 public class PixelPerfectBuilder {
 
-    private static PixelPerfectConfig pixelPerfectConfig;
     private static PixelPerfectController pixelPerfectController;
     private static AppLifeCycleObserver.Listener foregroundListener = new AppLifeCycleObserver.Listener() {
         @Override
@@ -24,9 +23,7 @@ public class PixelPerfectBuilder {
         }
     };
 
-    protected PixelPerfectBuilder() {
-        pixelPerfectConfig = new PixelPerfectConfig();
-    }
+    protected PixelPerfectBuilder() {}
 
     /**
      * stops foreground listener
@@ -44,8 +41,6 @@ public class PixelPerfectBuilder {
             pixelPerfectController.destroy();
             pixelPerfectController = null;
         }
-
-        pixelPerfectConfig = null;
     }
 
     /**
@@ -66,10 +61,22 @@ public class PixelPerfectBuilder {
             return;
         }
 
-        pixelPerfectController = new PixelPerfectController((Application) context.getApplicationContext(),
-                pixelPerfectConfig);
-
+        pixelPerfectController = new PixelPerfectController((Application) context.getApplicationContext());
+        pixelPerfectController.setListener(new PixelPerfectCallbacks.ControllerListener() {
+            @Override
+            public void onClosePixelPerfect() {
+                hide();
+            }
+        });
         AppLifeCycleObserver.get(context).addListener(foregroundListener);
+    }
+
+    /**
+     * checks if Pixel Perfect Tool
+     * is displayed on the screen now
+     */
+    public static boolean isShown() {
+        return pixelPerfectController != null;
     }
 
     /**
@@ -79,7 +86,7 @@ public class PixelPerfectBuilder {
      * @param use
      */
     public PixelPerfectBuilder useVolumeButtons(boolean use) {
-        pixelPerfectConfig.useVolumeButtons = use;
+        PixelPerfectConfig.get().useVolumeButtons = use;
         return this;
     }
 

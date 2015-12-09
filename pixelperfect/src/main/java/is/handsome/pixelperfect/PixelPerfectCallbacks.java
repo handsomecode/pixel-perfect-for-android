@@ -29,5 +29,12 @@ public class PixelPerfectCallbacks {
     public interface LayoutListener {
 
         void onCloseActionsView();
+
+        void onClosePixelPerfect();
+    }
+
+    public interface ControllerListener {
+
+        void onClosePixelPerfect();
     }
 }

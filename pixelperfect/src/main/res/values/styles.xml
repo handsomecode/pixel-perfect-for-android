@@ -2,10 +2,4 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
     </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-    Ï
 </resources>

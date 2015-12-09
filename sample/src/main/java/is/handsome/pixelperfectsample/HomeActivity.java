@@ -3,15 +3,12 @@ package is.handsome.pixelperfectsample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ToggleButton;
 
 import is.handsome.pixelperfect.PixelPerfect;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
-
-    private boolean pixelPerfectOpened;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +21,13 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public void changePixelPerfectState(View view) {
-        setPixelPerfectToolVisibility(((ToggleButton) view).isChecked());
-    }
-
     public void onImageClick(View view) {
-        pixelPerfectOpened = !pixelPerfectOpened;
-        setPixelPerfectToolVisibility(pixelPerfectOpened);
+        setPixelPerfectToolVisibility();
     }
 
-    private void setPixelPerfectToolVisibility(boolean enabled) {
-        if (enabled) {
-            PixelPerfect.create().show(getApplicationContext());
+    private void setPixelPerfectToolVisibility() {
+        if (!PixelPerfect.isShown()) {
+            PixelPerfect.create().useVolumeButtons(true).show(getApplicationContext());
         } else {
             PixelPerfect.hide();
         }

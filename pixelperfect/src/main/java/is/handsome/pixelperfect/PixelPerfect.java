@@ -9,4 +9,8 @@ public class PixelPerfect {
     public static void hide() {
         PixelPerfectBuilder.hide();
     }
+
+    public static boolean isShown() {
+        return PixelPerfectBuilder.isShown();
+    }
 }
