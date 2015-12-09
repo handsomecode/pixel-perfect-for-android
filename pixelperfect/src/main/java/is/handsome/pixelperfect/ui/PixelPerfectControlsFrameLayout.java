@@ -195,6 +195,11 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         }
     }
 
+    protected void updateOpacityProgress(float currentAlpha) {
+        ((SeekBar) pixelPerfectOpacityFrameLayout.findViewById(R.id.pixel_perfect_opacity_seek_bar)).
+                setProgress((int) (currentAlpha * 100));
+    }
+
     public boolean inBounds(int x, int y) {
         return pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
                 || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)

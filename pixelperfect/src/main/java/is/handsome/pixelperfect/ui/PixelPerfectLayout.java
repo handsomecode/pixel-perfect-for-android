@@ -159,11 +159,13 @@ public class PixelPerfectLayout extends FrameLayout {
                 case KeyEvent.KEYCODE_VOLUME_UP:
                     if (action == KeyEvent.ACTION_DOWN) {
                         pixelPerfectOverlayImageView.setAlpha(Math.min(1, pixelPerfectOverlayImageView.getAlpha() + 0.05f));
+                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
                     }
                     return true;
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
                     if (action == KeyEvent.ACTION_DOWN) {
                         pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
+                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
                     }
                     return true;
             }
