@@ -121,8 +121,9 @@ public class PixelPerfectController implements View.OnLongClickListener {
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin);
         floatingButtonParams.y = PixelPerfectUtils.getWindowHeight(windowManager)
+                - (int) context.getResources().getDimension(R.dimen.android_status_bar_height)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
-                - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin) - 72;
+                - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin);
 
         windowManager.addView(floatingButton, floatingButtonParams);
 

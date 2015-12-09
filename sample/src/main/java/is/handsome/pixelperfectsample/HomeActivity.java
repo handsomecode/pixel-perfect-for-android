@@ -22,10 +22,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onImageClick(View view) {
-        setPixelPerfectToolVisibility();
-    }
-
-    private void setPixelPerfectToolVisibility() {
         if (!PixelPerfect.isShown()) {
             PixelPerfect.create().useVolumeButtons(true).show(getApplicationContext());
         } else {
