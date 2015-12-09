@@ -11,7 +11,7 @@ import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private boolean pixelPerfetOpened;
+    private boolean pixelPerfectOpened;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +29,15 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onImageClick(View view) {
-        pixelPerfetOpened = !pixelPerfetOpened;
-        setPixelPerfectToolVisibility(pixelPerfetOpened);
+        pixelPerfectOpened = !pixelPerfectOpened;
+        setPixelPerfectToolVisibility(pixelPerfectOpened);
     }
 
     private void setPixelPerfectToolVisibility(boolean enabled) {
         if (enabled) {
             PixelPerfect.create().show(getApplicationContext());
         } else {
-            PixelPerfect.hide(getApplicationContext());
+            PixelPerfect.hide();
         }
     }
 }

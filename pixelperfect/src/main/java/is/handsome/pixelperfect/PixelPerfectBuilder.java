@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Log;
 
 public class PixelPerfectBuilder {
 
     private static PixelPerfectConfig pixelPerfectConfig;
     private static PixelPerfectController pixelPerfectController;
-    private static Foreground.Listener foregroundListener = new Foreground.Listener() {
+    private static AppLifeCycleObserver.Listener foregroundListener = new AppLifeCycleObserver.Listener() {
         @Override
         public void onBecameForeground() {
             pixelPerfectController.show();
@@ -31,15 +32,19 @@ public class PixelPerfectBuilder {
      * stops foreground listener
      * removes views from the window
      * nulls all static variables
-     *
-     * @param context
      */
-    protected static void hide(Context context) {
-        Foreground.get(context).removeListener(foregroundListener);
+    protected static void hide() {
+        try {
+            AppLifeCycleObserver.get().removeListener(foregroundListener);
+        } catch (IllegalStateException exception) {
+            Log.w("PixelPerfectBuilder", "Error during listener removing", exception);
+        }
 
-        pixelPerfectController.destroy();
+        if (pixelPerfectController != null) {
+            pixelPerfectController.destroy();
+            pixelPerfectController = null;
+        }
 
-        pixelPerfectController = null;
         pixelPerfectConfig = null;
     }
 
@@ -64,17 +69,17 @@ public class PixelPerfectBuilder {
         pixelPerfectController = new PixelPerfectController((Application) context.getApplicationContext(),
                 pixelPerfectConfig);
 
-        Foreground.init((Application) context.getApplicationContext()).addListener(foregroundListener);
+        AppLifeCycleObserver.get(context).addListener(foregroundListener);
     }
 
     /**
      * asks if volume buttons
      * can be used for Opacity widget
      *
-     * @param canUse
+     * @param use
      */
-    public PixelPerfectBuilder useVolumeButtons(boolean canUse) {
-        pixelPerfectConfig.useVolumeButtons = canUse;
+    public PixelPerfectBuilder useVolumeButtons(boolean use) {
+        pixelPerfectConfig.useVolumeButtons = use;
         return this;
     }
 
