@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
 import is.handsome.pixelperfect.PixelPerfect;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
@@ -19,6 +22,8 @@ public class HomeActivity extends AppCompatActivity {
             Timber.plant(new Timber.DebugTree());
             Timber.plant(new VisualWarnTree(this));
         }
+
+        Fabric.with(this, new Crashlytics());
     }
 
     public void onImageClick(View view) {
