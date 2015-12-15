@@ -28,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void onImageClick(View view) {
         if (!PixelPerfect.isShown()) {
-            PixelPerfect.create().useVolumeButtons(true).show(getApplicationContext());
+            PixelPerfect.create().useVolumeButtons(true).show(this);
         } else {
             PixelPerfect.hide();
         }

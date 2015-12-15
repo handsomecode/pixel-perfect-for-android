@@ -21,7 +21,7 @@
         android:layout_height="@dimen/pixel_perfect_action_button_size"
         android:background="@drawable/bg_pixelperfect_move_mode_button"
         android:gravity="center"
-        android:text="ALL"
+        android:text="@string/action_move_all_directions"
         android:textColor="@color/white"
         android:textSize="18sp"/>
 
@@ -31,7 +31,7 @@
         android:layout_height="@dimen/pixel_perfect_action_button_size"
         android:background="@drawable/bg_pixelperfect_opacity_button"
         android:gravity="center"
-        android:text="OP"
+        android:text="@string/action_opacity"
         android:textColor="@color/white"
         android:textSize="18sp"/>
 
@@ -41,7 +41,7 @@
         android:layout_height="@dimen/pixel_perfect_action_button_size"
         android:background="@drawable/bg_pixelperfect_models_button"
         android:gravity="center"
-        android:text="IM"
+        android:text="@string/action_choose_image"
         android:textColor="@color/white"
         android:textSize="18sp"/>
 

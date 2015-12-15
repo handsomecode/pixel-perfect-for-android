@@ -16,16 +16,18 @@ import android.widget.ImageView;
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
 import is.handsome.pixelperfect.PixelPerfectConfig;
 import is.handsome.pixelperfect.PixelPerfectUtils;
+import is.handsome.pixelperfect.R;
 
 public class PixelPerfectLayout extends FrameLayout {
 
     public enum MoveMode {
-        VERTICAL, HORIZONTAL, ALL_DIRECTIONS
+        VERTICAL, HORIZONTAL, ALL_DIRECTIONS, ZOOM
     }
 
     private ImageView pixelPerfectOverlayImageView;
     private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
     private PixelPerfectCallbacks.LayoutListener layoutListener;
+    private MagnifierView magnifierView;
 
     private MotionEvent lastMotionEvent;
     private int touchSlop;
@@ -236,8 +238,19 @@ public class PixelPerfectLayout extends FrameLayout {
             @Override
             public void onChangeMoveMode(MoveMode changedMoveMode) {
                 moveMode = changedMoveMode;
+                if (moveMode == MoveMode.ZOOM) {
+                    magnifierView.setVisibility(VISIBLE);
+                    pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+                    magnifierView.setImageBitmap(PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView));
+                    pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
+                } else {
+                    if (magnifierView.getVisibility() == VISIBLE) {
+                        magnifierView.setVisibility(GONE);
+                    }
+                }
             }
         });
+        magnifierView = (MagnifierView) pixelPerfectControlsFrameLayout.findViewById(R.id.controls_magnifier_view);
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
     }
 

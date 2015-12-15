@@ -3,9 +3,11 @@ package is.handsome.pixelperfect;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import java.io.IOException;
@@ -33,6 +35,34 @@ public class PixelPerfectUtils {
         Point displaySize = new Point();
         windowManager.getDefaultDisplay().getSize(displaySize);
         return displaySize.y;
+    }
+
+    public static Bitmap takeActivityScreenshot() {
+        View rootView = ((ViewGroup)PixelPerfectConfig.get().getTopActivity()
+                .findViewById(android.R.id.content)).getChildAt(0).getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        return rootView.getDrawingCache();
+    }
+
+    public static Bitmap takeOverlayScreenshot(View view) {
+        View rootView = view.getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        return rootView.getDrawingCache();
+    }
+
+    public static Bitmap combineBitmaps(View overlayView) {
+        Bitmap activityBitmap = takeActivityScreenshot();
+        Bitmap overlayBitmap = takeOverlayScreenshot(overlayView);
+        int width = overlayBitmap.getWidth();
+        int height = overlayBitmap.getHeight();
+        Bitmap comboBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(comboBitmap);
+        Rect src = new Rect(0, (int) PixelPerfectConfig.get().getTopActivity().getResources().getDimension(R.dimen.android_status_bar_height),
+                activityBitmap.getWidth(), activityBitmap.getHeight());
+        Rect dest = new Rect(0, 0, overlayBitmap.getWidth(), overlayBitmap.getHeight());
+        comboImage.drawBitmap(activityBitmap, src, dest, null);
+        comboImage.drawBitmap(overlayBitmap, 0, 0, null);
+        return comboBitmap;
     }
 
     public static Bitmap getBitmapFromAssets(Context context, String fullName) {

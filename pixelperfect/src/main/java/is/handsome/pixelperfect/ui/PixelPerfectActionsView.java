@@ -2,7 +2,6 @@ package is.handsome.pixelperfect.ui;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -120,12 +119,7 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
                     animate(opacityTextView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, getHeight() - actionViewSize);
                     animate(modelsTextView, fromX, centerX - offsetX, fromY, getHeight() - actionViewSize);
                 }
-
-                if (Build.VERSION.SDK_INT < 16) {
-                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }

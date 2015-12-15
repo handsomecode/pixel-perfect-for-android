@@ -43,4 +43,11 @@
             android:progress="50"/>
     </FrameLayout>
 
+    <is.handsome.pixelperfect.ui.MagnifierView
+        android:id="@+id/controls_magnifier_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="gone"/>
+
 </FrameLayout>

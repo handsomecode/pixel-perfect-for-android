@@ -1,5 +1,6 @@
 package is.handsome.pixelperfect;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -47,11 +48,11 @@ public class PixelPerfectBuilder {
      * shows pixel perfect tool that
      * displays floating button and options menu
      *
-     * @param context
+     * @param activity
      */
-    public void show(Context context) {
+    public void show(Activity activity) {
 
-        if (overlayPermRequest(context)) {
+        if (overlayPermRequest(activity)) {
             //once permission is granted then you must call show() again
             return;
         }
@@ -61,14 +62,14 @@ public class PixelPerfectBuilder {
             return;
         }
 
-        pixelPerfectController = new PixelPerfectController((Application) context.getApplicationContext());
+        pixelPerfectController = new PixelPerfectController((Application) activity.getApplicationContext());
         pixelPerfectController.setListener(new PixelPerfectCallbacks.ControllerListener() {
             @Override
             public void onClosePixelPerfect() {
                 hide();
             }
         });
-        AppLifeCycleObserver.get(context).addListener(foregroundListener);
+        AppLifeCycleObserver.get(activity).addListener(foregroundListener);
     }
 
     /**

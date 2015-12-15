@@ -30,11 +30,12 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
     private Runnable checkRunnable;
 
-    public static AppLifeCycleObserver get(Context context){
+    public static AppLifeCycleObserver get(Activity activity){
         if (instance == null) {
-            Context applicationContext = context.getApplicationContext();
+            Context applicationContext = activity.getApplicationContext();
             if (applicationContext instanceof Application) {
-               return init((Application) applicationContext);
+                PixelPerfectConfig.get().topActivity = activity;
+                return init((Application) applicationContext);
             }
             throw new IllegalStateException (
                     "Foreground is not initialised and " +
@@ -79,6 +80,7 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
     @Override
     public void onActivityResumed(Activity activity) {
 
+        PixelPerfectConfig.get().topActivity = activity;
         paused = false;
         boolean wasBackground = !foreground;
         foreground = true;
@@ -102,6 +104,8 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
 
     @Override
     public void onActivityPaused(Activity activity) {
+
+        PixelPerfectConfig.get().topActivity = null;
         paused = true;
 
         if (checkRunnable != null) {
