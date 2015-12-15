@@ -40,6 +40,8 @@ android {
 
     buildTypes {
         debug {
+            ext.betaDistributionReleaseNotesFilePath="releaseNotes.txt"
+            ext.betaDistributionGroupAliasesFilePath="groupAliases.txt"
             signingConfig signingConfigs.debug
         }
         release {
