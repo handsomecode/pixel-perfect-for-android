@@ -27,6 +27,7 @@ public class PixelPerfectLayout extends FrameLayout {
     private ImageView pixelPerfectOverlayImageView;
     private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
     private PixelPerfectCallbacks.LayoutListener layoutListener;
+    private FrameLayout magnifierFrameLayout;
     private MagnifierView magnifierView;
 
     private MotionEvent lastMotionEvent;
@@ -84,7 +85,7 @@ public class PixelPerfectLayout extends FrameLayout {
     public boolean onInterceptTouchEvent(MotionEvent event) {
         int x = (int) event.getRawX();
         int y = (int) event.getRawY();
-        if (pixelPerfectControlsFrameLayout.inBounds(x, y) || !pixelPerfectContext) {
+        if (pixelPerfectControlsFrameLayout.inBounds(x, y) || !pixelPerfectContext || magnifierFrameLayout.getVisibility() == VISIBLE) {
             return false;
         } else {
             return pixelPerfectOverlayImageView.getVisibility() == VISIBLE || super.onInterceptTouchEvent(event);
@@ -239,15 +240,65 @@ public class PixelPerfectLayout extends FrameLayout {
             public void onChangeMoveMode(MoveMode changedMoveMode) {
                 moveMode = changedMoveMode;
                 if (moveMode == MoveMode.ZOOM) {
-                    magnifierView.setVisibility(VISIBLE);
+                    magnifierFrameLayout.setVisibility(VISIBLE);
                     pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
-                    magnifierView.setImageBitmap(PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView));
+                    magnifierView.updateSrcBitmap(PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView));
                     pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
+                    magnifierView.setScaledImageBitmap();
                 } else {
-                    if (magnifierView.getVisibility() == VISIBLE) {
-                        magnifierView.setVisibility(GONE);
+                    if (magnifierFrameLayout.getVisibility() == VISIBLE) {
+                        magnifierFrameLayout.setVisibility(GONE);
                     }
                 }
+            }
+        });
+
+        magnifierFrameLayout = (FrameLayout) pixelPerfectControlsFrameLayout.findViewById(R.id.controls_magnifier_frame_layout);
+        magnifierFrameLayout.setOnTouchListener(new OnTouchListener() {
+
+            boolean wasClick1;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int x = (int) event.getRawX();
+                int y = (int) event.getRawY();
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (PixelPerfectUtils.inViewBounds(magnifierView, x, y)) {
+                        wasClick1 = true;
+                        lastMotionEvent = MotionEvent.obtain(event);
+                    }
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasClick1) {
+                    boolean wasMove = false;
+                    float translationX = magnifierView.getTranslationX() + (event.getX() - lastMotionEvent.getX());
+                    if (translationX >= 0 && translationX <= magnifierFrameLayout.getWidth() - 300) {
+                        magnifierView.setTranslationX(magnifierView.getTranslationX() + (event.getX() - lastMotionEvent.getX()));
+                        wasMove = true;
+                    }
+                    float translationY = magnifierView.getTranslationY() + (event.getY() - lastMotionEvent.getY());
+                    if (translationY >= 0 && translationY <= magnifierFrameLayout.getHeight() - 300) {
+                        magnifierView.setTranslationY(magnifierView.getTranslationY() + (event.getY() - lastMotionEvent.getY()));
+                        wasMove = true;
+                    }
+                    if (wasMove) {
+                        magnifierView.updateScaledImageBitmap();
+                        lastMotionEvent = MotionEvent.obtain(event);
+                        return true;
+                    }
+                    return false;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    wasClick1 = false;
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    wasClick1 = false;
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    wasClick1 = false;
+                    return true;
+                }
+                wasClick1 = false;
+                return false;
             }
         });
         magnifierView = (MagnifierView) pixelPerfectControlsFrameLayout.findViewById(R.id.controls_magnifier_view);
