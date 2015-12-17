@@ -30,8 +30,6 @@ public class PixelPerfectMoveModeView extends TextView {
             return PixelPerfectLayout.MoveMode.VERTICAL;
         } else if (getText().equals("H")) {
             return PixelPerfectLayout.MoveMode.HORIZONTAL;
-        } else if (getText().equals("zoom")) {
-            return PixelPerfectLayout.MoveMode.ZOOM;
         }
         return PixelPerfectLayout.MoveMode.ALL_DIRECTIONS;
     }
@@ -44,9 +42,6 @@ public class PixelPerfectMoveModeView extends TextView {
             case VERTICAL:
                 setText("V");
                 break;
-            case ZOOM:
-                setText("zoom");
-                break;
             default:
                 setText("All");
                 break;
@@ -58,8 +53,6 @@ public class PixelPerfectMoveModeView extends TextView {
             setState(PixelPerfectLayout.MoveMode.VERTICAL);
         } else if (getState() == PixelPerfectLayout.MoveMode.VERTICAL) {
             setState(PixelPerfectLayout.MoveMode.HORIZONTAL);
-        } else if (getState() == PixelPerfectLayout.MoveMode.HORIZONTAL){
-            setState(PixelPerfectLayout.MoveMode.ZOOM);
         } else {
             setState(PixelPerfectLayout.MoveMode.ALL_DIRECTIONS);
         }
