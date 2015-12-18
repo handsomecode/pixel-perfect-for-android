@@ -49,7 +49,21 @@ public class MagnifierView extends ImageView {
         }
     }
 
-    public void updateScaledImageBitmap(int x, int y) {
+    public void updateScaledImageBitmap(final int x, final int y) {
+        if (getWidth() == 0) {
+            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    updateImageBitmap(x, y);
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        } else {
+            updateImageBitmap(x, y);
+        }
+    }
+
+    private void updateImageBitmap(int x, int y) {
         int viewWidth = getWidth();
         int padding = viewWidth / ZOOM_FACTOR * (ZOOM_FACTOR - 1) / 2;
         int left = x + padding >= 0 ? x + padding : 0;
