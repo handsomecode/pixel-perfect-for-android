@@ -1,13 +1,27 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'org.moallemi.advanced-build-version'
 
 buildscript {
     repositories {
+        jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.21.2'
+        classpath 'org.moallemi.gradle.advanced-build-version:gradle-plugin:1.5.1'
+    }
+}
+
+advancedVersioning {
+    nameOptions {
+        versionMajor 1
+        versionMinor 0
+    }
+
+    codeOptions {
+        versionCodeType org.moallemi.gradle.internal.VersionCodeType.JALALI_DATE
     }
 }
 
@@ -19,8 +33,8 @@ android {
         applicationId "is.handsome.pixelperfectsample"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode advancedVersioning.versionCode
+        versionName advancedVersioning.versionName
     }
 
     signingConfigs {
