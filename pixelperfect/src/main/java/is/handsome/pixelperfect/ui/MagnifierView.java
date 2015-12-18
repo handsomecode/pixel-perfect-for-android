@@ -5,12 +5,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 public class MagnifierView extends ImageView {
 
     private static int ZOOM_FACTOR = 3;
-    private static int WIDTH = 300;
 
     private Bitmap srcBitmap;
 
@@ -31,39 +31,47 @@ public class MagnifierView extends ImageView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void updateSrcBitmap(Bitmap bitmap) {
+    public void setSrcBitmap(Bitmap bitmap) {
         this.srcBitmap = bitmap;
     }
 
-    public void setScaledImageBitmap(int centerX, int centerY) {
-        int padding = WIDTH / ZOOM_FACTOR * (ZOOM_FACTOR - 1) / 2;
-        Bitmap croppedBitmap = Bitmap.createBitmap(srcBitmap, centerX + padding - WIDTH / 2, centerY + padding - WIDTH / 2,
-                WIDTH / ZOOM_FACTOR, WIDTH / ZOOM_FACTOR);
-        setImageBitmap(croppedBitmap);
-    }
-
-    public void updateScaledImageBitmapAccordingViewPosition() {
-        int padding = WIDTH / ZOOM_FACTOR * (ZOOM_FACTOR - 1) / 2;
-        int left = (int) getX() + padding >= 0 ? (int) getX() + padding : 0;
-        int top = (int) getY() + padding >= 0 ? (int) getY() + padding : 0;
-        Bitmap croppedBitmap = Bitmap.createBitmap(srcBitmap, left, top,
-                WIDTH / ZOOM_FACTOR, WIDTH / ZOOM_FACTOR);
-        setImageBitmap(croppedBitmap);
+    public void setScaledImageBitmap(final int centerX, final int centerY) {
+        if (getWidth() == 0) {
+            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    setImageBitmap(centerX, centerY);
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        } else {
+            setImageBitmap(centerX, centerY);
+        }
     }
 
     public void updateScaledImageBitmap(int x, int y) {
-        int padding = WIDTH / ZOOM_FACTOR * (ZOOM_FACTOR - 1) / 2;
+        int viewWidth = getWidth();
+        int padding = viewWidth / ZOOM_FACTOR * (ZOOM_FACTOR - 1) / 2;
         int left = x + padding >= 0 ? x + padding : 0;
         int top = y + padding >= 0 ? y + padding : 0;
 
-        if (left + WIDTH / ZOOM_FACTOR > srcBitmap.getWidth()) {
-            left = srcBitmap.getWidth() - WIDTH / ZOOM_FACTOR;
+        if (left + viewWidth / ZOOM_FACTOR > srcBitmap.getWidth()) {
+            left = srcBitmap.getWidth() - viewWidth / ZOOM_FACTOR;
         }
-        if (top + WIDTH / ZOOM_FACTOR > srcBitmap.getHeight()) {
-            top = srcBitmap.getHeight() - WIDTH / ZOOM_FACTOR;
+        if (top + viewWidth / ZOOM_FACTOR > srcBitmap.getHeight()) {
+            top = srcBitmap.getHeight() - viewWidth / ZOOM_FACTOR;
         }
 
-        Bitmap croppedBitmap = Bitmap.createBitmap(srcBitmap, left, top, WIDTH / ZOOM_FACTOR, WIDTH / ZOOM_FACTOR);
+        Bitmap croppedBitmap = Bitmap.createBitmap(srcBitmap, left, top, viewWidth / ZOOM_FACTOR,
+                viewWidth / ZOOM_FACTOR);
+        setImageBitmap(croppedBitmap);
+    }
+
+    private void setImageBitmap(int centerX, int centerY) {
+        int viewWidth = getWidth();
+        int padding = viewWidth / ZOOM_FACTOR * (ZOOM_FACTOR - 1) / 2;
+        Bitmap croppedBitmap = Bitmap.createBitmap(srcBitmap, centerX + padding - viewWidth / 2, centerY + padding - viewWidth / 2,
+                viewWidth / ZOOM_FACTOR, viewWidth / ZOOM_FACTOR);
         setImageBitmap(croppedBitmap);
     }
 }

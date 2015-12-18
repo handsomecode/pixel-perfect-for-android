@@ -43,7 +43,7 @@
             android:progress="50"/>
     </FrameLayout>
 
-    <FrameLayout
+    <is.handsome.pixelperfect.ui.MagnifierContainerFrameLayout
         android:id="@+id/controls_magnifier_frame_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,10 +51,10 @@
 
         <is.handsome.pixelperfect.ui.MagnifierView
             android:id="@+id/controls_magnifier_view"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="@dimen/pixel_perfect_magnifier_view_width"
+            android:layout_height="@dimen/pixel_perfect_magnifier_view_width"
             android:background="@drawable/bg_zoom_rectangle"
             android:padding="3dp"/>
-    </FrameLayout>
+    </is.handsome.pixelperfect.ui.MagnifierContainerFrameLayout>
 
 </FrameLayout>
