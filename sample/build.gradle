@@ -21,7 +21,7 @@ advancedVersioning {
     }
 
     codeOptions {
-        versionCodeType org.moallemi.gradle.internal.VersionCodeType.JALALI_DATE
+        versionCodeType org.moallemi.gradle.internal.VersionCodeType.DATE
     }
 }
 
@@ -54,13 +54,16 @@ android {
 
     buildTypes {
         debug {
-            ext.betaDistributionReleaseNotesFilePath="releaseNotes.txt"
-            ext.betaDistributionGroupAliasesFilePath="groupAliases.txt"
             signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            ext.betaDistributionReleaseNotesFilePath = "releaseNotes.txt"
+            ext.betaDistributionGroupAliasesFilePath = "groupAliases.txt"
+            ext.betaDistributionNotifications = false
+
             signingConfig signingConfigs.release
         }
     }
