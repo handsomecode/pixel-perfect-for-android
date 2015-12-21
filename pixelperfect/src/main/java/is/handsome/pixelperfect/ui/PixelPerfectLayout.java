@@ -23,7 +23,7 @@ import is.handsome.pixelperfect.R;
 
 public class PixelPerfectLayout extends FrameLayout {
 
-    private static final int DOUBLE_CLICK_DURATION = 180;
+    private static final int DOUBLE_CLICK_DURATION = 200;
 
     public enum MoveMode {
         VERTICAL, HORIZONTAL, ALL_DIRECTIONS
@@ -40,7 +40,7 @@ public class PixelPerfectLayout extends FrameLayout {
     private int touchSlop;
     private boolean justClick;
     private boolean wasClick;
-    private boolean firstTouch;
+    private boolean firstClick;
     private long startClickTime;
 
     public PixelPerfectLayout(Context context) {
@@ -175,14 +175,14 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private boolean handleTouch(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (!firstTouch) {
+            if (!firstClick) {
                 wasClick = true;
                 justClick = true;
-                firstTouch = true;
+                firstClick = true;
                 startClickTime = Calendar.getInstance().getTimeInMillis();
                 lastMotionEvent = MotionEvent.obtain(event);
             } else if (Calendar.getInstance().getTimeInMillis() - startClickTime <= DOUBLE_CLICK_DURATION) {
-                firstTouch = false;
+                firstClick = false;
                 wasClick = false;
                 justClick = false;
                 magnifierFrameLayout.updateTouchData(event);
@@ -190,7 +190,7 @@ public class PixelPerfectLayout extends FrameLayout {
             } else {
                 wasClick = true;
                 justClick = true;
-                firstTouch = true;
+                firstClick = true;
                 startClickTime = Calendar.getInstance().getTimeInMillis();
                 lastMotionEvent = MotionEvent.obtain(event);
                 return false;
@@ -203,12 +203,12 @@ public class PixelPerfectLayout extends FrameLayout {
                 return true;
             }
             justClick = false;
-            firstTouch = false;
+            firstClick = false;
             if (moveMode != MoveMode.VERTICAL) {
-                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()));
+                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 5);
             }
             if (moveMode != MoveMode.HORIZONTAL) {
-                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()));
+                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 5);
             }
             lastMotionEvent = MotionEvent.obtain(event);
             return true;
@@ -233,12 +233,12 @@ public class PixelPerfectLayout extends FrameLayout {
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
             wasClick = false;
             justClick = false;
-            firstTouch = false;
+            firstClick = false;
             return true;
         }
         wasClick = false;
         justClick = false;
-        firstTouch = false;
+        firstClick = false;
         return false;
     }
 

@@ -55,8 +55,12 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (PixelPerfectUtils.inViewBounds(magnifierView, x, y)) {
                 wasMagnifierClick = true;
-                lastMotionEventMagnifierX = MotionEvent.obtain(event);
-                lastMotionEventMagnifierY = MotionEvent.obtain(event);
+                if (magnifierView.getTranslationX() > 0 && magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
+                    lastMotionEventMagnifierX = MotionEvent.obtain(event);
+                }
+                if (magnifierView.getTranslationY() > 0 && magnifierView.getTranslationY() < getHeight() - magnifierWidth) {
+                    lastMotionEventMagnifierY = MotionEvent.obtain(event);
+                }
             } else {
                 hideMagnifierMode();
             }
@@ -97,8 +101,25 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
     public boolean handleMagnifierMove(MotionEvent event) {
         float deltaTranslationX = event.getX() - lastMotionEventMagnifierX.getX();
         float deltaTranslationY = event.getY() - lastMotionEventMagnifierY.getY();
-        float bitmapX = magnifierView.getTranslationX() + deltaTranslationX;
-        float bitmapY = magnifierView.getTranslationY() + deltaTranslationY;
+        float bitmapX = calculateEdgeBitmapX(deltaTranslationX);
+        float bitmapY = calculateEdgeBitmapY(deltaTranslationY);
+
+        if (Float.isNaN(bitmapX)) {
+            bitmapX = magnifierView.getTranslationX() + deltaTranslationX;
+            magnifierView.setTranslationX(magnifierView.getTranslationX() + deltaTranslationX);
+            lastMotionEventMagnifierX = MotionEvent.obtain(event);
+        }
+        if (Float.isNaN(bitmapY)) {
+            bitmapY = magnifierView.getTranslationY() + deltaTranslationY;
+            magnifierView.setTranslationY(magnifierView.getTranslationY() + deltaTranslationY);
+            lastMotionEventMagnifierY = MotionEvent.obtain(event);
+        }
+        magnifierView.updateScaledImageBitmap((int) bitmapX, (int) bitmapY);
+        return true;
+    }
+
+    private float calculateEdgeBitmapX(float deltaTranslationX) {
+        float bitmapX = Float.NaN;
         if (magnifierView.getTranslationX() + deltaTranslationX < 0) {
             bitmapX = deltaTranslationX;
             if (magnifierView.getTranslationX() > 0) {
@@ -110,6 +131,11 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
                 magnifierView.setTranslationX(getWidth() - magnifierWidth);
             }
         }
+        return bitmapX;
+    }
+
+    private float calculateEdgeBitmapY(float deltaTranslationY) {
+        float bitmapY = Float.NaN;
         if (magnifierView.getTranslationY() + deltaTranslationY < 0) {
             bitmapY = deltaTranslationY;
             if (magnifierView.getTranslationY() > 0) {
@@ -121,16 +147,7 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
                 magnifierView.setTranslationY(getHeight() - magnifierWidth);
             }
         }
-        magnifierView.updateScaledImageBitmap((int) bitmapX, (int) bitmapY);
-        if (bitmapX == magnifierView.getTranslationX() + deltaTranslationX) {
-            magnifierView.setTranslationX(magnifierView.getTranslationX() + deltaTranslationX);
-            lastMotionEventMagnifierX = MotionEvent.obtain(event);
-        }
-        if (bitmapY == magnifierView.getTranslationY() + deltaTranslationY) {
-            magnifierView.setTranslationY(magnifierView.getTranslationY() + deltaTranslationY);
-            lastMotionEventMagnifierY = MotionEvent.obtain(event);
-        }
-        return true;
+        return bitmapY;
     }
 
     private void setMagnifierPosition(int x, int y) {
