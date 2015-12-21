@@ -22,8 +22,8 @@ public class HomeActivity extends AppCompatActivity {
             Timber.plant(new Timber.DebugTree());
             Timber.plant(new VisualWarnTree(this));
         }
-
         Fabric.with(this, new Crashlytics());
+        PixelPerfect.create().useVolumeButtons(true).show(this);
     }
 
     public void onImageClick(View view) {

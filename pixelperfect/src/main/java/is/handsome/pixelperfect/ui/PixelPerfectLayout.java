@@ -23,7 +23,7 @@ import is.handsome.pixelperfect.R;
 
 public class PixelPerfectLayout extends FrameLayout {
 
-    private static final int DOUBLE_CLICK_DURATION = 150;
+    private static final int DOUBLE_CLICK_DURATION = 180;
 
     public enum MoveMode {
         VERTICAL, HORIZONTAL, ALL_DIRECTIONS
@@ -64,20 +64,6 @@ public class PixelPerfectLayout extends FrameLayout {
         init();
     }
 
-    public void setLayoutListener(PixelPerfectCallbacks.LayoutListener listener) {
-        layoutListener = listener;
-    }
-
-    private void initOverlay() {
-        pixelPerfectOverlayImageView = new PixelPerfectModelImageView(getContext());
-        pixelPerfectOverlayImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        pixelPerfectOverlayImageView.setAdjustViewBounds(true);
-        pixelPerfectOverlayImageView.setVisibility(INVISIBLE);
-        pixelPerfectOverlayImageView.setAlpha(0.5f);
-        addView(pixelPerfectOverlayImageView);
-    }
-
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         int newIndex = -1;
@@ -106,6 +92,85 @@ public class PixelPerfectLayout extends FrameLayout {
         wasClick = false;
         justClick = false;
         return false;
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
+            layoutListener.onClosePixelPerfect();
+        }
+
+        if (PixelPerfectConfig.get().useVolumeButtons()) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_VOLUME_UP:
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        pixelPerfectOverlayImageView.setAlpha(Math.min(1, pixelPerfectOverlayImageView.getAlpha() + 0.05f));
+                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
+                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
+                    }
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    public void setLayoutListener(PixelPerfectCallbacks.LayoutListener listener) {
+        layoutListener = listener;
+    }
+
+    public void setImageVisible(boolean visible) {
+        if (visible && pixelPerfectOverlayImageView.getDrawable() == null) {
+            updateImage(null);
+        }
+        pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : GONE);
+        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
+    }
+
+    public void setControlsLayerVisible(boolean visible) {
+        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
+    }
+
+    public void setImageAlpha(float alpha) {
+        pixelPerfectOverlayImageView.setAlpha(alpha);
+    }
+
+    public void updateImage(String fullName) {
+        pixelPerfectOverlayImageView.setTranslationY(0);
+        if (TextUtils.isEmpty(fullName)) {
+            pixelPerfectOverlayImageView.setImageDrawable(null);
+        } else {
+            pixelPerfectOverlayImageView.setImageBitmap(PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName));
+        }
+    }
+
+    public void setPixelPerfectContext(boolean isPixelPerfectContext) {
+        pixelPerfectContext = isPixelPerfectContext;
+    }
+
+    public boolean isPixelPerfectContext() {
+        return pixelPerfectContext;
+    }
+
+    public void showActionsView(int poinX, int pointY) {
+        pixelPerfectControlsFrameLayout.showActionsView(poinX, pointY);
+    }
+
+    private void initOverlay() {
+        pixelPerfectOverlayImageView = new PixelPerfectModelImageView(getContext());
+        pixelPerfectOverlayImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        pixelPerfectOverlayImageView.setAdjustViewBounds(true);
+        pixelPerfectOverlayImageView.setVisibility(INVISIBLE);
+        pixelPerfectOverlayImageView.setAlpha(0.5f);
+        addView(pixelPerfectOverlayImageView);
     }
 
     private boolean handleTouch(MotionEvent event) {
@@ -177,67 +242,6 @@ public class PixelPerfectLayout extends FrameLayout {
         return false;
     }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        int action = event.getAction();
-        int keyCode = event.getKeyCode();
-
-        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
-            layoutListener.onClosePixelPerfect();
-        }
-
-        if (PixelPerfectConfig.get().useVolumeButtons()) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_VOLUME_UP:
-                    if (action == KeyEvent.ACTION_DOWN) {
-                        pixelPerfectOverlayImageView.setAlpha(Math.min(1, pixelPerfectOverlayImageView.getAlpha() + 0.05f));
-                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
-                    }
-                    return true;
-                case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    if (action == KeyEvent.ACTION_DOWN) {
-                        pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
-                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
-                    }
-                    return true;
-            }
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
-    public void setImageVisible(boolean visible) {
-        if (visible && pixelPerfectOverlayImageView.getDrawable() == null) {
-            updateImage(null);
-        }
-        pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : GONE);
-        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
-    }
-
-    public void setControlsLayerVisible(boolean visible) {
-        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
-    }
-
-    public void setImageAlpha(float alpha) {
-        pixelPerfectOverlayImageView.setAlpha(alpha);
-    }
-
-    public void updateImage(String fullName) {
-        pixelPerfectOverlayImageView.setTranslationY(0);
-        if (TextUtils.isEmpty(fullName)) {
-            pixelPerfectOverlayImageView.setImageDrawable(null);
-        } else {
-            pixelPerfectOverlayImageView.setImageBitmap(PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName));
-        }
-    }
-
-    public void setPixelPerfectContext(boolean isPixelPerfectContext) {
-        pixelPerfectContext = isPixelPerfectContext;
-    }
-
-    public boolean isPixelPerfectContext() {
-        return pixelPerfectContext;
-    }
-
     private void init() {
         touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         initOverlay();
@@ -273,10 +277,6 @@ public class PixelPerfectLayout extends FrameLayout {
         magnifierFrameLayout = (MagnifierContainerFrameLayout) pixelPerfectControlsFrameLayout
                 .findViewById(R.id.controls_magnifier_frame_layout);
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
-    }
-
-    public void showActionsView(int poinX, int pointY) {
-        pixelPerfectControlsFrameLayout.showActionsView(poinX, pointY);
     }
 
     private void showMagnifierMode(int x, int y) {

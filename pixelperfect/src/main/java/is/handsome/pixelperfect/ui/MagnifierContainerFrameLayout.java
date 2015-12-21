@@ -101,13 +101,25 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
         float bitmapY = magnifierView.getTranslationY() + deltaTranslationY;
         if (magnifierView.getTranslationX() + deltaTranslationX < 0) {
             bitmapX = deltaTranslationX;
+            if (magnifierView.getTranslationX() > 0) {
+                magnifierView.setTranslationX(0);
+            }
         } else if (magnifierView.getTranslationX() + deltaTranslationX > getWidth() - magnifierWidth) {
             bitmapX = getWidth() - magnifierWidth + deltaTranslationX;
+            if (magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
+                magnifierView.setTranslationX(getWidth() - magnifierWidth);
+            }
         }
         if (magnifierView.getTranslationY() + deltaTranslationY < 0) {
             bitmapY = deltaTranslationY;
+            if (magnifierView.getTranslationY() > 0) {
+                magnifierView.setTranslationY(0);
+            }
         } else if (magnifierView.getTranslationY() + deltaTranslationY > getHeight() - magnifierWidth) {
             bitmapY = getHeight() - magnifierWidth + deltaTranslationY;
+            if (magnifierView.getTranslationY() < getHeight() - magnifierWidth) {
+                magnifierView.setTranslationY(getHeight() - magnifierWidth);
+            }
         }
         magnifierView.updateScaledImageBitmap((int) bitmapX, (int) bitmapY);
         if (bitmapX == magnifierView.getTranslationX() + deltaTranslationX) {
