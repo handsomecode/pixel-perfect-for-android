@@ -15,12 +15,22 @@ import is.handsome.pixelperfect.R;
 
 public class MagnifierContainerFrameLayout extends FrameLayout implements View.OnTouchListener {
 
+    public interface MagnifierListener {
+        void onMockupDown(MotionEvent event);
+
+        void onMockupMove(MotionEvent event);
+    }
+
+    private MagnifierListener listener;
     private MagnifierView magnifierView;
     private int magnifierWidth;
 
     private MotionEvent lastMotionEventMagnifierX;
     private MotionEvent lastMotionEventMagnifierY;
-    boolean wasMagnifierClick;
+    private boolean wasMagnifierClick;
+    private boolean wasPPClick;
+    private boolean justClick;
+
 
     public MagnifierContainerFrameLayout(Context context) {
         super(context);
@@ -62,30 +72,69 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
                     lastMotionEventMagnifierY = MotionEvent.obtain(event);
                 }
             } else {
-                hideMagnifierMode();
+                justClick = true;
+                wasPPClick = true;
+                if (listener != null) {
+                    listener.onMockupDown(event);
+                }
             }
             return true;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasMagnifierClick) {
-            return handleMagnifierMove(event);
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            justClick = false;
+            if (wasMagnifierClick) {
+                return handleMagnifierMove(event);
+            }
+            if (wasPPClick) {
+                if (listener != null) {
+                    listener.onMockupMove(event);
+                }
+                return true;
+            }
+            return false;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (justClick) {
+                hideMagnifierMode();
+            }
             wasMagnifierClick = false;
+            wasPPClick = false;
+            justClick = false;
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
             wasMagnifierClick = false;
+            wasPPClick = false;
+            justClick = false;
             return true;
         }
         wasMagnifierClick = false;
+        wasPPClick = false;
+        justClick = false;
         return false;
     }
 
-    public void setMagnifierSrc(Bitmap bitmap) {
-        magnifierView.setSrcBitmap(bitmap);
+    public void setListener(MagnifierListener listener) {
+        this.listener = listener;
+    }
+
+    public void setMagnifierSrc(Bitmap bitmap, boolean updateImage) {
+        magnifierView.setSrcBitmap(bitmap, updateImage);
     }
 
     public void updateTouchData(MotionEvent event) {
-        wasMagnifierClick = true;
-        lastMotionEventMagnifierX = MotionEvent.obtain(event);
-        lastMotionEventMagnifierY = MotionEvent.obtain(event);
+        if (PixelPerfectUtils.inViewBounds(magnifierView, (int) event.getX(), (int) event.getY())) {
+            wasMagnifierClick = true;
+            if (magnifierView.getTranslationX() > 0 && magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
+                lastMotionEventMagnifierX = MotionEvent.obtain(event);
+            }
+            if (magnifierView.getTranslationY() > 0 && magnifierView.getTranslationY() < getHeight() - magnifierWidth) {
+                lastMotionEventMagnifierY = MotionEvent.obtain(event);
+            }
+        } else {
+            justClick = true;
+            wasPPClick = true;
+            if (listener != null) {
+                listener.onMockupDown(event);
+            }
+        }
     }
 
     public void setMagnifierViewPosition(final int x, final int y) {
@@ -99,8 +148,8 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
     }
 
     public boolean handleMagnifierMove(MotionEvent event) {
-        float deltaTranslationX = event.getX() - lastMotionEventMagnifierX.getX();
-        float deltaTranslationY = event.getY() - lastMotionEventMagnifierY.getY();
+        float deltaTranslationX = event.getX() - (lastMotionEventMagnifierX != null ? lastMotionEventMagnifierX.getX() : 0f);
+        float deltaTranslationY = event.getY() - (lastMotionEventMagnifierY != null ? lastMotionEventMagnifierY.getY() : 0f);
         float bitmapX = calculateEdgeBitmapX(deltaTranslationX);
         float bitmapY = calculateEdgeBitmapY(deltaTranslationY);
 
@@ -125,11 +174,13 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
             if (magnifierView.getTranslationX() > 0) {
                 magnifierView.setTranslationX(0);
             }
+            lastMotionEventMagnifierX = null;
         } else if (getWidth() > 0 && magnifierView.getTranslationX() + deltaTranslationX > getWidth() - magnifierWidth) {
             bitmapX = getWidth() - magnifierWidth + deltaTranslationX;
             if (magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
                 magnifierView.setTranslationX(getWidth() - magnifierWidth);
             }
+            lastMotionEventMagnifierY = null;
         }
         return bitmapX;
     }

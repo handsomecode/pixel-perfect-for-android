@@ -205,10 +205,10 @@ public class PixelPerfectLayout extends FrameLayout {
             justClick = false;
             firstClick = false;
             if (moveMode != MoveMode.VERTICAL) {
-                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 5);
+                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 3);
             }
             if (moveMode != MoveMode.HORIZONTAL) {
-                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 5);
+                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 3);
             }
             lastMotionEvent = MotionEvent.obtain(event);
             return true;
@@ -276,6 +276,28 @@ public class PixelPerfectLayout extends FrameLayout {
 
         magnifierFrameLayout = (MagnifierContainerFrameLayout) pixelPerfectControlsFrameLayout
                 .findViewById(R.id.controls_magnifier_frame_layout);
+        magnifierFrameLayout.setListener(new MagnifierContainerFrameLayout.MagnifierListener() {
+            @Override
+            public void onMockupDown(MotionEvent event) {
+                lastMotionEvent = event;
+            }
+
+            @Override
+            public void onMockupMove(MotionEvent event) {
+                if (moveMode != MoveMode.VERTICAL) {
+                    pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 5);
+                }
+                if (moveMode != MoveMode.HORIZONTAL) {
+                    pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 5);
+                }
+                lastMotionEvent = MotionEvent.obtain(event);
+
+                pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+                Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
+                pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
+                magnifierFrameLayout.setMagnifierSrc(bitmap, true);
+            }
+        });
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
     }
 
@@ -284,7 +306,7 @@ public class PixelPerfectLayout extends FrameLayout {
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
         Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
         pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
-        magnifierFrameLayout.setMagnifierSrc(bitmap);
+        magnifierFrameLayout.setMagnifierSrc(bitmap, false);
         magnifierFrameLayout.setMagnifierViewPosition(x, y);
     }
 }
