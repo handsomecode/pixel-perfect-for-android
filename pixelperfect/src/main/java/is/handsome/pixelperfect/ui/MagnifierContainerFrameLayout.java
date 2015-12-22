@@ -23,13 +23,17 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
 
     private MagnifierListener listener;
     private MagnifierView magnifierView;
-    private int magnifierWidth;
 
-    private MotionEvent lastMotionEventMagnifierX;
-    private MotionEvent lastMotionEventMagnifierY;
     private boolean wasMagnifierClick;
     private boolean wasPPClick;
     private boolean justClick;
+
+    private int magnifierWidth;
+    private int lastBitmapPositionX;
+    private int lastBitmapPositionY;
+
+    private MotionEvent lastMotionEventMagnifierX;
+    private MotionEvent lastMotionEventMagnifierY;
 
 
     public MagnifierContainerFrameLayout(Context context) {
@@ -116,7 +120,11 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
     }
 
     public void setMagnifierSrc(Bitmap bitmap, boolean updateImage) {
-        magnifierView.setSrcBitmap(bitmap, updateImage);
+        if (updateImage) {
+            magnifierView.setSrcBitmap(bitmap, lastBitmapPositionX, lastBitmapPositionY);
+        } else {
+            magnifierView.setSrcBitmap(bitmap);
+        }
     }
 
     public void updateTouchData(MotionEvent event) {
@@ -164,6 +172,8 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
             lastMotionEventMagnifierY = MotionEvent.obtain(event);
         }
         magnifierView.updateScaledImageBitmap((int) bitmapX, (int) bitmapY);
+        lastBitmapPositionX = (int) bitmapX;
+        lastBitmapPositionY = (int) bitmapY;
         return true;
     }
 
@@ -174,13 +184,11 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
             if (magnifierView.getTranslationX() > 0) {
                 magnifierView.setTranslationX(0);
             }
-            lastMotionEventMagnifierX = null;
         } else if (getWidth() > 0 && magnifierView.getTranslationX() + deltaTranslationX > getWidth() - magnifierWidth) {
             bitmapX = getWidth() - magnifierWidth + deltaTranslationX;
             if (magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
                 magnifierView.setTranslationX(getWidth() - magnifierWidth);
             }
-            lastMotionEventMagnifierY = null;
         }
         return bitmapX;
     }

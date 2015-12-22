@@ -31,11 +31,13 @@ public class MagnifierView extends ImageView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void setSrcBitmap(Bitmap bitmap, boolean updateImage) {
+    public void setSrcBitmap(Bitmap bitmap) {
         this.srcBitmap = bitmap;
-        if (updateImage) {
-            updateImageBitmap((int) getX(), (int) getY());
-        }
+    }
+
+    public void setSrcBitmap(Bitmap bitmap, int x, int y) {
+        this.srcBitmap = bitmap;
+        updateImageBitmap(x, y);
     }
 
     public void setScaledImageBitmap(final int centerX, final int centerY) {
