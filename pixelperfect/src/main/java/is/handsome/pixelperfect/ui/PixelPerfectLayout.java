@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -13,8 +14,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
-import java.util.Calendar;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
 import is.handsome.pixelperfect.PixelPerfectConfig;
@@ -37,11 +36,15 @@ public class PixelPerfectLayout extends FrameLayout {
     private boolean pixelPerfectContext = true;
 
     private MotionEvent lastMotionEvent;
+    private Handler doubleClickHandler = new Handler();
+    private Runnable doubleClickRunnable;
     private int touchSlop;
     private boolean justClick;
-    private boolean wasClick;
-    private boolean firstClick;
-    private long startClickTime;
+    private boolean wasActionDown;
+    private int clickCounter;
+
+    private int fixedOffsetX = 0;
+    private int fixedOffsetY = 0;
 
     public PixelPerfectLayout(Context context) {
         super(context);
@@ -89,8 +92,9 @@ public class PixelPerfectLayout extends FrameLayout {
         if (pixelPerfectOverlayImageView.getVisibility() == VISIBLE && pixelPerfectContext) {
             return handleTouch(event);
         }
-        wasClick = false;
+        wasActionDown = false;
         justClick = false;
+        clickCounter = 0;
         return false;
     }
 
@@ -175,70 +179,55 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private boolean handleTouch(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (!firstClick) {
-                wasClick = true;
-                justClick = true;
-                firstClick = true;
-                startClickTime = Calendar.getInstance().getTimeInMillis();
+            clickCounter++;
+            if (clickCounter == 1) {
+                wasActionDown = true;
+                doubleClickHandler.postDelayed(doubleClickRunnable, DOUBLE_CLICK_DURATION);
                 lastMotionEvent = MotionEvent.obtain(event);
-            } else if (Calendar.getInstance().getTimeInMillis() - startClickTime <= DOUBLE_CLICK_DURATION) {
-                firstClick = false;
-                wasClick = false;
-                justClick = false;
+            } else if (clickCounter >= 2) {
+                wasActionDown = false;
+                clickCounter = 0;
                 magnifierFrameLayout.updateTouchData(event);
                 showMagnifierMode((int) event.getX(), (int) event.getY());
-            } else {
-                wasClick = true;
-                justClick = true;
-                firstClick = true;
-                startClickTime = Calendar.getInstance().getTimeInMillis();
-                lastMotionEvent = MotionEvent.obtain(event);
-                return false;
             }
+            justClick = false;
             return true;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasClick && magnifierFrameLayout.getVisibility() != VISIBLE) {
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
             if (justClick
                     && Math.abs(event.getY() - lastMotionEvent.getY()) < touchSlop
                     && Math.abs(event.getX() - lastMotionEvent.getX()) < touchSlop) {
                 return true;
             }
             justClick = false;
-            firstClick = false;
+            clickCounter = 0;
             if (moveMode != MoveMode.VERTICAL) {
                 pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()));
+                pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
             }
             if (moveMode != MoveMode.HORIZONTAL) {
                 pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()));
+                pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
             }
             lastMotionEvent = MotionEvent.obtain(event);
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && magnifierFrameLayout.getVisibility() == VISIBLE) {
-            return magnifierFrameLayout.handleMagnifierMove(event);
-        } else if (event.getAction() == MotionEvent.ACTION_UP && justClick) {
-            wasClick = false;
+            wasActionDown = false;
             justClick = false;
-            if (lastMotionEvent.getX() < getWidth() / 3 || lastMotionEvent.getX() > getWidth() * 2 / 3) {
-                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX()
-                        + (lastMotionEvent.getX() < getWidth() / 5 ? -1 : 1));
-            }
-            if (lastMotionEvent.getY() < getHeight() / 4 || lastMotionEvent.getY() > getHeight() * 3 / 4) {
-                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY()
-                        + (lastMotionEvent.getY() > getHeight() / 2 ? 1 : -1));
-            }
-            return true;
+            clickCounter = 0;
+            return magnifierFrameLayout.handleMagnifierMove(event);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            wasClick = false;
+            wasActionDown = false;
             justClick = false;
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-            wasClick = false;
+            wasActionDown = false;
             justClick = false;
-            firstClick = false;
+            clickCounter = 0;
             return true;
         }
-        wasClick = false;
+        wasActionDown = false;
         justClick = false;
-        firstClick = false;
+        clickCounter = 0;
         return false;
     }
 
@@ -286,9 +275,11 @@ public class PixelPerfectLayout extends FrameLayout {
             public void onMockupMove(MotionEvent event) {
                 if (moveMode != MoveMode.VERTICAL) {
                     pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 5);
+                    pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
                 }
                 if (moveMode != MoveMode.HORIZONTAL) {
                     pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 5);
+                    pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
                 }
                 lastMotionEvent = MotionEvent.obtain(event);
 
@@ -299,6 +290,29 @@ public class PixelPerfectLayout extends FrameLayout {
             }
         });
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+
+        doubleClickRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (clickCounter == 1) {
+                    justClick = true;
+                    wasActionDown = false;
+                    if (lastMotionEvent.getX() < getWidth() / 3 || lastMotionEvent.getX() > getWidth() * 2 / 3) {
+                        pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX()
+                                + (lastMotionEvent.getX() < getWidth() / 5 ? -1 : 1));
+                        pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
+                    } else if (lastMotionEvent.getY() < getHeight() / 4 || lastMotionEvent.getY() > getHeight() * 3 / 4) {
+                        pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY()
+                                + (lastMotionEvent.getY() > getHeight() / 2 ? 1 : -1));
+                        pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
+                    } else {
+                        pixelPerfectControlsFrameLayout.setDiffPixelsViewVisibility();
+                    }
+                }
+                justClick = false;
+                clickCounter = 0;
+            }
+        };
     }
 
     private void showMagnifierMode(int x, int y) {

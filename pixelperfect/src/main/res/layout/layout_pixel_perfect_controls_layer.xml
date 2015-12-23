@@ -20,6 +20,11 @@
             android:padding="3dp"/>
     </is.handsome.pixelperfect.ui.MagnifierContainerFrameLayout>
 
+    <include
+        android:id="@+id/controls_diff_pixels"
+        layout="@layout/view_diff_pixels"
+        android:visibility="invisible"/>
+
     <FrameLayout
         android:id="@+id/pixel_perfect_opacity_frame_layout"
         android:layout_width="match_parent"

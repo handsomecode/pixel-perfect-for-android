@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
 import is.handsome.pixelperfect.PixelPerfectUtils;
@@ -23,6 +24,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
     private PixelPerfectActionsView pixelPerfectActionsView;
     private FrameLayout pixelPerfectOpacityFrameLayout;
     private FrameLayout pixelPerfectModelsFrameLayout;
+    private FrameLayout pixelPerfectDiffPixelsFrameLayout;
 
     private PixelPerfectCallbacks.ControlsListener controlsListener;
 
@@ -47,8 +49,53 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         init();
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        int x = (int) event.getRawX();
+        int y = (int) event.getRawY();
+        if (inBounds(x, y)) {
+            return false;
+        } else {
+            return super.onInterceptTouchEvent(event);
+        }
+    }
+
     public void setControlsListener(PixelPerfectCallbacks.ControlsListener controlsListener) {
         this.controlsListener = controlsListener;
+    }
+
+    public void showActionsView(int pointX, int pointY) {
+        pixelPerfectActionsView.setX(pointX - getResources().getDimension(R.dimen.pixel_perfect_options_view_width) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
+        pixelPerfectActionsView.setY(pointY - getResources().getDimension(R.dimen.pixel_perfect_options_view_height) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
+        pixelPerfectActionsView.animate(pointX < getWidth() / 2, getCorner(pointY, getResources().getDimension(R.dimen.pixel_perfect_options_radius_size)));
+        pixelPerfectActionsView.setVisibility(VISIBLE);
+    }
+
+    public boolean inBounds(int x, int y) {
+        return pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
+                || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)
+                || pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectModelsFrameLayout, x, y);
+    }
+
+    public void updateOpacityProgress(float currentAlpha) {
+        ((SeekBar) pixelPerfectOpacityFrameLayout.findViewById(R.id.pixel_perfect_opacity_seek_bar)).
+                setProgress((int) (currentAlpha * 100));
+    }
+
+    public void setDiffPixelsViewVisibility() {
+        if (pixelPerfectDiffPixelsFrameLayout.getVisibility() == VISIBLE) {
+            pixelPerfectDiffPixelsFrameLayout.setVisibility(INVISIBLE);
+        } else {
+            pixelPerfectDiffPixelsFrameLayout.setVisibility(VISIBLE);
+        }
+    }
+
+    public void updateDiffXPixelsData(int x) {
+        ((TextView) pixelPerfectDiffPixelsFrameLayout.findViewById(R.id.diff_pixels_x)).setText(x + " px");
+    }
+
+    public void updateDiffYPixelsData(int y) {
+        ((TextView) pixelPerfectDiffPixelsFrameLayout.findViewById(R.id.diff_pixels_y)).setText(y + "\npx");
     }
 
     private void init() {
@@ -60,6 +107,8 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
 
         initOpacityWidget();
         initModelsWidget();
+
+        pixelPerfectDiffPixelsFrameLayout = (FrameLayout) findViewById(R.id.controls_diff_pixels);
     }
 
     private void addActionsListeners() {
@@ -101,17 +150,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        int x = (int) event.getRawX();
-        int y = (int) event.getRawY();
-        if (inBounds(x, y)) {
-            return false;
-        } else {
-            return super.onInterceptTouchEvent(event);
-        }
     }
 
     private void initOpacityWidget() {
@@ -157,13 +195,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         spinner.setSelection(1, true);
     }
 
-    public void showActionsView(int pointX, int pointY) {
-        pixelPerfectActionsView.setX(pointX - getResources().getDimension(R.dimen.pixel_perfect_options_view_width) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
-        pixelPerfectActionsView.setY(pointY - getResources().getDimension(R.dimen.pixel_perfect_options_view_height) / 2 + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2);
-        pixelPerfectActionsView.animate(pointX < getWidth() / 2, getCorner(pointY, getResources().getDimension(R.dimen.pixel_perfect_options_radius_size)));
-        pixelPerfectActionsView.setVisibility(VISIBLE);
-    }
-
     private PixelPerfectActionsView.Corner getCorner(int pointY, float size) {
         if (pointY + getResources().getDimension(R.dimen.pixel_perfect_action_button_size) / 2 - getHeight() * 0.05 < size) {
             return PixelPerfectActionsView.Corner.TOP;
@@ -205,16 +236,5 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
                 }
             });
         }
-    }
-
-    protected void updateOpacityProgress(float currentAlpha) {
-        ((SeekBar) pixelPerfectOpacityFrameLayout.findViewById(R.id.pixel_perfect_opacity_seek_bar)).
-                setProgress((int) (currentAlpha * 100));
-    }
-
-    public boolean inBounds(int x, int y) {
-        return pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
-                || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)
-                || pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectModelsFrameLayout, x, y);
     }
 }
