@@ -205,10 +205,10 @@ public class PixelPerfectLayout extends FrameLayout {
             justClick = false;
             firstClick = false;
             if (moveMode != MoveMode.VERTICAL) {
-                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 3);
+                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()));
             }
             if (moveMode != MoveMode.HORIZONTAL) {
-                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 3);
+                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()));
             }
             lastMotionEvent = MotionEvent.obtain(event);
             return true;

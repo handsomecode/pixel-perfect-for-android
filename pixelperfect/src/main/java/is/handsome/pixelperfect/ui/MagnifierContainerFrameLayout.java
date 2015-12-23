@@ -69,6 +69,7 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (PixelPerfectUtils.inViewBounds(magnifierView, x, y)) {
                 wasMagnifierClick = true;
+                wasPPClick = false;
                 if (magnifierView.getTranslationX() > 0 && magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
                     lastMotionEventMagnifierX = MotionEvent.obtain(event);
                 }
@@ -76,6 +77,7 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
                     lastMotionEventMagnifierY = MotionEvent.obtain(event);
                 }
             } else {
+                wasMagnifierClick = false;
                 justClick = true;
                 wasPPClick = true;
                 if (listener != null) {
@@ -128,20 +130,12 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
     }
 
     public void updateTouchData(MotionEvent event) {
-        if (PixelPerfectUtils.inViewBounds(magnifierView, (int) event.getX(), (int) event.getY())) {
-            wasMagnifierClick = true;
-            if (magnifierView.getTranslationX() > 0 && magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
-                lastMotionEventMagnifierX = MotionEvent.obtain(event);
-            }
-            if (magnifierView.getTranslationY() > 0 && magnifierView.getTranslationY() < getHeight() - magnifierWidth) {
-                lastMotionEventMagnifierY = MotionEvent.obtain(event);
-            }
-        } else {
-            justClick = true;
-            wasPPClick = true;
-            if (listener != null) {
-                listener.onMockupDown(event);
-            }
+        wasMagnifierClick = true;
+        if (magnifierView.getTranslationX() > 0 && magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
+            lastMotionEventMagnifierX = MotionEvent.obtain(event);
+        }
+        if (magnifierView.getTranslationY() > 0 && magnifierView.getTranslationY() < getHeight() - magnifierWidth) {
+            lastMotionEventMagnifierY = MotionEvent.obtain(event);
         }
     }
 
@@ -231,6 +225,8 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
             validY = getHeight() - magnifierWidth / 2;
         }
         magnifierView.setScaledImageBitmap(validX, validY);
+        lastBitmapPositionX = validX - magnifierWidth / 2;
+        lastBitmapPositionY = validY - magnifierWidth / 2;
     }
 
     private void hideMagnifierMode() {
