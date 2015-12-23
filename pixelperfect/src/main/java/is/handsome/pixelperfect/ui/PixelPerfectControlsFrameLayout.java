@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -100,6 +101,17 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        int x = (int) event.getRawX();
+        int y = (int) event.getRawY();
+        if (inBounds(x, y)) {
+            return false;
+        } else {
+            return super.onInterceptTouchEvent(event);
+        }
     }
 
     private void initOpacityWidget() {
