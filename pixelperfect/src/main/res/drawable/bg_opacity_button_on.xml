@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="oval">
+    <solid android:color="#ee3769"/>
+    <size android:width="@dimen/pixel_perfect_action_button_size"
+          android:height="@dimen/pixel_perfect_action_button_size"/>
+    <stroke
+        android:width="2dp"
+        android:color="#af2449"/>
+</shape>

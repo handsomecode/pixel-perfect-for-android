@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">PixelPerfect</string>
-
-    <string name="action_move_all_directions">ALL</string>
-    <string name="action_opacity">OP</string>
-    <string name="action_choose_image">IM</string>
 </resources>

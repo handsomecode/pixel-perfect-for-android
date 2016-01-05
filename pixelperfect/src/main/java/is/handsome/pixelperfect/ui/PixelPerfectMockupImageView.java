@@ -10,22 +10,22 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-public class PixelPerfectModelImageView extends ImageView {
-    public PixelPerfectModelImageView(Context context) {
+public class PixelPerfectMockupImageView extends ImageView {
+    public PixelPerfectMockupImageView(Context context) {
         super(context);
     }
 
-    public PixelPerfectModelImageView(Context context, AttributeSet attrs) {
+    public PixelPerfectMockupImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public PixelPerfectModelImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PixelPerfectMockupImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PixelPerfectModelImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PixelPerfectMockupImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }

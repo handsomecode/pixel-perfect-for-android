@@ -23,7 +23,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
 
     private PixelPerfectActionsView pixelPerfectActionsView;
     private FrameLayout pixelPerfectOpacityFrameLayout;
-    private FrameLayout pixelPerfectModelsFrameLayout;
+    private FrameLayout pixelPerfectMockupsFrameLayout;
     private FrameLayout pixelPerfectDiffPixelsFrameLayout;
 
     private PixelPerfectCallbacks.ControlsListener controlsListener;
@@ -74,7 +74,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
     public boolean inBounds(int x, int y) {
         return pixelPerfectActionsView.getVisibility() == VISIBLE && pixelPerfectActionsView.inBounds(x, y)
                 || pixelPerfectOpacityFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectOpacityFrameLayout, x, y)
-                || pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectModelsFrameLayout, x, y);
+                || pixelPerfectMockupsFrameLayout.getVisibility() == VISIBLE && PixelPerfectUtils.inViewBounds(pixelPerfectMockupsFrameLayout, x, y);
     }
 
     public void updateOpacityProgress(float currentAlpha) {
@@ -106,7 +106,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         addActionsListeners();
 
         initOpacityWidget();
-        initModelsWidget();
+        initMockupsWidget();
 
         pixelPerfectDiffPixelsFrameLayout = (FrameLayout) findViewById(R.id.controls_diff_pixels);
     }
@@ -117,7 +117,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
             @Override
             public void onOpacityClicked(boolean isSelected) {
                 if (isSelected) {
-                    pixelPerfectModelsFrameLayout.setVisibility(INVISIBLE);
+                    pixelPerfectMockupsFrameLayout.setVisibility(INVISIBLE);
                     showOpacityView();
                 } else {
                     hideOpacityView();
@@ -125,12 +125,12 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
             }
 
             @Override
-            public void onModelsClicked(boolean isSelected) {
+            public void onMockupsClicked(boolean isSelected) {
                 if (isSelected) {
                     pixelPerfectOpacityFrameLayout.setVisibility(INVISIBLE);
-                    showModelsView();
+                    showMockupsView();
                 } else {
-                    hideModelsView();
+                    hideMockupsView();
                 }
             }
 
@@ -144,7 +144,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
             @Override
             public void onCancelClicked() {
                 hideOpacityView();
-                hideModelsView();
+                hideMockupsView();
                 if (controlsListener != null) {
                     controlsListener.onCloseActionsView();
                 }
@@ -174,9 +174,9 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         });
     }
 
-    private void initModelsWidget() {
-        pixelPerfectModelsFrameLayout = (FrameLayout) findViewById(R.id.pixel_perfect_models_frame_layout);
-        Spinner spinner = (Spinner) pixelPerfectModelsFrameLayout.findViewById(R.id.pixel_perfect_models_spinner);
+    private void initMockupsWidget() {
+        pixelPerfectMockupsFrameLayout = (FrameLayout) findViewById(R.id.pixel_perfect_mockups_frame_layout);
+        Spinner spinner = (Spinner) pixelPerfectMockupsFrameLayout.findViewById(R.id.pixel_perfect_mockups_spinner);
         spinner.setAdapter(new ScreensNamesAdapter(getContext()));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -204,18 +204,18 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         return null;
     }
 
-    private void showModelsView() {
-        pixelPerfectModelsFrameLayout.setAlpha(0.1f);
-        pixelPerfectModelsFrameLayout.setVisibility(VISIBLE);
-        pixelPerfectModelsFrameLayout.animate().alpha(1f).setDuration(200);
+    private void showMockupsView() {
+        pixelPerfectMockupsFrameLayout.setAlpha(0.1f);
+        pixelPerfectMockupsFrameLayout.setVisibility(VISIBLE);
+        pixelPerfectMockupsFrameLayout.animate().alpha(1f).setDuration(200);
     }
 
-    private void hideModelsView() {
-        if (pixelPerfectModelsFrameLayout.getVisibility() == VISIBLE) {
-            pixelPerfectModelsFrameLayout.animate().alpha(0.1f).setDuration(200).withEndAction(new Runnable() {
+    private void hideMockupsView() {
+        if (pixelPerfectMockupsFrameLayout.getVisibility() == VISIBLE) {
+            pixelPerfectMockupsFrameLayout.animate().alpha(0.1f).setDuration(200).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    pixelPerfectModelsFrameLayout.setVisibility(View.INVISIBLE);
+                    pixelPerfectMockupsFrameLayout.setVisibility(View.INVISIBLE);
                 }
             });
         }

@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ToggleButton;
 
 import is.handsome.pixelperfect.ui.PixelPerfectLayout;
 
@@ -22,7 +21,8 @@ public class PixelPerfectController implements View.OnLongClickListener {
     private Context context;
 
     private PixelPerfectLayout pixelPerfectLayout;
-    private FrameLayout floatingButton;
+    private FrameLayout floatingFrameLayout;
+    private View switchContextButton;
     private PixelPerfectCallbacks.ControllerListener listener;
 
     private WindowManager.LayoutParams floatingButtonParams;
@@ -52,10 +52,10 @@ public class PixelPerfectController implements View.OnLongClickListener {
                     }
                     floatingButtonParams.x = initialX + (int) event.getRawX() - downTouchX;
                     floatingButtonParams.y = initialY + (int) event.getRawY() - downTouchY;
-                    windowManager.updateViewLayout(floatingButton, floatingButtonParams);
+                    windowManager.updateViewLayout(floatingFrameLayout, floatingButtonParams);
                     break;
                 case MotionEvent.ACTION_UP:
-                    floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button).setOnTouchListener(emptyTouchListener);
+                    floatingFrameLayout.findViewById(R.id.switch_context_image_button).setOnTouchListener(emptyTouchListener);
                     break;
             }
             return true;
@@ -66,7 +66,10 @@ public class PixelPerfectController implements View.OnLongClickListener {
         this.context = context;
 
         pixelPerfectLayout = new PixelPerfectLayout(context);
-        floatingButton = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_pixel_perfect_floating_button, null);
+        floatingFrameLayout = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_pixel_perfect_floating_button, null);
+
+        switchContextButton = floatingFrameLayout.findViewById(R.id.switch_context_image_button);
+        switchContextButton.setSelected(true);
 
         windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow();
@@ -77,12 +80,12 @@ public class PixelPerfectController implements View.OnLongClickListener {
     }
 
     private void addViewsToWindow() {
-        addOverlayModel();
-        addFloatingToggleButton();
+        addOverlayMockup();
+        addFloatingFrameLayout();
         show();
     }
 
-    private void addOverlayModel() {
+    private void addOverlayMockup() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -108,7 +111,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
         });
     }
 
-    private void addFloatingToggleButton() {
+    private void addFloatingFrameLayout() {
         floatingButtonParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -125,10 +128,10 @@ public class PixelPerfectController implements View.OnLongClickListener {
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin);
 
-        windowManager.addView(floatingButton, floatingButtonParams);
+        windowManager.addView(floatingFrameLayout, floatingButtonParams);
 
-        floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button).setOnLongClickListener(this);
-        floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button).setOnClickListener(createClickAndDoubleClickListener());
+        switchContextButton.setOnLongClickListener(this);
+        switchContextButton.setOnClickListener(createClickAndDoubleClickListener());
     }
 
     private void updateDisplayedPixelPerfectContext(boolean isPixelPerfectContext) {
@@ -142,24 +145,24 @@ public class PixelPerfectController implements View.OnLongClickListener {
         pixelPerfectLayout.setImageVisible(true);
         pixelPerfectLayout.setControlsLayerVisible(true);
         pixelPerfectLayout.setVisibility(View.VISIBLE);
-        floatingButton.setVisibility(View.VISIBLE);
+        floatingFrameLayout.setVisibility(View.VISIBLE);
     }
 
     public void hide() {
         pixelPerfectLayout.setImageVisible(false);
         pixelPerfectLayout.setControlsLayerVisible(false);
         pixelPerfectLayout.setVisibility(View.GONE);
-        floatingButton.setVisibility(View.GONE);
+        floatingFrameLayout.setVisibility(View.GONE);
     }
 
     public void destroy() {
         windowManager.removeView(pixelPerfectLayout);
-        windowManager.removeView(floatingButton);
+        windowManager.removeView(floatingFrameLayout);
     }
 
     @Override
     public boolean onLongClick(View v) {
-        floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button).setOnTouchListener(floatingButtonTouchListener);
+        switchContextButton.setOnTouchListener(floatingButtonTouchListener);
         return true;
     }
 
@@ -184,26 +187,25 @@ public class PixelPerfectController implements View.OnLongClickListener {
                     }
                 };
                 if (clickCounter == 1) {
-                    ((ToggleButton)floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button))
-                            .setChecked(!((ToggleButton)floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button)).isChecked());
                     handler.postDelayed(runnable, 250);
                 } else if (clickCounter >= 2) {
-                    pixelPerfectLayout.setPixelPerfectContext(((ToggleButton)floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button)).isChecked());
-                    updateDisplayedPixelPerfectContext(((ToggleButton)floatingButton.findViewById(R.id.pixel_perfect_switch_context_toggle_button)).isChecked());
+                    switchContextButton.setSelected(!switchContextButton.isSelected());
+                    pixelPerfectLayout.setPixelPerfectContext(switchContextButton.isSelected());
+                    updateDisplayedPixelPerfectContext(switchContextButton.isSelected());
                 }
             }
         };
     }
 
     private void hideToggleButton() {
-        floatingButton.setAlpha(0f);
-        floatingButton.setScaleX(0.1f);
-        floatingButton.setScaleY(0.1f);
-        floatingButton.setVisibility(View.INVISIBLE);
+        floatingFrameLayout.setAlpha(0f);
+        floatingFrameLayout.setScaleX(0.1f);
+        floatingFrameLayout.setScaleY(0.1f);
+        floatingFrameLayout.setVisibility(View.INVISIBLE);
     }
 
     private void showToggleButton() {
-        floatingButton.setVisibility(View.VISIBLE);
-        floatingButton.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(100);
+        floatingFrameLayout.setVisibility(View.VISIBLE);
+        floatingFrameLayout.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(100);
     }
 }

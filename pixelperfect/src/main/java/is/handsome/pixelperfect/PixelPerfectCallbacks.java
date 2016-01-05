@@ -19,7 +19,7 @@ public class PixelPerfectCallbacks {
 
         void onOpacityClicked(boolean isSelected);
 
-        void onModelsClicked(boolean isSelected);
+        void onMockupsClicked(boolean isSelected);
 
         void onMoveModeClicked(PixelPerfectLayout.MoveMode moveMode);
 

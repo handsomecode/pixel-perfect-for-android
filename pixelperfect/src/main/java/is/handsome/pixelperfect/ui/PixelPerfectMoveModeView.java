@@ -4,9 +4,13 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import android.widget.ImageView;
 
-public class PixelPerfectMoveModeView extends TextView {
+import is.handsome.pixelperfect.R;
+
+public class PixelPerfectMoveModeView extends ImageView {
+
+    PixelPerfectLayout.MoveMode currentMoveMode = PixelPerfectLayout.MoveMode.ANY_DIRECTION;
 
     public PixelPerfectMoveModeView(Context context) {
         super(context);
@@ -26,35 +30,33 @@ public class PixelPerfectMoveModeView extends TextView {
     }
 
     public PixelPerfectLayout.MoveMode getState() {
-        if (getText().equals("V")) {
-            return PixelPerfectLayout.MoveMode.VERTICAL;
-        } else if (getText().equals("H")) {
-            return PixelPerfectLayout.MoveMode.HORIZONTAL;
-        }
-        return PixelPerfectLayout.MoveMode.ALL_DIRECTIONS;
+        return currentMoveMode;
     }
 
     public void setState(PixelPerfectLayout.MoveMode moveMode) {
         switch (moveMode) {
             case HORIZONTAL:
-                setText("H");
+                currentMoveMode = PixelPerfectLayout.MoveMode.HORIZONTAL;
+                setImageResource(R.drawable.ic_move_horizontal);
                 break;
             case VERTICAL:
-                setText("V");
+                currentMoveMode = PixelPerfectLayout.MoveMode.VERTICAL;
+                setImageResource(R.drawable.ic_move_vertical);
                 break;
             default:
-                setText("All");
+                currentMoveMode = PixelPerfectLayout.MoveMode.ANY_DIRECTION;
+                setImageResource(R.drawable.ic_move_any);
                 break;
         }
     }
 
     public void toNextState() {
-        if (getState() == PixelPerfectLayout.MoveMode.ALL_DIRECTIONS) {
+        if (getState() == PixelPerfectLayout.MoveMode.ANY_DIRECTION) {
             setState(PixelPerfectLayout.MoveMode.VERTICAL);
         } else if (getState() == PixelPerfectLayout.MoveMode.VERTICAL) {
             setState(PixelPerfectLayout.MoveMode.HORIZONTAL);
         } else {
-            setState(PixelPerfectLayout.MoveMode.ALL_DIRECTIONS);
+            setState(PixelPerfectLayout.MoveMode.ANY_DIRECTION);
         }
     }
 }

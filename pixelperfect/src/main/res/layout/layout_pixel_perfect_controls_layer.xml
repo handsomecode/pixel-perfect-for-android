@@ -45,7 +45,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/pixel_perfect_models_frame_layout"
+        android:id="@+id/pixel_perfect_mockups_frame_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -56,7 +56,7 @@
         android:visibility="invisible">
 
         <Spinner
-            android:id="@+id/pixel_perfect_models_spinner"
+            android:id="@+id/pixel_perfect_mockups_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:progress="50"/>

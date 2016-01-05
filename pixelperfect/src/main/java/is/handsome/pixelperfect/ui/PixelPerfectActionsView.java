@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
 import is.handsome.pixelperfect.PixelPerfectUtils;
@@ -18,8 +17,8 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
     }
 
     private PixelPerfectMoveModeView moveModeView;
-    private TextView opacityTextView;
-    private TextView modelsTextView;
+    private View opacityImageView;
+    private View mockupsImageView;
     private View cancelView;
     private PixelPerfectCallbacks.ActionsListener actionsListener;
 
@@ -30,11 +29,11 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
         moveModeView = (PixelPerfectMoveModeView) findViewById(R.id.pixel_perfect_options_move_mode_text_view);
         moveModeView.setOnClickListener(this);
 
-        opacityTextView = (TextView) findViewById(R.id.pixel_perfect_options_opacity_text_view);
-        opacityTextView.setOnClickListener(this);
+        opacityImageView = findViewById(R.id.pixel_perfect_options_opacity_image_view);
+        opacityImageView.setOnClickListener(this);
 
-        modelsTextView = (TextView) findViewById(R.id.pixel_perfect_options_models_text_view);
-        modelsTextView.setOnClickListener(this);
+        mockupsImageView = findViewById(R.id.pixel_perfect_options_mockups_image_view);
+        mockupsImageView.setOnClickListener(this);
 
         cancelView = findViewById(R.id.pixel_perfect_cancel_frame_layout);
         cancelView.setOnClickListener(this);
@@ -50,19 +49,19 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (view == modelsTextView) {
+        if (view == mockupsImageView) {
             view.setSelected(!view.isSelected());
-            if (view.isSelected() && opacityTextView.isSelected()) {
-                opacityTextView.setSelected(false);
+            if (view.isSelected() && opacityImageView.isSelected()) {
+                opacityImageView.setSelected(false);
             }
             if (actionsListener != null) {
-                actionsListener.onModelsClicked(view.isSelected());
+                actionsListener.onMockupsClicked(view.isSelected());
             }
 
-        } else if (view == opacityTextView) {
+        } else if (view == opacityImageView) {
             view.setSelected(!view.isSelected());
-            if (view.isSelected() && modelsTextView.isSelected()) {
-                modelsTextView.setSelected(false);
+            if (view.isSelected() && mockupsImageView.isSelected()) {
+                mockupsImageView.setSelected(false);
             }
             if (actionsListener != null) {
                 actionsListener.onOpacityClicked(view.isSelected());
@@ -75,8 +74,8 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
             }
 
         } else if (view == cancelView) {
-            modelsTextView.setSelected(false);
-            opacityTextView.setSelected(false);
+            mockupsImageView.setSelected(false);
+            opacityImageView.setSelected(false);
             setVisibility(GONE);
             if (actionsListener != null) {
                 actionsListener.onCancelClicked();
@@ -87,8 +86,8 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
 
     public boolean inBounds(int x, int y) {
         return (PixelPerfectUtils.inViewBounds(moveModeView, x, y)
-                || PixelPerfectUtils.inViewBounds(opacityTextView, x, y)
-                || PixelPerfectUtils.inViewBounds(modelsTextView, x, y)
+                || PixelPerfectUtils.inViewBounds(opacityImageView, x, y)
+                || PixelPerfectUtils.inViewBounds(mockupsImageView, x, y)
                 || PixelPerfectUtils.inViewBounds(cancelView, x, y));
     }
 
@@ -108,16 +107,16 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
 
                 if (corner == null) {
                     animate(moveModeView, fromX, centerX - offsetX, fromY, centerY - radiusSize);
-                    animate(opacityTextView, fromX, toRight ? centerX + radiusSize - actionViewSize : centerX - radiusSize, fromY, fromY);
-                    animate(modelsTextView, fromX, centerX - offsetX, fromY, centerY + radiusSize - actionViewSize);
+                    animate(opacityImageView, fromX, toRight ? centerX + radiusSize - actionViewSize : centerX - radiusSize, fromY, fromY);
+                    animate(mockupsImageView, fromX, centerX - offsetX, fromY, centerY + radiusSize - actionViewSize);
                 } else if (corner == Corner.BOTTOM) {
                     animate(moveModeView, fromX, centerX - offsetX, fromY, (getHeight() - getWidth()) / 2);
-                    animate(opacityTextView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, 0);
-                    animate(modelsTextView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, fromY - actionViewSize / 2 + cancelSize / 2);
+                    animate(opacityImageView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, 0);
+                    animate(mockupsImageView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, fromY - actionViewSize / 2 + cancelSize / 2);
                 } else {
                     animate(moveModeView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, fromY + actionViewSize / 2 - cancelSize / 2);
-                    animate(opacityTextView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, getHeight() - actionViewSize);
-                    animate(modelsTextView, fromX, centerX - offsetX, fromY, getHeight() - actionViewSize);
+                    animate(opacityImageView, fromX, toRight ? getWidth() - actionViewSize : 0, fromY, getHeight() - actionViewSize);
+                    animate(mockupsImageView, fromX, centerX - offsetX, fromY, getHeight() - actionViewSize);
                 }
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }

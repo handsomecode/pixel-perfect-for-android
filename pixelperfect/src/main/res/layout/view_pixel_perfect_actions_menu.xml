@@ -11,7 +11,7 @@
             android:layout_width="@dimen/pixel_perfect_options_cancel_size"
             android:layout_height="@dimen/pixel_perfect_options_cancel_size"
             android:layout_gravity="center"
-            android:src="@drawable/ic_pixel_perfect_options_cancel"/>
+            android:src="@drawable/ic_cancel"/>
 
     </FrameLayout>
 
@@ -19,30 +19,24 @@
         android:id="@+id/pixel_perfect_options_move_mode_text_view"
         android:layout_width="@dimen/pixel_perfect_action_button_size"
         android:layout_height="@dimen/pixel_perfect_action_button_size"
-        android:background="@drawable/bg_pixelperfect_move_mode_button"
-        android:gravity="center"
-        android:text="@string/action_move_all_directions"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:background="@drawable/bg_move_button"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_move_any"/>
 
-    <TextView
-        android:id="@+id/pixel_perfect_options_opacity_text_view"
+    <ImageView
+        android:id="@+id/pixel_perfect_options_opacity_image_view"
         android:layout_width="@dimen/pixel_perfect_action_button_size"
         android:layout_height="@dimen/pixel_perfect_action_button_size"
-        android:background="@drawable/bg_pixelperfect_opacity_button"
-        android:gravity="center"
-        android:text="@string/action_opacity"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:background="@drawable/bg_opacity_button"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_opacity"/>
 
-    <TextView
-        android:id="@+id/pixel_perfect_options_models_text_view"
+    <ImageView
+        android:id="@+id/pixel_perfect_options_mockups_image_view"
         android:layout_width="@dimen/pixel_perfect_action_button_size"
         android:layout_height="@dimen/pixel_perfect_action_button_size"
-        android:background="@drawable/bg_pixelperfect_models_button"
-        android:gravity="center"
-        android:text="@string/action_choose_image"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:background="@drawable/bg_mockups_button"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_mockups"/>
 
 </merge>

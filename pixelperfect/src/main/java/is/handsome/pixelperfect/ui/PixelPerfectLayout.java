@@ -25,14 +25,14 @@ public class PixelPerfectLayout extends FrameLayout {
     private static final int DOUBLE_CLICK_DURATION = 200;
 
     public enum MoveMode {
-        VERTICAL, HORIZONTAL, ALL_DIRECTIONS
+        VERTICAL, HORIZONTAL, ANY_DIRECTION
     }
 
     private ImageView pixelPerfectOverlayImageView;
     private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
     private PixelPerfectCallbacks.LayoutListener layoutListener;
     private MagnifierContainerFrameLayout magnifierFrameLayout;
-    private MoveMode moveMode = MoveMode.ALL_DIRECTIONS;
+    private MoveMode moveMode = MoveMode.ANY_DIRECTION;
     private boolean pixelPerfectContext = true;
 
     private MotionEvent lastMotionEvent;
@@ -168,7 +168,7 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private void initOverlay() {
-        pixelPerfectOverlayImageView = new PixelPerfectModelImageView(getContext());
+        pixelPerfectOverlayImageView = new PixelPerfectMockupImageView(getContext());
         pixelPerfectOverlayImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         pixelPerfectOverlayImageView.setAdjustViewBounds(true);
