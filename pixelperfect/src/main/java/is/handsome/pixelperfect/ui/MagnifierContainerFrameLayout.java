@@ -70,10 +70,10 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
             if (PixelPerfectUtils.inViewBounds(magnifierView, x, y)) {
                 wasMagnifierClick = true;
                 wasPPClick = false;
-                if (magnifierView.getTranslationX() > 0 && magnifierView.getTranslationX() < getWidth() - magnifierWidth) {
+                if (magnifierView.getTranslationX() >= 0 && magnifierView.getTranslationX() <= getWidth() - magnifierWidth) {
                     lastMotionEventMagnifierX = MotionEvent.obtain(event);
                 }
-                if (magnifierView.getTranslationY() > 0 && magnifierView.getTranslationY() < getHeight() - magnifierWidth) {
+                if (magnifierView.getTranslationY() >= 0 && magnifierView.getTranslationY() <= getHeight() - magnifierWidth) {
                     lastMotionEventMagnifierY = MotionEvent.obtain(event);
                 }
             } else {
