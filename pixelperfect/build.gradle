@@ -46,5 +46,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
 }
 
-apply from: '../install.gradle'
-apply from: '../bintray.gradle'
+/* commented because of TeamCity distribution
+(during project building Team City could not find local.properties that is used in bintray.gradle) */
+
+//apply from: '../install.gradle'
+//apply from: '../bintray.gradle'
