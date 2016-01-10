@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
 import is.handsome.pixelperfect.PixelPerfectConfig;
+import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
 
@@ -30,7 +31,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private ImageView pixelPerfectOverlayImageView;
     private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
-    private PixelPerfectCallbacks.LayoutListener layoutListener;
+    private PixelPerfectController.LayoutListener layoutListener;
     private MagnifierContainerFrameLayout magnifierFrameLayout;
     private MoveMode moveMode = MoveMode.ANY_DIRECTION;
     private boolean pixelPerfectContext = true;
@@ -126,7 +127,7 @@ public class PixelPerfectLayout extends FrameLayout {
         return super.dispatchKeyEvent(event);
     }
 
-    public void setLayoutListener(PixelPerfectCallbacks.LayoutListener listener) {
+    public void setLayoutListener(PixelPerfectController.LayoutListener listener) {
         layoutListener = listener;
     }
 
@@ -201,11 +202,15 @@ public class PixelPerfectLayout extends FrameLayout {
             justClick = false;
             clickCounter = 0;
             if (moveMode != MoveMode.VERTICAL) {
-                pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()));
+                if (layoutListener != null) {
+                    layoutListener.onMockupOverlayMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
+                }
                 pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
             }
             if (moveMode != MoveMode.HORIZONTAL) {
-                pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()));
+                if (layoutListener != null) {
+                    layoutListener.onMockupOverlayMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
+                }
                 pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
             }
             lastMotionEvent = MotionEvent.obtain(event);

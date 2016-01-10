@@ -26,13 +26,6 @@ public class PixelPerfectCallbacks {
         void onCancelClicked();
     }
 
-    public interface LayoutListener {
-
-        void onCloseActionsView();
-
-        void onClosePixelPerfect();
-    }
-
     public interface ControllerListener {
 
         void onClosePixelPerfect();

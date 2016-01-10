@@ -3,6 +3,7 @@ package is.handsome.pixelperfectsample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -34,5 +35,13 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             PixelPerfect.hide();
         }
+    }
+
+    public void onButton1Click(View view) {
+        Toast.makeText(this, "Button 1 clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onButton2Click(View view) {
+        Toast.makeText(this, "Button 2 clicked", Toast.LENGTH_SHORT).show();
     }
 }

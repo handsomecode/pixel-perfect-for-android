@@ -17,6 +17,14 @@ import is.handsome.pixelperfect.ui.PixelPerfectLayout;
 
 public class PixelPerfectController implements View.OnLongClickListener {
 
+    public interface LayoutListener {
+
+        void onCloseActionsView();
+        void onClosePixelPerfect();
+        void onMockupOverlayMoveX(int dx);
+        void onMockupOverlayMoveY(int dy);
+    }
+
     private final WindowManager windowManager;
     private Context context;
 
@@ -26,6 +34,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
     private PixelPerfectCallbacks.ControllerListener listener;
 
     private WindowManager.LayoutParams floatingButtonParams;
+    private WindowManager.LayoutParams overlayParams;
 
     private final View.OnTouchListener emptyTouchListener = new View.OnTouchListener() {
         @Override
@@ -97,16 +106,16 @@ public class PixelPerfectController implements View.OnLongClickListener {
     }
 
     private void addOverlayMockup() {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        overlayParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
 
-        windowManager.addView(pixelPerfectLayout, params);
+        windowManager.addView(pixelPerfectLayout, overlayParams);
 
-        pixelPerfectLayout.setLayoutListener(new PixelPerfectCallbacks.LayoutListener() {
+        pixelPerfectLayout.setLayoutListener(new LayoutListener() {
 
             @Override
             public void onCloseActionsView() {
@@ -118,6 +127,18 @@ public class PixelPerfectController implements View.OnLongClickListener {
                 if (listener != null) {
                     listener.onClosePixelPerfect();
                 }
+            }
+
+            @Override
+            public void onMockupOverlayMoveX(int dx) {
+                overlayParams.x = overlayParams.x + dx;
+                windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+            }
+
+            @Override
+            public void onMockupOverlayMoveY(int dy) {
+                overlayParams.y = overlayParams.y + dy;
+                windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
             }
         });
     }
@@ -148,7 +169,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
         WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) pixelPerfectLayout.getLayoutParams();
         layoutParams.flags = isPixelPerfectContext ? WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 : WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        layoutParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
         windowManager.updateViewLayout(pixelPerfectLayout, layoutParams);
     }
 
