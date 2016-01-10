@@ -56,6 +56,8 @@ public class PixelPerfectController implements View.OnLongClickListener {
                     break;
                 case MotionEvent.ACTION_UP:
                     floatingFrameLayout.findViewById(R.id.switch_context_image_button).setOnTouchListener(emptyTouchListener);
+                    downTouchX = -1;
+                    downTouchY = -1;
                     break;
             }
             return true;
@@ -79,6 +81,15 @@ public class PixelPerfectController implements View.OnLongClickListener {
         this.listener = listener;
     }
 
+    public void updateFloatingViewPositionAfterRotation() {
+        if (floatingButtonParams != null) {
+            int xPosition = floatingButtonParams.x;
+            floatingButtonParams.x = floatingButtonParams.y;
+            floatingButtonParams.y = xPosition;
+            windowManager.updateViewLayout(floatingFrameLayout, floatingButtonParams);
+        }
+    }
+
     private void addViewsToWindow() {
         addOverlayMockup();
         addFloatingFrameLayout();
@@ -90,7 +101,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
                 PixelFormat.TRANSLUCENT);
 
         windowManager.addView(pixelPerfectLayout, params);
@@ -115,8 +126,8 @@ public class PixelPerfectController implements View.OnLongClickListener {
         floatingButtonParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
                 PixelFormat.TRANSLUCENT);
 
         floatingButtonParams.gravity = Gravity.TOP | Gravity.START;
@@ -124,7 +135,6 @@ public class PixelPerfectController implements View.OnLongClickListener {
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin);
         floatingButtonParams.y = PixelPerfectUtils.getWindowHeight(windowManager)
-                - (int) context.getResources().getDimension(R.dimen.android_status_bar_height)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_action_button_size)
                 - (int) context.getResources().getDimension(R.dimen.pixel_perfect_floating_button_margin);
 
@@ -138,6 +148,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
         WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) pixelPerfectLayout.getLayoutParams();
         layoutParams.flags = isPixelPerfectContext ? WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 : WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        layoutParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         windowManager.updateViewLayout(pixelPerfectLayout, layoutParams);
     }
 

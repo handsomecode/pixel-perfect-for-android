@@ -13,4 +13,8 @@ public class PixelPerfect {
     public static boolean isShown() {
         return PixelPerfectBuilder.isShown();
     }
+
+    public static void updatePosition() {
+        PixelPerfectBuilder.updateFloatingViewPositionAfterRotation();
+    }
 }

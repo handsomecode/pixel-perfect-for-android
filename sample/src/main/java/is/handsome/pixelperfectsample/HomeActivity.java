@@ -18,12 +18,14 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-            Timber.plant(new VisualWarnTree(this));
+        if (savedInstanceState == null) {
+            if (BuildConfig.DEBUG) {
+                Timber.plant(new Timber.DebugTree());
+                Timber.plant(new VisualWarnTree(this));
+            }
+            Fabric.with(this, new Crashlytics());
+            PixelPerfect.create().useVolumeButtons(true).show(this);
         }
-        Fabric.with(this, new Crashlytics());
-        PixelPerfect.create().useVolumeButtons(true).show(this);
     }
 
     public void onImageClick(View view) {

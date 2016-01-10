@@ -53,14 +53,12 @@ public class PixelPerfectUtils {
     public static Bitmap combineBitmaps(View overlayView) {
         Bitmap activityBitmap = takeActivityScreenshot();
         Bitmap overlayBitmap = takeOverlayScreenshot(overlayView);
-        int statusBar = (int) PixelPerfectConfig.get().getTopActivity().getResources().getDimension(R.dimen.android_status_bar_height);
         int width = activityBitmap.getWidth();
-        int height = activityBitmap.getHeight() - statusBar;
+        int height = activityBitmap.getHeight();
         Bitmap comboBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(comboBitmap);
-        Rect src = new Rect(0, (int) PixelPerfectConfig.get().getTopActivity().getResources().getDimension(R.dimen.android_status_bar_height),
-                activityBitmap.getWidth(), activityBitmap.getHeight());
-        Rect dest = new Rect(0, 0, activityBitmap.getWidth(), activityBitmap.getHeight() - statusBar);
+        Rect src = new Rect(0, 0, activityBitmap.getWidth(), activityBitmap.getHeight());
+        Rect dest = new Rect(0, 0, activityBitmap.getWidth(), activityBitmap.getHeight());
         comboImage.drawBitmap(activityBitmap, src, dest, null);
         comboImage.drawBitmap(overlayBitmap, 0, 0, null);
         return comboBitmap;

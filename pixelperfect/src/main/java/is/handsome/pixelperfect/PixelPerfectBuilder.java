@@ -80,6 +80,12 @@ public class PixelPerfectBuilder {
         return pixelPerfectController != null;
     }
 
+    public static void updateFloatingViewPositionAfterRotation() {
+        if (isShown()) {
+            pixelPerfectController.updateFloatingViewPositionAfterRotation();
+        }
+    }
+
     /**
      * asks if volume buttons
      * can be used for Opacity widget
