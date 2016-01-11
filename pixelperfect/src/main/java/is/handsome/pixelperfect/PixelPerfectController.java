@@ -21,8 +21,12 @@ public class PixelPerfectController implements View.OnLongClickListener {
 
         void onCloseActionsView();
         void onClosePixelPerfect();
+
         void onMockupOverlayMoveX(int dx);
         void onMockupOverlayMoveY(int dy);
+
+        int getXOverlayPosition();
+        int getYOverlayPosition();
     }
 
     private final WindowManager windowManager;
@@ -139,6 +143,16 @@ public class PixelPerfectController implements View.OnLongClickListener {
             public void onMockupOverlayMoveY(int dy) {
                 overlayParams.y = overlayParams.y + dy;
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+            }
+
+            @Override
+            public int getXOverlayPosition() {
+                return overlayParams.x;
+            }
+
+            @Override
+            public int getYOverlayPosition() {
+                return overlayParams.y;
             }
         });
     }

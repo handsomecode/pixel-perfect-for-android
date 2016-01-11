@@ -16,7 +16,7 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
         BOTTOM, TOP
     }
 
-    private PixelPerfectMoveModeView moveModeView;
+    private View moveModeView;
     private View opacityImageView;
     private View mockupsImageView;
     private View cancelView;
@@ -26,8 +26,7 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
         super(context);
         inflate(getContext(), R.layout.view_pixel_perfect_actions_menu, this);
 
-        moveModeView = (PixelPerfectMoveModeView) findViewById(R.id.pixel_perfect_options_move_mode_text_view);
-        moveModeView.setOnClickListener(this);
+        moveModeView = findViewById(R.id.pixel_perfect_options_move_mode_text_view);
 
         opacityImageView = findViewById(R.id.pixel_perfect_options_opacity_image_view);
         opacityImageView.setOnClickListener(this);
@@ -67,12 +66,6 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
                 actionsListener.onOpacityClicked(view.isSelected());
             }
 
-        } else if (view == moveModeView) {
-            moveModeView.toNextState();
-            if (actionsListener != null) {
-                actionsListener.onMoveModeClicked(moveModeView.getState());
-            }
-
         } else if (view == cancelView) {
             mockupsImageView.setSelected(false);
             opacityImageView.setSelected(false);
@@ -85,8 +78,7 @@ public class PixelPerfectActionsView extends FrameLayout implements View.OnClick
     }
 
     public boolean inBounds(int x, int y) {
-        return (PixelPerfectUtils.inViewBounds(moveModeView, x, y)
-                || PixelPerfectUtils.inViewBounds(opacityImageView, x, y)
+        return (PixelPerfectUtils.inViewBounds(opacityImageView, x, y)
                 || PixelPerfectUtils.inViewBounds(mockupsImageView, x, y)
                 || PixelPerfectUtils.inViewBounds(cancelView, x, y));
     }

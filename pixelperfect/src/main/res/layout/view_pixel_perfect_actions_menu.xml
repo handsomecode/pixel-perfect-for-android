@@ -15,7 +15,7 @@
 
     </FrameLayout>
 
-    <is.handsome.pixelperfect.ui.PixelPerfectMoveModeView
+    <ImageView
         android:id="@+id/pixel_perfect_options_move_mode_text_view"
         android:layout_width="@dimen/pixel_perfect_action_button_size"
         android:layout_height="@dimen/pixel_perfect_action_button_size"

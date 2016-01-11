@@ -4,9 +4,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,26 +23,22 @@ import is.handsome.pixelperfect.R;
 
 public class PixelPerfectLayout extends FrameLayout {
 
-    private static final int DOUBLE_CLICK_DURATION = 200;
-
     public enum MoveMode {
-        VERTICAL, HORIZONTAL, ANY_DIRECTION
+        VERTICAL, HORIZONTAL, UNDEFINED
     }
 
     private ImageView pixelPerfectOverlayImageView;
     private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
     private PixelPerfectController.LayoutListener layoutListener;
     private MagnifierContainerFrameLayout magnifierFrameLayout;
-    private MoveMode moveMode = MoveMode.ANY_DIRECTION;
+    private MoveMode moveMode = MoveMode.UNDEFINED;
     private boolean pixelPerfectContext = true;
 
+    private GestureDetector gestureDetector;
     private MotionEvent lastMotionEvent;
-    private Handler doubleClickHandler = new Handler();
-    private Runnable doubleClickRunnable;
     private int touchSlop;
     private boolean justClick;
     private boolean wasActionDown;
-    private int clickCounter;
 
     private int fixedOffsetX = 0;
     private int fixedOffsetY = 0;
@@ -91,11 +87,10 @@ public class PixelPerfectLayout extends FrameLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (pixelPerfectOverlayImageView.getVisibility() == VISIBLE && pixelPerfectContext) {
+            gestureDetector.onTouchEvent(event);
             return handleTouch(event);
         }
-        wasActionDown = false;
-        justClick = false;
-        clickCounter = 0;
+        clearTouchData();
         return false;
     }
 
@@ -178,67 +173,11 @@ public class PixelPerfectLayout extends FrameLayout {
         addView(pixelPerfectOverlayImageView);
     }
 
-    private boolean handleTouch(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            clickCounter++;
-            if (clickCounter == 1) {
-                wasActionDown = true;
-                doubleClickHandler.postDelayed(doubleClickRunnable, DOUBLE_CLICK_DURATION);
-                lastMotionEvent = MotionEvent.obtain(event);
-            } else if (clickCounter >= 2) {
-                wasActionDown = false;
-                clickCounter = 0;
-                magnifierFrameLayout.updateTouchData(event);
-                showMagnifierMode((int) event.getX(), (int) event.getY());
-            }
-            justClick = false;
-            return true;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
-            if (justClick
-                    && Math.abs(event.getY() - lastMotionEvent.getY()) < touchSlop
-                    && Math.abs(event.getX() - lastMotionEvent.getX()) < touchSlop) {
-                return true;
-            }
-            justClick = false;
-            clickCounter = 0;
-            if (moveMode != MoveMode.VERTICAL) {
-                if (layoutListener != null) {
-                    layoutListener.onMockupOverlayMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
-                }
-                pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
-            }
-            if (moveMode != MoveMode.HORIZONTAL) {
-                if (layoutListener != null) {
-                    layoutListener.onMockupOverlayMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
-                }
-                pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
-            }
-            lastMotionEvent = MotionEvent.obtain(event);
-            return true;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE && magnifierFrameLayout.getVisibility() == VISIBLE) {
-            wasActionDown = false;
-            justClick = false;
-            clickCounter = 0;
-            return magnifierFrameLayout.handleMagnifierMove(event);
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            wasActionDown = false;
-            justClick = false;
-            return true;
-        } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-            wasActionDown = false;
-            justClick = false;
-            clickCounter = 0;
-            return true;
-        }
-        wasActionDown = false;
-        justClick = false;
-        clickCounter = 0;
-        return false;
-    }
-
     private void init() {
         touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         initOverlay();
+
+        gestureDetector = new GestureDetector(getContext(), new PixelPerfectLayoutGestureListener());
 
         pixelPerfectControlsFrameLayout = new PixelPerfectControlsFrameLayout(getContext());
         addView(pixelPerfectControlsFrameLayout,
@@ -261,11 +200,6 @@ public class PixelPerfectLayout extends FrameLayout {
                     layoutListener.onCloseActionsView();
                 }
             }
-
-            @Override
-            public void onChangeMoveMode(MoveMode changedMoveMode) {
-                moveMode = changedMoveMode;
-            }
         });
 
         magnifierFrameLayout = (MagnifierContainerFrameLayout) pixelPerfectControlsFrameLayout
@@ -273,20 +207,14 @@ public class PixelPerfectLayout extends FrameLayout {
         magnifierFrameLayout.setListener(new MagnifierContainerFrameLayout.MagnifierListener() {
             @Override
             public void onMockupDown(MotionEvent event) {
-                lastMotionEvent = event;
+                justClick = true;
+                wasActionDown = true;
+                lastMotionEvent = MotionEvent.obtain(event);
             }
 
             @Override
             public void onMockupMove(MotionEvent event) {
-                if (moveMode != MoveMode.VERTICAL) {
-                    pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX() + (event.getX() - lastMotionEvent.getX()) / 5);
-                    pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
-                }
-                if (moveMode != MoveMode.HORIZONTAL) {
-                    pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY() + (event.getY() - lastMotionEvent.getY()) / 5);
-                    pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
-                }
-                lastMotionEvent = MotionEvent.obtain(event);
+                moveMockupOverlay(event);
 
                 pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
                 Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
@@ -295,29 +223,38 @@ public class PixelPerfectLayout extends FrameLayout {
             }
         });
         pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+    }
 
-        doubleClickRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (clickCounter == 1) {
-                    justClick = true;
-                    wasActionDown = false;
-                    if (lastMotionEvent.getX() < getWidth() / 3 || lastMotionEvent.getX() > getWidth() * 2 / 3) {
-                        pixelPerfectOverlayImageView.setTranslationX(pixelPerfectOverlayImageView.getTranslationX()
-                                + (lastMotionEvent.getX() < getWidth() / 5 ? -1 : 1));
-                        pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + (int) pixelPerfectOverlayImageView.getTranslationX());
-                    } else if (lastMotionEvent.getY() < getHeight() / 4 || lastMotionEvent.getY() > getHeight() * 3 / 4) {
-                        pixelPerfectOverlayImageView.setTranslationY(pixelPerfectOverlayImageView.getTranslationY()
-                                + (lastMotionEvent.getY() > getHeight() / 2 ? 1 : -1));
-                        pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
-                    } else {
-                        pixelPerfectControlsFrameLayout.setDiffPixelsViewVisibility();
-                    }
-                }
-                justClick = false;
-                clickCounter = 0;
+    private void moveMockupOverlay(MotionEvent event) {
+        if (justClick
+                && Math.abs(event.getY() - lastMotionEvent.getY()) < touchSlop
+                && Math.abs(event.getX() - lastMotionEvent.getX()) < touchSlop) {
+            return;
+        }
+        if (justClick) {
+            float dx = event.getRawX() - lastMotionEvent.getRawX();
+            float dy = event.getRawY() - lastMotionEvent.getRawY();
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                moveMode = MoveMode.HORIZONTAL;
+            } else {
+                moveMode = MoveMode.VERTICAL;
             }
-        };
+            justClick = false;
+            lastMotionEvent = MotionEvent.obtain(event);
+        } else {
+            if (moveMode == MoveMode.HORIZONTAL) {
+                if (layoutListener != null) {
+                    layoutListener.onMockupOverlayMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
+                    pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + layoutListener.getXOverlayPosition());
+                }
+            } else {
+                if (layoutListener != null) {
+                    layoutListener.onMockupOverlayMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
+                    pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + layoutListener.getYOverlayPosition());
+                }
+            }
+            lastMotionEvent = MotionEvent.obtain(event);
+        }
     }
 
     private void showMagnifierMode(int x, int y) {
@@ -327,5 +264,54 @@ public class PixelPerfectLayout extends FrameLayout {
         pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
         magnifierFrameLayout.setMagnifierSrc(bitmap, false);
         magnifierFrameLayout.setMagnifierViewPosition(x, y);
+    }
+
+    private class PixelPerfectLayoutGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent event) {
+            magnifierFrameLayout.updateTouchData(event);
+            showMagnifierMode((int) event.getX(), (int) event.getY());
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent event) {
+            pixelPerfectControlsFrameLayout.setDiffPixelsViewVisibility();
+            return true;
+        }
+    }
+
+    private boolean handleTouch(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            justClick = true;
+            wasActionDown = true;
+            lastMotionEvent = MotionEvent.obtain(event);
+            return true;
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
+            moveMockupOverlay(event);
+            return true;
+        }
+        if (event.getAction() == MotionEvent.ACTION_MOVE && magnifierFrameLayout.getVisibility() == VISIBLE) {
+            clearTouchData();
+            return magnifierFrameLayout.handleMagnifierMove(event);
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+            clearTouchData();
+            return true;
+        }
+        clearTouchData();
+        return false;
+    }
+
+    private void clearTouchData() {
+        moveMode = MoveMode.UNDEFINED;
+        wasActionDown = false;
+        justClick = false;
     }
 }

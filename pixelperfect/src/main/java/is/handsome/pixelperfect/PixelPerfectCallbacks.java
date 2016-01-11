@@ -1,7 +1,5 @@
 package is.handsome.pixelperfect;
 
-import is.handsome.pixelperfect.ui.PixelPerfectLayout;
-
 public class PixelPerfectCallbacks {
 
     public interface ControlsListener {
@@ -11,8 +9,6 @@ public class PixelPerfectCallbacks {
         void onUpdateImage(String fullName);
 
         void onCloseActionsView();
-
-        void onChangeMoveMode(PixelPerfectLayout.MoveMode moveMode);
     }
 
     public interface ActionsListener {
@@ -20,8 +16,6 @@ public class PixelPerfectCallbacks {
         void onOpacityClicked(boolean isSelected);
 
         void onMockupsClicked(boolean isSelected);
-
-        void onMoveModeClicked(PixelPerfectLayout.MoveMode moveMode);
 
         void onCancelClicked();
     }

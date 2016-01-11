@@ -135,13 +135,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
             }
 
             @Override
-            public void onMoveModeClicked(PixelPerfectLayout.MoveMode moveMode) {
-                if (controlsListener != null) {
-                    controlsListener.onChangeMoveMode(moveMode);
-                }
-            }
-
-            @Override
             public void onCancelClicked() {
                 hideOpacityView();
                 hideMockupsView();
