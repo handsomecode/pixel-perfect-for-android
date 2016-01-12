@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import is.handsome.pixelperfect.ui.PixelPerfectLayout;
 
@@ -25,8 +26,11 @@ public class PixelPerfectController implements View.OnLongClickListener {
         void onMockupOverlayMoveX(int dx);
         void onMockupOverlayMoveY(int dy);
 
-        int getXOverlayPosition();
-        int getYOverlayPosition();
+        void onOffsetViewMoveX(int dx);
+        void onOffsetViewMoveY(int dy);
+
+        void hideOffsetView();
+        void showOffsetView(int xPos, int yPos);
     }
 
     private final WindowManager windowManager;
@@ -34,11 +38,16 @@ public class PixelPerfectController implements View.OnLongClickListener {
 
     private PixelPerfectLayout pixelPerfectLayout;
     private FrameLayout floatingFrameLayout;
+    private ViewGroup offsetPixelsView;
     private View switchContextButton;
     private PixelPerfectCallbacks.ControllerListener listener;
 
     private WindowManager.LayoutParams floatingButtonParams;
+    private WindowManager.LayoutParams offsetPixelsViewParams;
     private WindowManager.LayoutParams overlayParams;
+
+    private int fixedOffsetX = 0;
+    private int fixedOffsetY = 0;
 
     private final View.OnTouchListener emptyTouchListener = new View.OnTouchListener() {
         @Override
@@ -82,6 +91,7 @@ public class PixelPerfectController implements View.OnLongClickListener {
 
         pixelPerfectLayout = new PixelPerfectLayout(context);
         floatingFrameLayout = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_pixel_perfect_floating_button, null);
+        offsetPixelsView = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.view_offset_pixels, null);
 
         switchContextButton = floatingFrameLayout.findViewById(R.id.switch_context_image_button);
         switchContextButton.setSelected(true);
@@ -105,7 +115,8 @@ public class PixelPerfectController implements View.OnLongClickListener {
 
     private void addViewsToWindow() {
         addOverlayMockup();
-        addFloatingFrameLayout();
+        //addFloatingFrameLayout();
+        addOffsetPixelsView();
         show();
     }
 
@@ -135,24 +146,43 @@ public class PixelPerfectController implements View.OnLongClickListener {
 
             @Override
             public void onMockupOverlayMoveX(int dx) {
-                overlayParams.x = overlayParams.x + dx;
+                overlayParams.x += dx;
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+
+                ((TextView) offsetPixelsView.findViewById(R.id.diff_pixels_x)).setText(fixedOffsetX + overlayParams.x + " px");
             }
 
             @Override
             public void onMockupOverlayMoveY(int dy) {
-                overlayParams.y = overlayParams.y + dy;
+                overlayParams.y += dy;
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+
+                ((TextView) offsetPixelsView.findViewById(R.id.diff_pixels_y)).setText(fixedOffsetY + overlayParams.y + " px");
             }
 
             @Override
-            public int getXOverlayPosition() {
-                return overlayParams.x;
+            public void onOffsetViewMoveX(int dx) {
+                offsetPixelsViewParams.x += dx;
+                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
 
             @Override
-            public int getYOverlayPosition() {
-                return overlayParams.y;
+            public void onOffsetViewMoveY(int dy) {
+                offsetPixelsViewParams.y += dy;
+                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+            }
+
+            @Override
+            public void hideOffsetView() {
+                offsetPixelsView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void showOffsetView(int xPos, int yPos) {
+                offsetPixelsView.setVisibility(View.VISIBLE);
+                offsetPixelsViewParams.x = xPos;
+                offsetPixelsViewParams.y = yPos;
+                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
         });
     }
@@ -179,6 +209,19 @@ public class PixelPerfectController implements View.OnLongClickListener {
         switchContextButton.setOnClickListener(createClickAndDoubleClickListener());
     }
 
+    private void addOffsetPixelsView() {
+        offsetPixelsViewParams = new WindowManager.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT);
+
+        offsetPixelsViewParams.gravity = Gravity.TOP | Gravity.START;
+        offsetPixelsView.setVisibility(View.GONE);
+        windowManager.addView(offsetPixelsView, offsetPixelsViewParams);
+    }
+
     private void updateDisplayedPixelPerfectContext(boolean isPixelPerfectContext) {
         WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) pixelPerfectLayout.getLayoutParams();
         layoutParams.flags = isPixelPerfectContext ? WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -191,19 +234,21 @@ public class PixelPerfectController implements View.OnLongClickListener {
         pixelPerfectLayout.setImageVisible(true);
         pixelPerfectLayout.setControlsLayerVisible(true);
         pixelPerfectLayout.setVisibility(View.VISIBLE);
-        floatingFrameLayout.setVisibility(View.VISIBLE);
+        //floatingFrameLayout.setVisibility(View.VISIBLE);
     }
 
     public void hide() {
         pixelPerfectLayout.setImageVisible(false);
         pixelPerfectLayout.setControlsLayerVisible(false);
         pixelPerfectLayout.setVisibility(View.GONE);
-        floatingFrameLayout.setVisibility(View.GONE);
+        //floatingFrameLayout.setVisibility(View.GONE);
+        offsetPixelsView.setVisibility(View.GONE);
     }
 
     public void destroy() {
         windowManager.removeView(pixelPerfectLayout);
-        windowManager.removeView(floatingFrameLayout);
+        //windowManager.removeView(floatingFrameLayout);
+        windowManager.removeView(offsetPixelsView);
     }
 
     @Override

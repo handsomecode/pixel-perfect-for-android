@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import is.handsome.pixelperfect.PixelPerfectCallbacks;
 import is.handsome.pixelperfect.PixelPerfectUtils;
@@ -24,7 +23,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
     private PixelPerfectActionsView pixelPerfectActionsView;
     private FrameLayout pixelPerfectOpacityFrameLayout;
     private FrameLayout pixelPerfectMockupsFrameLayout;
-    private FrameLayout pixelPerfectDiffPixelsFrameLayout;
 
     private PixelPerfectCallbacks.ControlsListener controlsListener;
 
@@ -82,22 +80,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
                 setProgress((int) (currentAlpha * 100));
     }
 
-    public void setDiffPixelsViewVisibility() {
-        if (pixelPerfectDiffPixelsFrameLayout.getVisibility() == VISIBLE) {
-            pixelPerfectDiffPixelsFrameLayout.setVisibility(INVISIBLE);
-        } else {
-            pixelPerfectDiffPixelsFrameLayout.setVisibility(VISIBLE);
-        }
-    }
-
-    public void updateDiffXPixelsData(int x) {
-        ((TextView) pixelPerfectDiffPixelsFrameLayout.findViewById(R.id.diff_pixels_x)).setText(x + " px");
-    }
-
-    public void updateDiffYPixelsData(int y) {
-        ((TextView) pixelPerfectDiffPixelsFrameLayout.findViewById(R.id.diff_pixels_y)).setText(y + "\npx");
-    }
-
     private void init() {
         inflate(getContext(), R.layout.layout_pixel_perfect_controls_layer, this);
 
@@ -107,8 +89,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
 
         initOpacityWidget();
         initMockupsWidget();
-
-        pixelPerfectDiffPixelsFrameLayout = (FrameLayout) findViewById(R.id.controls_diff_pixels);
     }
 
     private void addActionsListeners() {

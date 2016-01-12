@@ -2,6 +2,7 @@ package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import is.handsome.pixelperfect.PixelPerfectConfig;
 import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
+import is.handsome.pixelperfect.SettingsActivity;
 
 public class PixelPerfectLayout extends FrameLayout {
 
@@ -39,9 +41,6 @@ public class PixelPerfectLayout extends FrameLayout {
     private int touchSlop;
     private boolean justClick;
     private boolean wasActionDown;
-
-    private int fixedOffsetX = 0;
-    private int fixedOffsetY = 0;
 
     public PixelPerfectLayout(Context context) {
         super(context);
@@ -241,17 +240,22 @@ public class PixelPerfectLayout extends FrameLayout {
             }
             justClick = false;
             lastMotionEvent = MotionEvent.obtain(event);
+            if (layoutListener != null) {
+                layoutListener.showOffsetView((int) event.getRawX() - 170, (int) event.getRawY() - 170);
+            }
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
                 if (layoutListener != null) {
                     layoutListener.onMockupOverlayMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
-                    pixelPerfectControlsFrameLayout.updateDiffXPixelsData(fixedOffsetX + layoutListener.getXOverlayPosition());
                 }
             } else {
                 if (layoutListener != null) {
                     layoutListener.onMockupOverlayMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
-                    pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + layoutListener.getYOverlayPosition());
                 }
+            }
+            if (layoutListener != null) {
+                layoutListener.onOffsetViewMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
+                layoutListener.onOffsetViewMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
             }
             lastMotionEvent = MotionEvent.obtain(event);
         }
@@ -282,7 +286,9 @@ public class PixelPerfectLayout extends FrameLayout {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent event) {
-            pixelPerfectControlsFrameLayout.setDiffPixelsViewVisibility();
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
             return true;
         }
     }
@@ -310,6 +316,9 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private void clearTouchData() {
+        if (layoutListener != null) {
+            layoutListener.hideOffsetView();
+        }
         moveMode = MoveMode.UNDEFINED;
         wasActionDown = false;
         justClick = false;

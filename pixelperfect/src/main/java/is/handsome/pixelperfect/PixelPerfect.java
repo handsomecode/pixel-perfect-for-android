@@ -17,4 +17,12 @@ public class PixelPerfect {
     public static void updatePosition() {
         PixelPerfectBuilder.updateFloatingViewPositionAfterRotation();
     }
+
+    public static void innerHide() {
+        PixelPerfectBuilder.innerHide();
+    }
+
+    public static void innerShow() {
+        PixelPerfectBuilder.innerShow();
+    }
 }
