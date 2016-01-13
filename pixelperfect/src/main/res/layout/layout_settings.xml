@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@android:color/white">
 
     <FrameLayout
         android:id="@+id/settings_opacity_frame_layout"
@@ -36,4 +37,11 @@
             android:layout_height="wrap_content"
             android:progress="50"/>
     </FrameLayout>
+
+    <Button
+        android:id="@+id/settings_exit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exit"
+        android:layout_gravity="center_horizontal"/>
 </LinearLayout>

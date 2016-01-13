@@ -1,13 +1,17 @@
 package is.handsome.pixelperfect;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.IOException;
@@ -37,8 +41,16 @@ public class PixelPerfectUtils {
         return displaySize.y;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static boolean isTranslucentStatusBar(Context context) {
+        Window window = ((Activity)context).getWindow();
+        int flags = window.getAttributes().flags;
+        return (flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+    }
+
     public static Bitmap takeActivityScreenshot() {
-        View rootView = ((ViewGroup)PixelPerfectConfig.get().getTopActivity()
+        View rootView = ((ViewGroup) PixelPerfectConfig.get().getTopActivity()
                 .findViewById(android.R.id.content)).getChildAt(0).getRootView();
         rootView.setDrawingCacheEnabled(true);
         return rootView.getDrawingCache();

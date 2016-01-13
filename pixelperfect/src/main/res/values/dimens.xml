@@ -7,4 +7,6 @@
     <dimen name="pixel_perfect_options_radius_size">90dp</dimen>
     <dimen name="pixel_perfect_floating_button_margin">25dp</dimen>
     <dimen name="pixel_perfect_magnifier_view_width">170dp</dimen>
+
+    <dimen name="android_status_bar_height">25dp</dimen>
 </resources>

@@ -1,7 +1,6 @@
 package is.handsome.pixelperfect;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -62,7 +61,7 @@ public class PixelPerfectBuilder {
             return;
         }
 
-        pixelPerfectController = new PixelPerfectController((Application) activity.getApplicationContext());
+        pixelPerfectController = new PixelPerfectController(activity);
         pixelPerfectController.setListener(new PixelPerfectCallbacks.ControllerListener() {
             @Override
             public void onClosePixelPerfect() {
@@ -94,7 +93,7 @@ public class PixelPerfectBuilder {
 
     public static void updateFloatingViewPositionAfterRotation() {
         if (isShown()) {
-            pixelPerfectController.updateFloatingViewPositionAfterRotation();
+            //pixelPerfectController.updateFloatingViewPositionAfterRotation();
         }
     }
 

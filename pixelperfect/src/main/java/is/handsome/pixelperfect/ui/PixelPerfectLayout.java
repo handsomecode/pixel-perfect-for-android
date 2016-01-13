@@ -2,7 +2,6 @@ package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.TextUtils;
@@ -21,7 +20,6 @@ import is.handsome.pixelperfect.PixelPerfectConfig;
 import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
-import is.handsome.pixelperfect.SettingsActivity;
 
 public class PixelPerfectLayout extends FrameLayout {
 
@@ -99,7 +97,7 @@ public class PixelPerfectLayout extends FrameLayout {
         int keyCode = event.getKeyCode();
 
         if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
-            layoutListener.onClosePixelPerfect();
+            layoutListener.onBackPressed();
         }
 
         if (PixelPerfectConfig.get().useVolumeButtons()) {
@@ -150,18 +148,6 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    public void setPixelPerfectContext(boolean isPixelPerfectContext) {
-        pixelPerfectContext = isPixelPerfectContext;
-    }
-
-    public boolean isPixelPerfectContext() {
-        return pixelPerfectContext;
-    }
-
-    public void showActionsView(int poinX, int pointY) {
-        pixelPerfectControlsFrameLayout.showActionsView(poinX, pointY);
-    }
-
     private void initOverlay() {
         pixelPerfectOverlayImageView = new PixelPerfectMockupImageView(getContext());
         pixelPerfectOverlayImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -195,9 +181,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
             @Override
             public void onCloseActionsView() {
-                if (layoutListener != null) {
-                    layoutListener.onCloseActionsView();
-                }
+
             }
         });
 
@@ -241,7 +225,7 @@ public class PixelPerfectLayout extends FrameLayout {
             justClick = false;
             lastMotionEvent = MotionEvent.obtain(event);
             if (layoutListener != null) {
-                layoutListener.showOffsetView((int) event.getRawX() - 170, (int) event.getRawY() - 170);
+                layoutListener.showOffsetView((int) event.getRawX() - 100, (int) event.getRawY() - 170);
             }
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
@@ -286,9 +270,9 @@ public class PixelPerfectLayout extends FrameLayout {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent event) {
-            Intent intent = new Intent(getContext(), SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
+            if (layoutListener != null) {
+                layoutListener.openSettings();
+            }
             return true;
         }
     }

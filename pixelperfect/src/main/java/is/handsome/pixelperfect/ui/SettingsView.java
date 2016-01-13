@@ -1,36 +1,67 @@
-package is.handsome.pixelperfect;
+package is.handsome.pixelperfect.ui;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 
-public class SettingsActivity extends AppCompatActivity {
+import is.handsome.pixelperfect.PixelPerfectController;
+import is.handsome.pixelperfect.R;
+import is.handsome.pixelperfect.ScreensNamesAdapter;
+
+public class SettingsView extends FrameLayout {
+
+    private Button exitButton;
+    private PixelPerfectController.SettingsListener settingsListener;
 
     private FrameLayout pixelPerfectOpacityFrameLayout;
     private FrameLayout pixelPerfectMockupsFrameLayout;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+    public SettingsView(Context context) {
+        super(context);
+        init();
+    }
+
+    public SettingsView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+
+    public SettingsView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public SettingsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
+    public void setListener(PixelPerfectController.SettingsListener listener) {
+        this.settingsListener = listener;
+    }
+
+    private void init() {
+        inflate(getContext(), R.layout.layout_settings, this);
+        exitButton = (Button) findViewById(R.id.settings_exit_button);
+        exitButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                settingsListener.closeSettings();
+            }
+        });
+
         initOpacityWidget();
         initMockupsWidget();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        PixelPerfect.innerHide();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        PixelPerfect.innerShow();
     }
 
     public void updateOpacityProgress(float currentAlpha) {
@@ -63,7 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void initMockupsWidget() {
         pixelPerfectMockupsFrameLayout = (FrameLayout) findViewById(R.id.settings_mockups_frame_layout);
         Spinner spinner = (Spinner) pixelPerfectMockupsFrameLayout.findViewById(R.id.settings_mockups_spinner);
-        spinner.setAdapter(new ScreensNamesAdapter(this));
+        spinner.setAdapter(new ScreensNamesAdapter(getContext()));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
