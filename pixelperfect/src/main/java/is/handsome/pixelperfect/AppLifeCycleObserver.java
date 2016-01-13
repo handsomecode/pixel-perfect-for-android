@@ -133,11 +133,7 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
     }
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            PixelPerfect.updatePosition();
-        }
-    }
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
 
     @Override
     public void onActivityStarted(Activity activity) {}
