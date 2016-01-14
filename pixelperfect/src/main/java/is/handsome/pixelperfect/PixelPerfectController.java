@@ -33,6 +33,9 @@ public class PixelPerfectController {
 
     public interface SettingsListener {
         void closeSettings();
+
+        void onSetImageAlpha(float alpha);
+        void onUpdateImage(String fullName);
     }
 
     private final WindowManager windowManager;
@@ -142,6 +145,7 @@ public class PixelPerfectController {
 
             @Override
             public void openSettings() {
+                settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
                 settingsView.setVisibility(View.VISIBLE);
             }
         });
@@ -163,6 +167,16 @@ public class PixelPerfectController {
             @Override
             public void closeSettings() {
                 settingsView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSetImageAlpha(float alpha) {
+                pixelPerfectLayout.setImageAlpha(alpha);
+            }
+
+            @Override
+            public void onUpdateImage(String fullName) {
+                pixelPerfectLayout.updateImage(fullName);
             }
         });
     }

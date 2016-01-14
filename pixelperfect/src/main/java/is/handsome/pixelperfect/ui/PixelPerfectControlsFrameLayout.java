@@ -118,9 +118,6 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
             public void onCancelClicked() {
                 hideOpacityView();
                 hideMockupsView();
-                if (controlsListener != null) {
-                    controlsListener.onCloseActionsView();
-                }
             }
         });
     }

@@ -7,8 +7,6 @@ public class PixelPerfectCallbacks {
         void onSetImageAlpha(float alpha);
 
         void onUpdateImage(String fullName);
-
-        void onCloseActionsView();
     }
 
     public interface ActionsListener {

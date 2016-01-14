@@ -6,7 +6,6 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -17,11 +16,11 @@ import is.handsome.pixelperfect.ScreensNamesAdapter;
 
 public class SettingsView extends FrameLayout {
 
-    private Button exitButton;
+    private View exitButton;
     private PixelPerfectController.SettingsListener settingsListener;
 
-    private FrameLayout pixelPerfectOpacityFrameLayout;
     private FrameLayout pixelPerfectMockupsFrameLayout;
+    private SeekBar opacitySeekBar;
 
     public SettingsView(Context context) {
         super(context);
@@ -51,32 +50,33 @@ public class SettingsView extends FrameLayout {
 
     private void init() {
         inflate(getContext(), R.layout.layout_settings, this);
-        exitButton = (Button) findViewById(R.id.settings_exit_button);
-        exitButton.setOnClickListener(new OnClickListener() {
+        exitButton = findViewById(R.id.settings_exit_button);
+        OnClickListener exitButtonListener = new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 settingsListener.closeSettings();
             }
-        });
+        };
+        exitButton.setOnClickListener(exitButtonListener);
+        findViewById(R.id.settings_opacity_confirm_image_view).setOnClickListener(exitButtonListener);
 
         initOpacityWidget();
         initMockupsWidget();
     }
 
     public void updateOpacityProgress(float currentAlpha) {
-        ((SeekBar) pixelPerfectOpacityFrameLayout.findViewById(R.id.pixel_perfect_opacity_seek_bar)).
-                setProgress((int) (currentAlpha * 100));
+        opacitySeekBar.setProgress((int) (currentAlpha * 100));
     }
 
     private void initOpacityWidget() {
-        pixelPerfectOpacityFrameLayout = (FrameLayout) findViewById(R.id.settings_opacity_frame_layout);
-        ((SeekBar) pixelPerfectOpacityFrameLayout.findViewById(R.id.settings_opacity_seek_bar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        opacitySeekBar = (SeekBar) findViewById(R.id.settings_opacity_seek_bar);
+        opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                /*if (controlsListener != null) {
-                    controlsListener.onSetImageAlpha(progress / 100.0f);
-                }*/
+                if (settingsListener != null) {
+                    settingsListener.onSetImageAlpha(progress / 100.0f);
+                }
             }
 
             @Override
@@ -99,9 +99,9 @@ public class SettingsView extends FrameLayout {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String fullName = (String) parent.getItemAtPosition(position);
-                /*if (controlsListener != null) {
-                    controlsListener.onUpdateImage(fullName);
-                }*/
+                if (settingsListener != null) {
+                    settingsListener.onUpdateImage(fullName);
+                }
             }
 
             @Override

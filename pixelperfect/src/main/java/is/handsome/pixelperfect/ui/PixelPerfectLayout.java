@@ -139,6 +139,10 @@ public class PixelPerfectLayout extends FrameLayout {
         pixelPerfectOverlayImageView.setAlpha(alpha);
     }
 
+    public float getImageAlpha() {
+        return pixelPerfectOverlayImageView.getAlpha();
+    }
+
     public void updateImage(String fullName) {
         pixelPerfectOverlayImageView.setTranslationY(0);
         if (TextUtils.isEmpty(fullName)) {
@@ -177,11 +181,6 @@ public class PixelPerfectLayout extends FrameLayout {
             @Override
             public void onUpdateImage(String fullName) {
                 updateImage(fullName);
-            }
-
-            @Override
-            public void onCloseActionsView() {
-
             }
         });
 
