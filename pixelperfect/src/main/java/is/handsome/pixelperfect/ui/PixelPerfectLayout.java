@@ -42,6 +42,9 @@ public class PixelPerfectLayout extends FrameLayout {
     private boolean justClick;
     private boolean wasActionDown;
 
+    private float micro_offset_dx;
+    private float micro_offset_dy;
+
     public PixelPerfectLayout(Context context) {
         super(context);
         init();
@@ -225,23 +228,32 @@ public class PixelPerfectLayout extends FrameLayout {
             }
             justClick = false;
             lastMotionEvent = MotionEvent.obtain(event);
-            if (layoutListener != null) {
-                layoutListener.showOffsetView((int) event.getRawX() - 100, (int) event.getRawY() - 170);
-            }
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
                 if (layoutListener != null) {
                     float dx = event.getRawX() - lastMotionEvent.getRawX();
-                    if (Math.abs(dx) <= MICRO_OFFSET) {
-                        dx = dx >= 0 ? 1 : -1;
+                    if (Math.abs(dx) < MICRO_OFFSET) {
+                        micro_offset_dx += dx / MICRO_OFFSET;
+                        dx = Math.round(micro_offset_dx + dx / MICRO_OFFSET);
+                        if (dx != 0) {
+                            micro_offset_dx = 0;
+                        }
+                    } else {
+                        micro_offset_dx = 0;
                     }
                     layoutListener.onMockupOverlayMoveX((int) dx);
                 }
             } else {
                 if (layoutListener != null) {
                     float dy = event.getRawY() - lastMotionEvent.getRawY();
-                    if (Math.abs(dy) <= MICRO_OFFSET) {
-                        dy = dy >= 0 ? 1 : -1;
+                    if (Math.abs(dy) < MICRO_OFFSET) {
+                        micro_offset_dy += dy / MICRO_OFFSET;
+                        dy = Math.round(micro_offset_dy + dy / MICRO_OFFSET);
+                        if (dy != 0) {
+                            micro_offset_dy = 0;
+                        }
+                    } else {
+                        micro_offset_dy = 0;
                     }
                     layoutListener.onMockupOverlayMoveY((int) dy);
                 }
@@ -293,6 +305,9 @@ public class PixelPerfectLayout extends FrameLayout {
             lastMotionEvent = MotionEvent.obtain(event);
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
+            if (layoutListener != null) {
+                layoutListener.showOffsetView((int) event.getRawX() - 100, (int) event.getRawY() - 170);
+            }
             moveMockupOverlay(event);
             return true;
         }
