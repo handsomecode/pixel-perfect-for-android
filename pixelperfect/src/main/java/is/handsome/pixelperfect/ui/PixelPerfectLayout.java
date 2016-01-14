@@ -23,6 +23,8 @@ import is.handsome.pixelperfect.R;
 
 public class PixelPerfectLayout extends FrameLayout {
 
+    private static int MICRO_OFFSET = 7;
+
     public enum MoveMode {
         VERTICAL, HORIZONTAL, UNDEFINED
     }
@@ -229,11 +231,19 @@ public class PixelPerfectLayout extends FrameLayout {
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
                 if (layoutListener != null) {
-                    layoutListener.onMockupOverlayMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
+                    float dx = event.getRawX() - lastMotionEvent.getRawX();
+                    if (Math.abs(dx) <= MICRO_OFFSET) {
+                        dx = dx >= 0 ? 1 : -1;
+                    }
+                    layoutListener.onMockupOverlayMoveX((int) dx);
                 }
             } else {
                 if (layoutListener != null) {
-                    layoutListener.onMockupOverlayMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
+                    float dy = event.getRawY() - lastMotionEvent.getRawY();
+                    if (Math.abs(dy) <= MICRO_OFFSET) {
+                        dy = dy >= 0 ? 1 : -1;
+                    }
+                    layoutListener.onMockupOverlayMoveY((int) dy);
                 }
             }
             if (layoutListener != null) {
