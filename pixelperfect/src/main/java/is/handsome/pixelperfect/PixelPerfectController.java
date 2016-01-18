@@ -78,12 +78,20 @@ public class PixelPerfectController {
     }
 
     private void addOverlayMockup(Context context) {
+        int overlayWidth = PixelPerfectUtils.getWindowWidth(windowManager)
+                + 2 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
+
         overlayParams = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                overlayWidth,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
+
+        overlayParams.gravity = Gravity.TOP;
+
+        overlayParams.y = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
+        fixedOffsetY = Math.abs(overlayParams.y);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 && PixelPerfectUtils.isTranslucentStatusBar(context)) {
@@ -180,8 +188,8 @@ public class PixelPerfectController {
 
             @Override
             public void onFixOffset() {
-                fixedOffsetX = overlayParams.x * -1;
-                fixedOffsetY = overlayParams.y * -1;
+                fixedOffsetX = -1 * overlayParams.x;
+                fixedOffsetY = -1 * overlayParams.y;
 
                 offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
                 offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");

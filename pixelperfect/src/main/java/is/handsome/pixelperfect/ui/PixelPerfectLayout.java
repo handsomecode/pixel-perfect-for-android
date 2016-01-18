@@ -168,8 +168,12 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private void initOverlay() {
         pixelPerfectOverlayImageView = new PixelPerfectMockupImageView(getContext());
-        pixelPerfectOverlayImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        FrameLayout.LayoutParams layoutParams = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        int margin = (int )getContext().getResources().getDimension(R.dimen.overlay_border_size);
+        layoutParams.setMargins(margin, margin, margin, margin);
+        pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
         pixelPerfectOverlayImageView.setAdjustViewBounds(true);
         pixelPerfectOverlayImageView.setVisibility(INVISIBLE);
         pixelPerfectOverlayImageView.setAlpha(0.5f);
@@ -178,6 +182,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private void init() {
         touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        setBackgroundResource(R.drawable.bg_overlay);
         initOverlay();
 
         gestureDetector = new GestureDetector(getContext(), new PixelPerfectLayoutGestureListener());
