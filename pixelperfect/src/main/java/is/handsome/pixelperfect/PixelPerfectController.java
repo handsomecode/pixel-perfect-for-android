@@ -80,8 +80,7 @@ public class PixelPerfectController {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
 
-        int currentApiVersion = Build.VERSION.SDK_INT;
-        if (currentApiVersion >= Build.VERSION_CODES.KITKAT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 && PixelPerfectUtils.isTranslucentStatusBar(context)) {
             overlayParams.y -= (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
             fixedOffsetY = Math.abs(overlayParams.y);
@@ -155,7 +154,7 @@ public class PixelPerfectController {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
                 PixelFormat.TRANSLUCENT);
 
         params.gravity = Gravity.TOP | Gravity.START;
