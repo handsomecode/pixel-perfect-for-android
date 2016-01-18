@@ -187,15 +187,15 @@ public class PixelPerfectLayout extends FrameLayout {
             } else if (clickCounter >= 2) {
                 wasActionDown = false;
                 clickCounter = 0;
-                magnifierFrameLayout.updateTouchData(event);
-                showMagnifierMode((int) event.getX(), (int) event.getY());
+                //magnifierFrameLayout.updateTouchData(event);
+                //showMagnifierMode((int) event.getX(), (int) event.getY());
             }
             justClick = false;
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
             if (justClick
-                    && Math.abs(event.getY() - lastMotionEvent.getY()) < touchSlop
-                    && Math.abs(event.getX() - lastMotionEvent.getX()) < touchSlop) {
+                    && Math.abs(event.getY() - lastMotionEvent.getY()) < touchSlop*3
+                    && Math.abs(event.getX() - lastMotionEvent.getX()) < touchSlop*3) {
                 return true;
             }
             justClick = false;
@@ -306,7 +306,7 @@ public class PixelPerfectLayout extends FrameLayout {
                                 + (lastMotionEvent.getY() > getHeight() / 2 ? 1 : -1));
                         pixelPerfectControlsFrameLayout.updateDiffYPixelsData(fixedOffsetY + (int) pixelPerfectOverlayImageView.getTranslationY());
                     } else {
-                        pixelPerfectControlsFrameLayout.setDiffPixelsViewVisibility();
+                        //pixelPerfectControlsFrameLayout.setDiffPixelsViewVisibility();
                     }
                 }
                 justClick = false;
