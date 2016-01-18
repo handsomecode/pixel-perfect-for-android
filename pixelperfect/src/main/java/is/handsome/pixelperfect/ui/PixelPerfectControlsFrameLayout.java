@@ -153,7 +153,7 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String fullName = (String) parent.getItemAtPosition(position);
                 if (controlsListener != null) {
-                    controlsListener.onUpdateImage(fullName);
+                    controlsListener.onUpdateImage(null);
                 }
             }
 

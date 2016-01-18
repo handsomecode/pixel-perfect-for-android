@@ -2,6 +2,7 @@ package is.handsome.pixelperfect;
 
 import android.app.Service;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.view.Gravity;
@@ -32,10 +33,8 @@ public class PixelPerfectController {
     }
 
     public interface SettingsListener {
-        void closeSettings();
-
         void onSetImageAlpha(float alpha);
-        void onUpdateImage(String fullName);
+        void onUpdateImage(Bitmap bitmap);
     }
 
     private final WindowManager windowManager;
@@ -94,7 +93,7 @@ public class PixelPerfectController {
             @Override
             public void onBackPressed() {
                 if (settingsView.getVisibility() == View.VISIBLE) {
-                    settingsView.setVisibility(View.GONE);
+                    settingsView.onBack();
                 } else {
                     if (listener != null) {
                         listener.onClosePixelPerfect();
@@ -165,20 +164,16 @@ public class PixelPerfectController {
         settingsView.setVisibility(View.GONE);
         settingsView.setListener(new SettingsListener() {
             @Override
-            public void closeSettings() {
-                settingsView.setVisibility(View.GONE);
-            }
-
-            @Override
             public void onSetImageAlpha(float alpha) {
                 pixelPerfectLayout.setImageAlpha(alpha);
             }
 
             @Override
-            public void onUpdateImage(String fullName) {
-                pixelPerfectLayout.updateImage(fullName);
+            public void onUpdateImage(Bitmap bitmap) {
+                pixelPerfectLayout.updateImage(bitmap);
             }
         });
+        settingsView.setImageOverlay(1);
     }
 
     private void addOffsetPixelsView() {

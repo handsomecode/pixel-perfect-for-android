@@ -130,7 +130,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
     public void setImageVisible(boolean visible) {
         if (visible && pixelPerfectOverlayImageView.getDrawable() == null) {
-            updateImage(null);
+            updateImage("");
         }
         pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : GONE);
         pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
@@ -146,6 +146,15 @@ public class PixelPerfectLayout extends FrameLayout {
 
     public float getImageAlpha() {
         return pixelPerfectOverlayImageView.getAlpha();
+    }
+
+    public void updateImage(Bitmap bitmap) {
+        pixelPerfectOverlayImageView.setTranslationY(0);
+        if (bitmap == null) {
+            pixelPerfectOverlayImageView.setImageDrawable(null);
+        } else {
+            pixelPerfectOverlayImageView.setImageBitmap(bitmap);
+        }
     }
 
     public void updateImage(String fullName) {
@@ -184,8 +193,8 @@ public class PixelPerfectLayout extends FrameLayout {
             }
 
             @Override
-            public void onUpdateImage(String fullName) {
-                updateImage(fullName);
+            public void onUpdateImage(Bitmap bitmap) {
+                //updateImage(bitmap);
             }
         });
 

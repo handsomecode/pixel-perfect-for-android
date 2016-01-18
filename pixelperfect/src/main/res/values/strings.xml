@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">PixelPerfect</string>
-    <string name="screen_settings">Pixel Perfect Settings</string>
+    <string name="settings_name">Pixel Perfect</string>
 </resources>

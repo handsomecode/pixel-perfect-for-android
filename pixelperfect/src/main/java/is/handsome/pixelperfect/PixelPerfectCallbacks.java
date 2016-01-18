@@ -1,12 +1,14 @@
 package is.handsome.pixelperfect;
 
+import android.graphics.Bitmap;
+
 public class PixelPerfectCallbacks {
 
     public interface ControlsListener {
 
         void onSetImageAlpha(float alpha);
 
-        void onUpdateImage(String fullName);
+        void onUpdateImage(Bitmap bitmap);
     }
 
     public interface ActionsListener {

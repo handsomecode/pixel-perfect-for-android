@@ -6,4 +6,7 @@
     <color name="black_50_alpha">#80000000</color>
     <color name="black_70_alpha">#B3000000</color>
     <color name="black">#000000</color>
+    <color name="gray_dd">#dddddd</color>
+
+    <color name="color_accent">#00a5c4</color>
 </resources>

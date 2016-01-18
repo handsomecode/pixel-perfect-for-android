@@ -3,24 +3,40 @@ package is.handsome.pixelperfect.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import is.handsome.pixelperfect.ImagesAdapter;
+import is.handsome.pixelperfect.MockupImage;
 import is.handsome.pixelperfect.PixelPerfectController;
+import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
-import is.handsome.pixelperfect.ScreensNamesAdapter;
 
 public class SettingsView extends FrameLayout {
 
-    private View exitButton;
-    private PixelPerfectController.SettingsListener settingsListener;
+    public interface AdapterListener {
+        void onItemSelected(int position);
+    }
 
-    private FrameLayout pixelPerfectMockupsFrameLayout;
+    private PixelPerfectController.SettingsListener settingsListener;
+    private List<MockupImage> images;
+
     private SeekBar opacitySeekBar;
+    private View opacityDemoView;
+    private View firstScreenOptionsView;
+    private View secondScreenImagesView;
+    private View exitButton;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
 
     public SettingsView(Context context) {
         super(context);
@@ -48,6 +64,25 @@ public class SettingsView extends FrameLayout {
         this.settingsListener = listener;
     }
 
+    public void setImageOverlay(int position) {
+        if (settingsListener != null && images.size() > position) {
+            settingsListener.onUpdateImage(images.get(position).bitmap);
+        }
+    }
+
+    public void updateOpacityProgress(float currentAlpha) {
+        opacitySeekBar.setProgress((int) (currentAlpha * 100));
+    }
+
+    public void onBack() {
+        if (secondScreenImagesView.getVisibility() == VISIBLE) {
+            secondScreenImagesView.setVisibility(GONE);
+            firstScreenOptionsView.setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
+        }
+    }
+
     private void init() {
         inflate(getContext(), R.layout.layout_settings, this);
         exitButton = findViewById(R.id.settings_exit_button);
@@ -55,18 +90,24 @@ public class SettingsView extends FrameLayout {
 
             @Override
             public void onClick(View v) {
-                settingsListener.closeSettings();
+                exitSettingsView();
             }
         };
         exitButton.setOnClickListener(exitButtonListener);
-        findViewById(R.id.settings_opacity_confirm_image_view).setOnClickListener(exitButtonListener);
 
         initOpacityWidget();
-        initMockupsWidget();
-    }
+        initImagesRecyclerView();
 
-    public void updateOpacityProgress(float currentAlpha) {
-        opacitySeekBar.setProgress((int) (currentAlpha * 100));
+        findViewById(R.id.settings_images_option_linear_layout).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.settings_linear_layout).setVisibility(GONE);
+                findViewById(R.id.settings_images_recycler_view).setVisibility(VISIBLE);
+            }
+        });
+
+        firstScreenOptionsView = findViewById(R.id.settings_linear_layout);
+        secondScreenImagesView = findViewById(R.id.settings_images_recycler_view);
     }
 
     private void initOpacityWidget() {
@@ -76,6 +117,7 @@ public class SettingsView extends FrameLayout {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (settingsListener != null) {
                     settingsListener.onSetImageAlpha(progress / 100.0f);
+                    opacityDemoView.setAlpha(progress / 100.0f);
                 }
             }
 
@@ -89,26 +131,52 @@ public class SettingsView extends FrameLayout {
 
             }
         });
+        opacityDemoView = findViewById(R.id.settings_opacity_demo_view);
     }
 
-    private void initMockupsWidget() {
-        pixelPerfectMockupsFrameLayout = (FrameLayout) findViewById(R.id.settings_mockups_frame_layout);
-        Spinner spinner = (Spinner) pixelPerfectMockupsFrameLayout.findViewById(R.id.settings_mockups_spinner);
-        spinner.setAdapter(new ScreensNamesAdapter(getContext()));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void initImagesRecyclerView() {
+        recyclerView = (RecyclerView) findViewById(R.id.settings_images_recycler_view);
+
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new GridLayoutManager(getContext(), 3);
+        recyclerView.setLayoutManager(layoutManager);
+
+        addImagesContent();
+
+        recyclerView.setAdapter(new ImagesAdapter(getContext(), images, new AdapterListener() {
+
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String fullName = (String) parent.getItemAtPosition(position);
+            public void onItemSelected(int position) {
                 if (settingsListener != null) {
-                    settingsListener.onUpdateImage(fullName);
+                    settingsListener.onUpdateImage(images.get(position).bitmap);
+                    exitSettingsView();
                 }
             }
+        }));
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+    private void addImagesContent() {
+        images = new ArrayList<>();
+        String[] filenames;
 
-            }
-        });
-        spinner.setSelection(1, true);
+        try {
+            filenames = getContext().getAssets().list("pixelperfect");
+        } catch (IOException e) {
+            filenames = new String[0];
+        }
+        for (int i = 0; i < filenames.length; i++) {
+            MockupImage mockupImage = new MockupImage();
+            mockupImage.name = filenames[i].substring(0, filenames[i].indexOf("."));
+            //TODO: add bitmap decoding max size
+            mockupImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), "pixelperfect" + "/" + filenames[i]);
+            images.add(mockupImage);
+        }
+    }
+
+    private void exitSettingsView() {
+        firstScreenOptionsView.setVisibility(VISIBLE);
+        secondScreenImagesView.setVisibility(GONE);
+        setVisibility(GONE);
     }
 }
