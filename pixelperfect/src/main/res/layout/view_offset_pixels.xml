@@ -7,7 +7,7 @@
               android:background="@color/black_70_alpha">
 
     <TextView
-        android:id="@+id/diff_pixels_x"
+        android:id="@+id/offset_x_text_view"
         android:layout_width="55dp"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -16,7 +16,7 @@
         android:text="0 px"/>
 
     <TextView
-        android:id="@+id/diff_pixels_y"
+        android:id="@+id/offset_y_text_view"
         android:layout_width="55dp"
         android:layout_height="wrap_content"
         android:gravity="center"

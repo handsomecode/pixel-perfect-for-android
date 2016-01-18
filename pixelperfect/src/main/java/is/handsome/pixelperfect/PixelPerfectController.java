@@ -35,6 +35,7 @@ public class PixelPerfectController {
     public interface SettingsListener {
         void onSetImageAlpha(float alpha);
         void onUpdateImage(Bitmap bitmap);
+        void onFixOffset();
     }
 
     private final WindowManager windowManager;
@@ -42,6 +43,8 @@ public class PixelPerfectController {
     private SettingsView settingsView;
     private PixelPerfectLayout pixelPerfectLayout;
     private ViewGroup offsetPixelsView;
+    private TextView offsetXTextView;
+    private TextView offsetYTextView;
     private PixelPerfectCallbacks.ControllerListener listener;
 
     private WindowManager.LayoutParams offsetPixelsViewParams;
@@ -56,6 +59,8 @@ public class PixelPerfectController {
         pixelPerfectLayout = new PixelPerfectLayout(applicationContext);
         settingsView = new SettingsView(applicationContext);
         offsetPixelsView = (ViewGroup) LayoutInflater.from(applicationContext).inflate(R.layout.view_offset_pixels, null);
+        offsetXTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_x_text_view);
+        offsetYTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_y_text_view);
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(context);
@@ -105,7 +110,7 @@ public class PixelPerfectController {
                 overlayParams.x += dx;
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
 
-                ((TextView) offsetPixelsView.findViewById(R.id.diff_pixels_x)).setText(fixedOffsetX + overlayParams.x + " px");
+                offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
             }
 
             @Override
@@ -113,7 +118,7 @@ public class PixelPerfectController {
                 overlayParams.y += dy;
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
 
-                ((TextView) offsetPixelsView.findViewById(R.id.diff_pixels_y)).setText(fixedOffsetY + overlayParams.y + " px");
+                offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
             }
 
             @Override
@@ -144,6 +149,7 @@ public class PixelPerfectController {
             @Override
             public void openSettings() {
                 settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
+                settingsView.updateOffset(fixedOffsetX + overlayParams.x, fixedOffsetY + overlayParams.y);
                 settingsView.setVisibility(View.VISIBLE);
             }
         });
@@ -170,6 +176,15 @@ public class PixelPerfectController {
             @Override
             public void onUpdateImage(Bitmap bitmap) {
                 pixelPerfectLayout.updateImage(bitmap);
+            }
+
+            @Override
+            public void onFixOffset() {
+                fixedOffsetX = overlayParams.x * -1;
+                fixedOffsetY = overlayParams.y * -1;
+
+                offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
+                offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
             }
         });
         settingsView.setImageOverlay(1);

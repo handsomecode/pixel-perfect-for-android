@@ -5,7 +5,7 @@
                 android:layout_margin="40dp">
 
     <TextView
-        android:id="@+id/diff_pixels_x"
+        android:id="@+id/offset_x_text_view"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="45dp"
@@ -63,7 +63,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/diff_pixels_y"
+        android:id="@+id/offset_y_text_view"
         android:layout_width="44dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"

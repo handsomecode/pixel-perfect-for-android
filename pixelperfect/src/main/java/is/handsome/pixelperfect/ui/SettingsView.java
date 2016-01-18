@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ public class SettingsView extends FrameLayout {
     private View firstScreenOptionsView;
     private View secondScreenImagesView;
     private View exitButton;
+    private TextView imageNameTextView;
+    private TextView offsetTextView;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -67,6 +70,7 @@ public class SettingsView extends FrameLayout {
     public void setImageOverlay(int position) {
         if (settingsListener != null && images.size() > position) {
             settingsListener.onUpdateImage(images.get(position).bitmap);
+            imageNameTextView.setText(images.get(position).name);
         }
     }
 
@@ -81,6 +85,10 @@ public class SettingsView extends FrameLayout {
         } else {
             setVisibility(GONE);
         }
+    }
+
+    public void updateOffset(int x, int y) {
+        offsetTextView.setText("(" + x + "px, " + y + "px)");
     }
 
     private void init() {
@@ -106,8 +114,18 @@ public class SettingsView extends FrameLayout {
             }
         });
 
+        findViewById(R.id.settings_offset_option_linear_layout).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                settingsListener.onFixOffset();
+                offsetTextView.setText("(0px, 0px)");
+            }
+        });
+
         firstScreenOptionsView = findViewById(R.id.settings_linear_layout);
         secondScreenImagesView = findViewById(R.id.settings_images_recycler_view);
+        imageNameTextView = (TextView) findViewById(R.id.settings_image_name);
+        offsetTextView = (TextView) findViewById(R.id.settings_offset_text_view);
     }
 
     private void initOpacityWidget() {
@@ -150,6 +168,7 @@ public class SettingsView extends FrameLayout {
             public void onItemSelected(int position) {
                 if (settingsListener != null) {
                     settingsListener.onUpdateImage(images.get(position).bitmap);
+                    imageNameTextView.setText(images.get(position).name);
                     exitSettingsView();
                 }
             }
@@ -167,7 +186,7 @@ public class SettingsView extends FrameLayout {
         }
         for (int i = 0; i < filenames.length; i++) {
             MockupImage mockupImage = new MockupImage();
-            mockupImage.name = filenames[i].substring(0, filenames[i].indexOf("."));
+            mockupImage.name = filenames[i];
             //TODO: add bitmap decoding max size
             mockupImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), "pixelperfect" + "/" + filenames[i]);
             images.add(mockupImage);
