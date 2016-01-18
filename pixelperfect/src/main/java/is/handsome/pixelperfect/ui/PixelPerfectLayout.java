@@ -293,8 +293,8 @@ public class PixelPerfectLayout extends FrameLayout {
 
         @Override
         public boolean onDoubleTap(MotionEvent event) {
-            magnifierFrameLayout.updateTouchData(event);
-            showMagnifierMode((int) event.getX(), (int) event.getY());
+            //magnifierFrameLayout.updateTouchData(event);
+            //showMagnifierMode((int) event.getX(), (int) event.getY());
             return true;
         }
 
@@ -315,7 +315,7 @@ public class PixelPerfectLayout extends FrameLayout {
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
             if (layoutListener != null) {
-                layoutListener.showOffsetView((int) event.getRawX() - 100, (int) event.getRawY() - 170);
+                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
             }
             moveMockupOverlay(event);
             return true;

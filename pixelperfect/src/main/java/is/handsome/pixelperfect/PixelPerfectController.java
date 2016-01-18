@@ -141,8 +141,8 @@ public class PixelPerfectController {
             @Override
             public void showOffsetView(int xPos, int yPos) {
                 offsetPixelsView.setVisibility(View.VISIBLE);
-                offsetPixelsViewParams.x = xPos;
-                offsetPixelsViewParams.y = yPos;
+                offsetPixelsViewParams.x = xPos - offsetPixelsView.getWidth() / 2;
+                offsetPixelsViewParams.y = yPos - offsetPixelsView.getHeight() * 3;
                 windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
 
