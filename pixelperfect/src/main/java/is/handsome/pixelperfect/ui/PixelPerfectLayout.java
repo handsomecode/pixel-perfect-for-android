@@ -23,7 +23,7 @@ import is.handsome.pixelperfect.R;
 
 public class PixelPerfectLayout extends FrameLayout {
 
-    private static int MICRO_OFFSET = 7;
+    private static int MICRO_OFFSET = 8;
 
     public enum MoveMode {
         VERTICAL, HORIZONTAL, UNDEFINED
@@ -171,7 +171,7 @@ public class PixelPerfectLayout extends FrameLayout {
         FrameLayout.LayoutParams layoutParams = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
 
-        int margin = (int )getContext().getResources().getDimension(R.dimen.overlay_border_size);
+        int margin = (int) getContext().getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);
         pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
         pixelPerfectOverlayImageView.setAdjustViewBounds(true);
@@ -247,7 +247,7 @@ public class PixelPerfectLayout extends FrameLayout {
                 if (layoutListener != null) {
                     float dx = event.getRawX() - lastMotionEvent.getRawX();
                     if (Math.abs(dx) < MICRO_OFFSET) {
-                        micro_offset_dx += dx / MICRO_OFFSET;
+                        micro_offset_dx += dx / (MICRO_OFFSET * 2);
                         dx = Math.round(micro_offset_dx + dx / MICRO_OFFSET);
                         if (dx != 0) {
                             micro_offset_dx = 0;
@@ -261,7 +261,7 @@ public class PixelPerfectLayout extends FrameLayout {
                 if (layoutListener != null) {
                     float dy = event.getRawY() - lastMotionEvent.getRawY();
                     if (Math.abs(dy) < MICRO_OFFSET) {
-                        micro_offset_dy += dy / MICRO_OFFSET;
+                        micro_offset_dy += dy / (MICRO_OFFSET * 2);
                         dy = Math.round(micro_offset_dy + dy / MICRO_OFFSET);
                         if (dy != 0) {
                             micro_offset_dy = 0;
@@ -272,9 +272,13 @@ public class PixelPerfectLayout extends FrameLayout {
                     layoutListener.onMockupOverlayMoveY((int) dy);
                 }
             }
-            if (layoutListener != null) {
-                layoutListener.onOffsetViewMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
-                layoutListener.onOffsetViewMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
+            float dx = event.getRawX() - lastMotionEvent.getRawX();
+            if (Math.abs(dx) >= 3) {
+                layoutListener.onOffsetViewMoveX((int) dx);
+            }
+            float dy = event.getRawY() - lastMotionEvent.getRawY();
+            if (Math.abs(dy) >= 3) {
+                layoutListener.onOffsetViewMoveY((int) dy);
             }
             lastMotionEvent = MotionEvent.obtain(event);
         }
