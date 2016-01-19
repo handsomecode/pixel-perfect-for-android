@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -33,8 +34,7 @@ public class SettingsView extends FrameLayout {
     private SeekBar opacitySeekBar;
     private View opacityDemoView;
     private View firstScreenOptionsView;
-    private View secondScreenImagesView;
-    private View exitButton;
+    private ImageView exitButton;
     private TextView imageNameTextView;
     private TextView offsetTextView;
 
@@ -79,9 +79,10 @@ public class SettingsView extends FrameLayout {
     }
 
     public void onBack() {
-        if (secondScreenImagesView.getVisibility() == VISIBLE) {
-            secondScreenImagesView.setVisibility(GONE);
+        if (recyclerView.getVisibility() == VISIBLE) {
+            recyclerView.setVisibility(GONE);
             firstScreenOptionsView.setVisibility(VISIBLE);
+            exitButton.setImageResource(R.drawable.ic_settings_cancel);
         } else {
             setVisibility(GONE);
         }
@@ -93,12 +94,12 @@ public class SettingsView extends FrameLayout {
 
     private void init() {
         inflate(getContext(), R.layout.layout_settings, this);
-        exitButton = findViewById(R.id.settings_exit_button);
+        exitButton = (ImageView) findViewById(R.id.settings_exit_button);
         OnClickListener exitButtonListener = new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                exitSettingsView();
+                onBack();
             }
         };
         exitButton.setOnClickListener(exitButtonListener);
@@ -110,7 +111,8 @@ public class SettingsView extends FrameLayout {
             @Override
             public void onClick(View v) {
                 findViewById(R.id.settings_linear_layout).setVisibility(GONE);
-                findViewById(R.id.settings_images_recycler_view).setVisibility(VISIBLE);
+                recyclerView.setVisibility(VISIBLE);
+                exitButton.setImageResource(R.drawable.ic_back);
             }
         });
 
@@ -123,7 +125,6 @@ public class SettingsView extends FrameLayout {
         });
 
         firstScreenOptionsView = findViewById(R.id.settings_linear_layout);
-        secondScreenImagesView = findViewById(R.id.settings_images_recycler_view);
         imageNameTextView = (TextView) findViewById(R.id.settings_image_name);
         offsetTextView = (TextView) findViewById(R.id.settings_offset_text_view);
     }
@@ -195,7 +196,8 @@ public class SettingsView extends FrameLayout {
 
     private void exitSettingsView() {
         firstScreenOptionsView.setVisibility(VISIBLE);
-        secondScreenImagesView.setVisibility(GONE);
+        recyclerView.setVisibility(GONE);
+        exitButton.setImageResource(R.drawable.ic_settings_cancel);
         setVisibility(GONE);
     }
 }
