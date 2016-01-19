@@ -89,10 +89,13 @@ public class PixelPerfectController {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
 
-        overlayParams.gravity = Gravity.TOP | Gravity.LEFT;
+        overlayParams.gravity = Gravity.TOP | Gravity.START;
 
         overlayParams.y = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
         fixedOffsetY = Math.abs(overlayParams.y);
+
+        overlayParams.x = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
+        fixedOffsetX = Math.abs(overlayParams.x);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 && PixelPerfectUtils.isTranslucentStatusBar(context)) {
