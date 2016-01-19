@@ -88,7 +88,7 @@ public class PixelPerfectController {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
 
-        overlayParams.gravity = Gravity.TOP;
+        overlayParams.gravity = Gravity.TOP | Gravity.LEFT;
 
         overlayParams.y = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
         fixedOffsetY = Math.abs(overlayParams.y);
@@ -99,6 +99,9 @@ public class PixelPerfectController {
             fixedOffsetY = Math.abs(overlayParams.y);
         }
         windowManager.addView(pixelPerfectLayout, overlayParams);
+
+        final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);
+        final int statusBarSize = (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
 
         pixelPerfectLayout.setLayoutListener(new LayoutListener() {
 
@@ -115,18 +118,24 @@ public class PixelPerfectController {
 
             @Override
             public void onMockupOverlayMoveX(int dx) {
-                overlayParams.x += dx;
-                windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+                if (overlayParams.x + dx + pixelPerfectLayout.getWidth() >= overlayMinimumVisibleSize
+                        && PixelPerfectUtils.getWindowWidth(windowManager) - overlayParams.x - dx >= overlayMinimumVisibleSize) {
+                    overlayParams.x += dx;
+                    windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
 
-                offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
+                    offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
+                }
             }
 
             @Override
             public void onMockupOverlayMoveY(int dy) {
-                overlayParams.y += dy;
-                windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+                if (overlayParams.y + dy + pixelPerfectLayout.getHeight() >= overlayMinimumVisibleSize
+                        && PixelPerfectUtils.getWindowHeight(windowManager) - statusBarSize - overlayParams.y - dy >= overlayMinimumVisibleSize) {
+                    overlayParams.y += dy;
+                    windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
 
-                offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
+                    offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
+                }
             }
 
             @Override

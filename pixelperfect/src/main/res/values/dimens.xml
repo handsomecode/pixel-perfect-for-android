@@ -10,4 +10,5 @@
 
     <dimen name="android_status_bar_height">25dp</dimen>
     <dimen name="overlay_border_size">1dp</dimen>
+    <dimen name="overlay_minimum_visible_size">50dp</dimen>
 </resources>
