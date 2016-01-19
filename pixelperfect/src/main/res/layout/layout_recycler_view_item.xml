@@ -28,6 +28,7 @@
         android:gravity="center"
         android:minWidth="100dp"
         android:padding="4dp"
-        android:text="name.png"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:textColor="@color/white"/>
 </FrameLayout>
