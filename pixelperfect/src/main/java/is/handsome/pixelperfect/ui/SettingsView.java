@@ -7,6 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -37,6 +39,7 @@ public class SettingsView extends FrameLayout {
     private ImageView exitButton;
     private TextView imageNameTextView;
     private TextView offsetTextView;
+    private CheckBox inverseCheckbox;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -127,6 +130,13 @@ public class SettingsView extends FrameLayout {
         firstScreenOptionsView = findViewById(R.id.settings_linear_layout);
         imageNameTextView = (TextView) findViewById(R.id.settings_image_name);
         offsetTextView = (TextView) findViewById(R.id.settings_offset_text_view);
+        inverseCheckbox = (CheckBox) findViewById(R.id.inverse_checkbox);
+        inverseCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                settingsListener.onInverseChecked();
+            }
+        });
     }
 
     private void initOpacityWidget() {

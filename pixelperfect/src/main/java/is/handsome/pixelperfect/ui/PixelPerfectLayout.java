@@ -3,6 +3,7 @@ package is.handsome.pixelperfect.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -164,6 +165,13 @@ public class PixelPerfectLayout extends FrameLayout {
         } else {
             pixelPerfectOverlayImageView.setImageBitmap(PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName));
         }
+    }
+
+    public void invertImageBitmap() {
+        setImageAlpha(0.5f);
+        Bitmap srcBitmap = ((BitmapDrawable) pixelPerfectOverlayImageView.getDrawable()).getBitmap();
+        Bitmap invertedBitmap = PixelPerfectUtils.invertBitmap(srcBitmap);
+        pixelPerfectOverlayImageView.setImageBitmap(invertedBitmap);
     }
 
     private void initOverlay() {

@@ -6,6 +6,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -93,6 +97,23 @@ public class PixelPerfectUtils {
                 }
             }
         }
+    }
+
+    public static Bitmap invertBitmap(Bitmap src) {
+        ColorMatrix invertedColorMatrix =
+                new ColorMatrix(new float[]{
+                        -1, 0, 0, 0, 255,
+                        0, -1, 0, 0, 255,
+                        0, 0, -1, 0, 255,
+                        0, 0, 0, 1, 0});
+
+        ColorFilter sepiaColorFilter = new ColorMatrixColorFilter(invertedColorMatrix);
+        Bitmap bitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setColorFilter(sepiaColorFilter);
+        canvas.drawBitmap(src, 0, 0, paint);
+        return bitmap;
     }
 
     private static Bitmap decodeSampledBitmapFromInputStream(InputStream inputStream, int reqWidth) {

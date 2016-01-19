@@ -161,8 +161,10 @@
                         android:textSize="19sp"/>
 
                     <CheckBox
+                        android:id="@+id/inverse_checkbox"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/black_50_alpha"/>
 
                 </LinearLayout>
 

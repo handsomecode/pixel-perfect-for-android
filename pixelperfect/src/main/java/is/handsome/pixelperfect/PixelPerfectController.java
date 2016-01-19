@@ -36,6 +36,7 @@ public class PixelPerfectController {
         void onSetImageAlpha(float alpha);
         void onUpdateImage(Bitmap bitmap);
         void onFixOffset();
+        void onInverseChecked();
     }
 
     private final WindowManager windowManager;
@@ -202,6 +203,12 @@ public class PixelPerfectController {
 
                 offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
                 offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
+            }
+
+            @Override
+            public void onInverseChecked() {
+                pixelPerfectLayout.invertImageBitmap();
+                settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
             }
         });
         settingsView.setImageOverlay(1);
