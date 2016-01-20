@@ -53,10 +53,11 @@ public class ScreensNamesAdapter extends BaseAdapter {
     }
 
     private String getTitle(int position) {
-        if (position == 0) {
+        return "none";
+        /*if (position == 0) {
             return "none";
         } else {
             return filenames[position - 1].substring(0, filenames[position - 1].indexOf("."));
-        }
+        }*/
     }
 }

@@ -78,13 +78,14 @@ public class PixelPerfectLayout extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        int x = (int) event.getRawX();
+        return pixelPerfectOverlayImageView.getVisibility() == VISIBLE || super.onInterceptTouchEvent(event);
+        /*int x = (int) event.getRawX();
         int y = (int) event.getRawY();
         if (pixelPerfectControlsFrameLayout.inBounds(x, y) || !pixelPerfectContext || magnifierFrameLayout.getVisibility() == VISIBLE) {
             return false;
         } else {
             return pixelPerfectOverlayImageView.getVisibility() == VISIBLE || super.onInterceptTouchEvent(event);
-        }
+        }*/
     }
 
     @Override

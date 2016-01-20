@@ -45,8 +45,10 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         String name = images.get(position).name;
-        holder.textView.setText(name.substring(0, name.indexOf(".")));
-        holder.imageView.setImageBitmap(images.get(position).bitmap);
+        holder.textView.setText(name.contains(".") ? name.substring(0, name.indexOf(".")) : name);
+        if (images.get(position).bitmap != null) {
+            holder.imageView.setImageBitmap(images.get(position).bitmap);
+        }
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

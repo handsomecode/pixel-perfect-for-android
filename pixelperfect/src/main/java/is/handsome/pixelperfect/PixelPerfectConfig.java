@@ -2,11 +2,14 @@ package is.handsome.pixelperfect;
 
 import android.app.Activity;
 
+import java.util.List;
+
 public class PixelPerfectConfig {
 
     private static PixelPerfectConfig instance = null;
 
     public boolean useVolumeButtons;
+    public List<MockupImage> userImages;
 
     public Activity topActivity;
 

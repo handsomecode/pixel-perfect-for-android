@@ -5,5 +5,5 @@ import android.graphics.Bitmap;
 public class MockupImage {
 
     public Bitmap bitmap;
-    public String name;
+    public String name = "No name";
 }

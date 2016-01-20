@@ -53,7 +53,7 @@ public class PixelPerfectUtils {
                 == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
     }
 
-    public static Bitmap takeActivityScreenshot() {
+    static Bitmap takeActivityScreenshot() {
         View rootView = ((ViewGroup) PixelPerfectConfig.get().getTopActivity()
                 .findViewById(android.R.id.content)).getChildAt(0).getRootView();
         rootView.setDrawingCacheEnabled(true);

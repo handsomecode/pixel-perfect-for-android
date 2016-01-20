@@ -214,7 +214,8 @@ public class PixelPerfectController {
                 settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
             }
         });
-        settingsView.setImageOverlay(1);
+        settingsView.addUserImages(PixelPerfectConfig.get().userImages);
+        settingsView.setImageOverlay(0);
     }
 
     private void addOffsetPixelsView() {

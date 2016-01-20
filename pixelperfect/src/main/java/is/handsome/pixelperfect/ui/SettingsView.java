@@ -32,7 +32,7 @@ public class SettingsView extends FrameLayout {
     }
 
     private PixelPerfectController.SettingsListener settingsListener;
-    private List<MockupImage> images;
+    private List<MockupImage> images = new ArrayList<>();
 
     private SeekBar opacitySeekBar;
     private View opacityDemoView;
@@ -69,6 +69,12 @@ public class SettingsView extends FrameLayout {
 
     public void setListener(PixelPerfectController.SettingsListener listener) {
         this.settingsListener = listener;
+    }
+
+    public void addUserImages(List<MockupImage> userImages) {
+        if (userImages != null) {
+            images.addAll(userImages);
+        }
     }
 
     public void setImageOverlay(int position) {
@@ -188,7 +194,6 @@ public class SettingsView extends FrameLayout {
     }
 
     private void addImagesContent() {
-        images = new ArrayList<>();
         String[] filenames;
 
         try {

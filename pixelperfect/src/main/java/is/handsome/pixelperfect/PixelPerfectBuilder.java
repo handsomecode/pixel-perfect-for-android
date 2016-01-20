@@ -8,6 +8,8 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import java.util.List;
+
 public class PixelPerfectBuilder {
 
     private static PixelPerfectController pixelPerfectController;
@@ -69,6 +71,11 @@ public class PixelPerfectBuilder {
             }
         });
         AppLifeCycleObserver.get(activity).addListener(foregroundListener);
+    }
+
+    public PixelPerfectBuilder withImages(List<MockupImage> images) {
+        PixelPerfectConfig.get().userImages = images;
+        return this;
     }
 
     /**

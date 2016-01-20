@@ -87,8 +87,8 @@ public class PixelPerfectControlsFrameLayout extends FrameLayout {
         addView(pixelPerfectActionsView, new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         addActionsListeners();
 
-        initOpacityWidget();
-        initMockupsWidget();
+        //initOpacityWidget();
+        //initMockupsWidget();
     }
 
     private void addActionsListeners() {
