@@ -6,11 +6,26 @@ public class PixelPerfect {
         return new PixelPerfectBuilder();
     }
 
+    public static boolean isCreated() {
+        return PixelPerfectBuilder.isCreated();
+    }
+
+    public static boolean isShown() {
+        if (isCreated()) {
+            return PixelPerfectBuilder.isShown();
+        }
+        return false;
+    }
+
+    public static void show() {
+        PixelPerfectBuilder.show();
+    }
+
     public static void hide() {
         PixelPerfectBuilder.hide();
     }
 
-    public static boolean isShown() {
-        return PixelPerfectBuilder.isShown();
+    public static void destroy() {
+        PixelPerfectBuilder.destroy();
     }
 }

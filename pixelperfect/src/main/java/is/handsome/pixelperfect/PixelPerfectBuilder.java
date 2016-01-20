@@ -30,7 +30,7 @@ public class PixelPerfectBuilder {
      * removes views from the window
      * nulls all static variables
      */
-    protected static void hide() {
+    protected static void destroy() {
         try {
             AppLifeCycleObserver.get().removeListener(foregroundListener);
         } catch (IllegalStateException exception) {
@@ -65,7 +65,7 @@ public class PixelPerfectBuilder {
         pixelPerfectController.setListener(new PixelPerfectCallbacks.ControllerListener() {
             @Override
             public void onClosePixelPerfect() {
-                hide();
+                destroy();
             }
         });
         AppLifeCycleObserver.get(activity).addListener(foregroundListener);
@@ -75,7 +75,7 @@ public class PixelPerfectBuilder {
      * checks if Pixel Perfect Tool
      * is displayed on the screen now
      */
-    public static boolean isShown() {
+    public static boolean isCreated() {
         return pixelPerfectController != null;
     }
 
@@ -88,6 +88,18 @@ public class PixelPerfectBuilder {
     public PixelPerfectBuilder useVolumeButtons(boolean use) {
         PixelPerfectConfig.get().useVolumeButtons = use;
         return this;
+    }
+
+    public static void show() {
+        pixelPerfectController.show();
+    }
+
+    public static void hide() {
+        pixelPerfectController.hide();
+    }
+
+    public static boolean isShown() {
+        return pixelPerfectController.isShown();
     }
 
     /**

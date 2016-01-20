@@ -40,12 +40,12 @@ public class HomeActivity extends AppCompatActivity {
         pixelPerfectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!PixelPerfect.isShown()) {
-                    PixelPerfect.create().useVolumeButtons(true).show(HomeActivity.this);
-                    pixelPerfectButton.setText(R.string.button_hide);
-                } else {
+                if (PixelPerfect.isShown()) {
                     PixelPerfect.hide();
                     pixelPerfectButton.setText(R.string.button_show);
+                } else {
+                    PixelPerfect.show();
+                    pixelPerfectButton.setText(R.string.button_hide);
                 }
             }
         });

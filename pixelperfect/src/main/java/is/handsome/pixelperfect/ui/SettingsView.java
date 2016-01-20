@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -209,5 +210,16 @@ public class SettingsView extends FrameLayout {
         recyclerView.setVisibility(GONE);
         exitButton.setImageResource(R.drawable.ic_settings_cancel);
         setVisibility(GONE);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
+            onBack();
+        }
+        return super.dispatchKeyEvent(event);
     }
 }
