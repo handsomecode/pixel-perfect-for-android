@@ -67,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private List<MockupImage> createImages() {
-        List<MockupImage> images = new ArrayList<>(2);
+        List<MockupImage> images = new ArrayList<>(1);
 
         pixelPerfectButton.setVisibility(View.INVISIBLE);
 

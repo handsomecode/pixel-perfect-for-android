@@ -36,18 +36,4 @@
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:text="@string/button_show"/>
-
-    <ImageView
-        android:id="@+id/home_image_view1"
-        android:layout_width="60dp"
-        android:layout_height="160dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/home_image_view2"
-        android:layout_width="60dp"
-        android:layout_height="160dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"/>
 </LinearLayout>
