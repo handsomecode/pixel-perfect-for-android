@@ -86,4 +86,12 @@ public class HomeActivity extends AppCompatActivity {
         rootView.setDrawingCacheEnabled(true);
         return rootView.getDrawingCache();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (PixelPerfect.isCreated()) {
+            PixelPerfect.destroy();
+        }
+    }
 }
