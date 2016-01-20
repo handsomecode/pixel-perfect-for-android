@@ -47,7 +47,7 @@
             android:id="@+id/settings_images_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
+            android:layout_margin="5dp"
             android:visibility="gone"/>
 
         <ScrollView

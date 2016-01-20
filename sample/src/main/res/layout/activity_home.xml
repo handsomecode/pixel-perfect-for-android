@@ -7,27 +7,32 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <ImageView
-        android:id="@+id/home_image_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:onClick="onImageClick"
-        android:scaleType="centerCrop"
-        android:src="@drawable/cute_image"/>
+        android:layout_weight="1">
 
-    <View
+        <ImageView
+            android:id="@+id/home_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/im_cat"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="110dp"
+            android:text="@string/pixel_perfect"
+            android:textColor="@color/white"
+            android:textSize="40sp"/>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/pixel_perfect_button"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="50dp"
-        android:background="@color/colorPrimaryDark"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="@string/greetings"
-        android:textSize="50sp"
-        android:textStyle="bold"/>
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/button_hide"/>
 </LinearLayout>

@@ -3,6 +3,7 @@ package is.handsome.pixelperfectsample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -12,6 +13,8 @@ import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
+
+    private Button pixelPerfectButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +29,25 @@ public class HomeActivity extends AppCompatActivity {
             Fabric.with(this, new Crashlytics());
             PixelPerfect.create().useVolumeButtons(true).show(this);
         }
+        init();
     }
 
-    public void onImageClick(View view) {
+    public void init() {
+        pixelPerfectButton = (Button) findViewById(R.id.pixel_perfect_button);
         if (!PixelPerfect.isShown()) {
-            PixelPerfect.create().useVolumeButtons(true).show(this);
-        } else {
-            PixelPerfect.hide();
+            pixelPerfectButton.setText(R.string.button_show);
         }
+        pixelPerfectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!PixelPerfect.isShown()) {
+                    PixelPerfect.create().useVolumeButtons(true).show(HomeActivity.this);
+                    pixelPerfectButton.setText(R.string.button_hide);
+                } else {
+                    PixelPerfect.hide();
+                    pixelPerfectButton.setText(R.string.button_show);
+                }
+            }
+        });
     }
 }

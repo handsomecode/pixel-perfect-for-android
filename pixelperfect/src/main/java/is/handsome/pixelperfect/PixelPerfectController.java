@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
-import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,10 +80,11 @@ public class PixelPerfectController {
     private void addOverlayMockup(Context context) {
         int overlayWidth = PixelPerfectUtils.getWindowWidth(windowManager)
                 + 2 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
-
+        int overlayHeight = PixelPerfectUtils.getWindowHeight(windowManager)
+                + 2 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
         overlayParams = new WindowManager.LayoutParams(
                 overlayWidth,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                overlayHeight,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
@@ -97,11 +97,11 @@ public class PixelPerfectController {
         overlayParams.x = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
         fixedOffsetX = Math.abs(overlayParams.x);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && PixelPerfectUtils.isTranslucentStatusBar(context)) {
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        //        && PixelPerfectUtils.isTranslucentStatusBar(context)) {
             overlayParams.y -= (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
             fixedOffsetY = Math.abs(overlayParams.y);
-        }
+        //}
         windowManager.addView(pixelPerfectLayout, overlayParams);
 
         final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);

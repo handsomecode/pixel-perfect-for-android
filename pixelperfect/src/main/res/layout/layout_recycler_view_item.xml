@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:layout_margin="5dp">
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -13,8 +14,8 @@
 
         <ImageView
             android:id="@+id/recycler_item_image_view"
-            android:layout_width="100dp"
-            android:layout_height="160dp"
+            android:layout_width="90dp"
+            android:layout_height="150dp"
             android:scaleType="centerCrop"
             android:layout_margin="2dp"/>
     </FrameLayout>
