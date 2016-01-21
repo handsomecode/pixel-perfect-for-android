@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
-import is.handsome.pixelperfect.MockupImage;
+import is.handsome.pixelperfect.PixelPerfectImage;
 import is.handsome.pixelperfect.PixelPerfect;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
@@ -66,12 +66,12 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private List<MockupImage> createImages() {
-        List<MockupImage> images = new ArrayList<>(1);
+    private List<PixelPerfectImage> createImages() {
+        List<PixelPerfectImage> images = new ArrayList<>(1);
 
         pixelPerfectButton.setVisibility(View.INVISIBLE);
 
-        MockupImage correctImage = new MockupImage();
+        PixelPerfectImage correctImage = new PixelPerfectImage();
         correctImage.name = "Correct";
         correctImage.bitmap = takeActivityScreenshot();
         images.add(correctImage);

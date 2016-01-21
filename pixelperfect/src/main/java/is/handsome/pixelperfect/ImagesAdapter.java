@@ -26,11 +26,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         }
     }
 
-    private List<MockupImage> images = Collections.EMPTY_LIST;
+    private List<PixelPerfectImage> images = Collections.EMPTY_LIST;
     private SettingsView.AdapterListener listener;
     private final LayoutInflater layoutInflater;
 
-    public ImagesAdapter(Context context, List<MockupImage> images, SettingsView.AdapterListener listener) {
+    public ImagesAdapter(Context context, List<PixelPerfectImage> images, SettingsView.AdapterListener listener) {
         this.images = images;
         this.layoutInflater = LayoutInflater.from(context);
         this.listener = listener;

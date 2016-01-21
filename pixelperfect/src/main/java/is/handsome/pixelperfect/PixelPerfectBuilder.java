@@ -47,7 +47,7 @@ public class PixelPerfectBuilder {
 
     /**
      * shows pixel perfect tool that
-     * displays floating button and options menu
+     * displays screen overlay and settings view
      *
      * @param activity
      */
@@ -64,16 +64,10 @@ public class PixelPerfectBuilder {
         }
 
         pixelPerfectController = new PixelPerfectController(activity);
-        pixelPerfectController.setListener(new PixelPerfectCallbacks.ControllerListener() {
-            @Override
-            public void onClosePixelPerfect() {
-                destroy();
-            }
-        });
         AppLifeCycleObserver.get(activity).addListener(foregroundListener);
     }
 
-    public PixelPerfectBuilder withImages(List<MockupImage> images) {
+    public PixelPerfectBuilder withImages(List<PixelPerfectImage> images) {
         PixelPerfectConfig.get().userImages = images;
         return this;
     }

@@ -38,19 +38,23 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
 
     public MagnifierContainerFrameLayout(Context context) {
         super(context);
+        init();
     }
 
     public MagnifierContainerFrameLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public MagnifierContainerFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MagnifierContainerFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init();
     }
 
     @Override
@@ -169,6 +173,10 @@ public class MagnifierContainerFrameLayout extends FrameLayout implements View.O
         lastBitmapPositionX = (int) bitmapX;
         lastBitmapPositionY = (int) bitmapY;
         return true;
+    }
+
+    private void init() {
+        inflate(getContext(), R.layout.layout_magnifier_overlay, this);
     }
 
     private float calculateEdgeBitmapX(float deltaTranslationX) {

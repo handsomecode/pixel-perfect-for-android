@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import is.handsome.pixelperfect.ImagesAdapter;
-import is.handsome.pixelperfect.MockupImage;
+import is.handsome.pixelperfect.PixelPerfectImage;
 import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
@@ -32,7 +32,7 @@ public class SettingsView extends FrameLayout {
     }
 
     private PixelPerfectController.SettingsListener settingsListener;
-    private List<MockupImage> images = new ArrayList<>();
+    private List<PixelPerfectImage> images = new ArrayList<>();
 
     private SeekBar opacitySeekBar;
     private View opacityDemoView;
@@ -71,9 +71,9 @@ public class SettingsView extends FrameLayout {
         this.settingsListener = listener;
     }
 
-    public void addUserImages(List<MockupImage> userImages) {
+    public void addUserImages(List<PixelPerfectImage> userImages) {
         if (userImages != null) {
-            images.addAll(userImages);
+            images.addAll(0, userImages);
         }
     }
 
@@ -202,11 +202,11 @@ public class SettingsView extends FrameLayout {
             filenames = new String[0];
         }
         for (int i = 0; i < filenames.length; i++) {
-            MockupImage mockupImage = new MockupImage();
-            mockupImage.name = filenames[i];
+            PixelPerfectImage pixelPerfectImage = new PixelPerfectImage();
+            pixelPerfectImage.name = filenames[i];
             //TODO: add bitmap decoding max size
-            mockupImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), "pixelperfect" + "/" + filenames[i]);
-            images.add(mockupImage);
+            pixelPerfectImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), "pixelperfect" + "/" + filenames[i]);
+            images.add(pixelPerfectImage);
         }
     }
 
@@ -224,7 +224,9 @@ public class SettingsView extends FrameLayout {
 
         if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
             onBack();
+            return true;
         }
+
         return super.dispatchKeyEvent(event);
     }
 }

@@ -17,9 +17,6 @@ import is.handsome.pixelperfect.ui.SettingsView;
 public class PixelPerfectController {
 
     public interface LayoutListener {
-
-        void onBackPressed();
-
         void onMockupOverlayMoveX(int dx);
         void onMockupOverlayMoveY(int dy);
 
@@ -28,6 +25,7 @@ public class PixelPerfectController {
 
         void hideOffsetView();
         void showOffsetView(int xPos, int yPos);
+
         void openSettings();
     }
 
@@ -45,7 +43,6 @@ public class PixelPerfectController {
     private ViewGroup offsetPixelsView;
     private TextView offsetXTextView;
     private TextView offsetYTextView;
-    private PixelPerfectCallbacks.ControllerListener listener;
 
     private WindowManager.LayoutParams offsetPixelsViewParams;
     private WindowManager.LayoutParams overlayParams;
@@ -64,10 +61,6 @@ public class PixelPerfectController {
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(context);
-    }
-
-    public void setListener(PixelPerfectCallbacks.ControllerListener listener) {
-        this.listener = listener;
     }
 
     private void addViewsToWindow(Context context) {
@@ -108,17 +101,6 @@ public class PixelPerfectController {
         final int statusBarSize = (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
 
         pixelPerfectLayout.setLayoutListener(new LayoutListener() {
-
-            @Override
-            public void onBackPressed() {
-                if (settingsView.getVisibility() == View.VISIBLE) {
-                    settingsView.onBack();
-                } else {
-                    if (listener != null) {
-                        listener.onClosePixelPerfect();
-                    }
-                }
-            }
 
             @Override
             public void onMockupOverlayMoveX(int dx) {
@@ -215,7 +197,7 @@ public class PixelPerfectController {
             }
         });
         settingsView.addUserImages(PixelPerfectConfig.get().userImages);
-        settingsView.setImageOverlay(0);
+        settingsView.setImageOverlay(1);
     }
 
     private void addOffsetPixelsView() {
@@ -233,7 +215,6 @@ public class PixelPerfectController {
 
     public void show() {
         pixelPerfectLayout.setImageVisible(true);
-        //pixelPerfectLayout.setControlsLayerVisible(true);
         pixelPerfectLayout.setVisibility(View.VISIBLE);
         if (settingsOpened) {
             settingsView.setVisibility(View.VISIBLE);
@@ -247,7 +228,6 @@ public class PixelPerfectController {
 
     public void hide() {
         pixelPerfectLayout.setImageVisible(false);
-        //pixelPerfectLayout.setControlsLayerVisible(false);
         pixelPerfectLayout.setVisibility(View.GONE);
         offsetPixelsView.setVisibility(View.GONE);
         if (settingsView.getVisibility() == View.VISIBLE) {

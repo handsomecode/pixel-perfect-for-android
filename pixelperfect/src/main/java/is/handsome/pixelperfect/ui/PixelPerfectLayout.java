@@ -8,16 +8,11 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import is.handsome.pixelperfect.PixelPerfectCallbacks;
-import is.handsome.pixelperfect.PixelPerfectConfig;
 import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
@@ -31,11 +26,9 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private ImageView pixelPerfectOverlayImageView;
-    private PixelPerfectControlsFrameLayout pixelPerfectControlsFrameLayout;
     private PixelPerfectController.LayoutListener layoutListener;
     private MagnifierContainerFrameLayout magnifierFrameLayout;
     private MoveMode moveMode = MoveMode.UNDEFINED;
-    private boolean pixelPerfectContext = true;
 
     private GestureDetector gestureDetector;
     private MotionEvent lastMotionEvent;
@@ -68,62 +61,13 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        int newIndex = -1;
-        if (child != pixelPerfectOverlayImageView && child != pixelPerfectControlsFrameLayout) {
-            newIndex = index == -1 ? getChildCount() - 2 : index;
-        }
-        super.addView(child, newIndex, params);
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        return pixelPerfectOverlayImageView.getVisibility() == VISIBLE || super.onInterceptTouchEvent(event);
-        /*int x = (int) event.getRawX();
-        int y = (int) event.getRawY();
-        if (pixelPerfectControlsFrameLayout.inBounds(x, y) || !pixelPerfectContext || magnifierFrameLayout.getVisibility() == VISIBLE) {
-            return false;
-        } else {
-            return pixelPerfectOverlayImageView.getVisibility() == VISIBLE || super.onInterceptTouchEvent(event);
-        }*/
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (pixelPerfectOverlayImageView.getVisibility() == VISIBLE && pixelPerfectContext) {
+        if (pixelPerfectOverlayImageView.getVisibility() == VISIBLE) {
             gestureDetector.onTouchEvent(event);
             return handleTouch(event);
         }
         clearTouchData();
         return false;
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        int action = event.getAction();
-        int keyCode = event.getKeyCode();
-
-        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
-            layoutListener.onBackPressed();
-        }
-
-        if (PixelPerfectConfig.get().useVolumeButtons()) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_VOLUME_UP:
-                    if (action == KeyEvent.ACTION_DOWN) {
-                        pixelPerfectOverlayImageView.setAlpha(Math.min(1, pixelPerfectOverlayImageView.getAlpha() + 0.05f));
-                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
-                    }
-                    return true;
-                case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    if (action == KeyEvent.ACTION_DOWN) {
-                        pixelPerfectOverlayImageView.setAlpha(Math.max(0, pixelPerfectOverlayImageView.getAlpha() - 0.05f));
-                        pixelPerfectControlsFrameLayout.updateOpacityProgress(pixelPerfectOverlayImageView.getAlpha());
-                    }
-                    return true;
-            }
-        }
-        return super.dispatchKeyEvent(event);
     }
 
     public void setLayoutListener(PixelPerfectController.LayoutListener listener) {
@@ -135,11 +79,6 @@ public class PixelPerfectLayout extends FrameLayout {
             updateImage("");
         }
         pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : GONE);
-        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
-    }
-
-    public void setControlsLayerVisible(boolean visible) {
-        pixelPerfectControlsFrameLayout.setVisibility(visible ? VISIBLE : GONE);
     }
 
     public void setImageAlpha(float alpha) {
@@ -196,24 +135,11 @@ public class PixelPerfectLayout extends FrameLayout {
 
         gestureDetector = new GestureDetector(getContext(), new PixelPerfectLayoutGestureListener());
 
-        pixelPerfectControlsFrameLayout = new PixelPerfectControlsFrameLayout(getContext());
-        addView(pixelPerfectControlsFrameLayout,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        pixelPerfectControlsFrameLayout.setControlsListener(new PixelPerfectCallbacks.ControlsListener() {
+        magnifierFrameLayout = new MagnifierContainerFrameLayout(getContext());
 
-            @Override
-            public void onSetImageAlpha(float alpha) {
-                setImageAlpha(alpha);
-            }
-
-            @Override
-            public void onUpdateImage(Bitmap bitmap) {
-                //updateImage(bitmap);
-            }
-        });
-
-        magnifierFrameLayout = (MagnifierContainerFrameLayout) pixelPerfectControlsFrameLayout
-                .findViewById(R.id.controls_magnifier_frame_layout);
+        //Feature is turned off temporary
+        /*addView(magnifierFrameLayout,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));*/
         magnifierFrameLayout.setListener(new MagnifierContainerFrameLayout.MagnifierListener() {
             @Override
             public void onMockupDown(MotionEvent event) {
@@ -226,13 +152,13 @@ public class PixelPerfectLayout extends FrameLayout {
             public void onMockupMove(MotionEvent event) {
                 moveMockupOverlay(event);
 
-                pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+                magnifierFrameLayout.setVisibility(INVISIBLE);
                 Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
-                pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
+                magnifierFrameLayout.setVisibility(VISIBLE);
                 magnifierFrameLayout.setMagnifierSrc(bitmap, true);
             }
         });
-        pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+        magnifierFrameLayout.setVisibility(INVISIBLE);
     }
 
     private void moveMockupOverlay(MotionEvent event) {
@@ -294,10 +220,9 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private void showMagnifierMode(int x, int y) {
-        magnifierFrameLayout.setVisibility(VISIBLE);
-        pixelPerfectControlsFrameLayout.setVisibility(INVISIBLE);
+        magnifierFrameLayout.setVisibility(INVISIBLE);
         Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
-        pixelPerfectControlsFrameLayout.setVisibility(VISIBLE);
+        magnifierFrameLayout.setVisibility(VISIBLE);
         magnifierFrameLayout.setMagnifierSrc(bitmap, false);
         magnifierFrameLayout.setMagnifierViewPosition(x, y);
     }
