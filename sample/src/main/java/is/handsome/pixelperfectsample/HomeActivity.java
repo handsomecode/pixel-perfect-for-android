@@ -13,15 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
-import is.handsome.pixelperfect.PixelPerfectImage;
 import is.handsome.pixelperfect.PixelPerfect;
+import is.handsome.pixelperfect.PixelPerfectImage;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
 
     private Button pixelPerfectButton;
-    private View pixelPerfectTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void init() {
         pixelPerfectButton = (Button) findViewById(R.id.pixel_perfect_button);
-        pixelPerfectTextView = findViewById(R.id.pixel_perfect_text_view);
 
         if (PixelPerfect.isShown()) {
             pixelPerfectButton.setText(R.string.button_hide);
@@ -71,17 +69,39 @@ public class HomeActivity extends AppCompatActivity {
 
         pixelPerfectButton.setVisibility(View.INVISIBLE);
 
-        PixelPerfectImage correctImage = new PixelPerfectImage();
-        correctImage.name = "Correct";
-        correctImage.bitmap = takeActivityScreenshot();
-        images.add(correctImage);
+        images.add(createCorrectImage());
+        images.add(createIncorrectImage());
 
         pixelPerfectButton.setVisibility(View.VISIBLE);
 
         return images;
     }
 
-    private Bitmap takeActivityScreenshot() {
+    private PixelPerfectImage createCorrectImage() {
+        PixelPerfectImage correctImage = new PixelPerfectImage();
+        correctImage.name = "Correct";
+        correctImage.bitmap = takeScreenshot();
+        return correctImage;
+    }
+
+    private PixelPerfectImage createIncorrectImage() {
+        View correctTextView = findViewById(R.id.pixel_perfect_correct_text_view);
+        View incorrectTextView = findViewById(R.id.pixel_perfect_incorrect_text_view);
+
+        correctTextView.setVisibility(View.INVISIBLE);
+        incorrectTextView.setVisibility(View.VISIBLE);
+
+        PixelPerfectImage incorrectImage = new PixelPerfectImage();
+        incorrectImage.name = "Incorrect";
+        incorrectImage.bitmap = takeScreenshot();
+
+        correctTextView.setVisibility(View.VISIBLE);
+        incorrectTextView.setVisibility(View.GONE);
+        return incorrectImage;
+
+    }
+
+    private Bitmap takeScreenshot() {
         View rootView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).getRootView();
         rootView.setDrawingCacheEnabled(true);
         Bitmap screenshotBitmap = Bitmap.createBitmap(rootView.getDrawingCache());
