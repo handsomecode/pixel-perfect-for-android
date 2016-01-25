@@ -49,8 +49,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!PixelPerfect.isCreated()) {
-                    PixelPerfect.create().withImages(createImages()).show(HomeActivity.this);
-                    pixelPerfectButton.setText(R.string.button_hide);
+                    boolean shownSuccessfully = PixelPerfect.create().withImages(createImages()).show(HomeActivity.this);
+                    if (shownSuccessfully) {
+                        pixelPerfectButton.setText(R.string.button_hide);
+                    }
                 } else {
                     if (PixelPerfect.isShown()) {
                         PixelPerfect.hide();

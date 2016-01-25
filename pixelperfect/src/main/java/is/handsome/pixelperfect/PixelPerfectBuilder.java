@@ -50,21 +50,23 @@ public class PixelPerfectBuilder {
      * displays screen overlay and settings view
      *
      * @param activity
+     * @return
      */
-    public void show(Activity activity) {
+    public boolean show(Activity activity) {
 
         if (overlayPermRequest(activity)) {
             //once permission is granted then you must call show() again
-            return;
+            return false;
         }
 
         if (pixelPerfectController != null) {
             pixelPerfectController.show();
-            return;
+            return true;
         }
 
         pixelPerfectController = new PixelPerfectController(activity);
         AppLifeCycleObserver.get(activity).addListener(foregroundListener);
+        return true;
     }
 
     public PixelPerfectBuilder withImages(List<PixelPerfectImage> images) {
