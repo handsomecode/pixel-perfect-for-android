@@ -18,12 +18,15 @@ public class PixelPerfectController {
 
     public interface LayoutListener {
         void onMockupOverlayMoveX(int dx);
+
         void onMockupOverlayMoveY(int dy);
 
         void onOffsetViewMoveX(int dx);
+
         void onOffsetViewMoveY(int dy);
 
         void hideOffsetView();
+
         void showOffsetView(int xPos, int yPos);
 
         void openSettings();
@@ -31,9 +34,12 @@ public class PixelPerfectController {
 
     public interface SettingsListener {
         void onSetImageAlpha(float alpha);
+
         void onUpdateImage(Bitmap bitmap);
+
         void onFixOffset();
-        void onInverseChecked();
+
+        void onInverseChecked(boolean enabled);
     }
 
     private final WindowManager windowManager;
@@ -92,8 +98,8 @@ public class PixelPerfectController {
 
         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
         //        && PixelPerfectUtils.isTranslucentStatusBar(context)) {
-            overlayParams.y -= (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
-            fixedOffsetY = Math.abs(overlayParams.y);
+        overlayParams.y -= (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
+        fixedOffsetY = Math.abs(overlayParams.y);
         //}
         windowManager.addView(pixelPerfectLayout, overlayParams);
 
@@ -191,8 +197,8 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void onInverseChecked() {
-                pixelPerfectLayout.invertImageBitmap();
+            public void onInverseChecked(boolean enabled) {
+                pixelPerfectLayout.invertImageBitmap(enabled);
                 settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
             }
         });

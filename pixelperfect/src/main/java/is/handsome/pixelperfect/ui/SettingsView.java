@@ -141,7 +141,7 @@ public class SettingsView extends FrameLayout {
         inverseCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsListener.onInverseChecked();
+                settingsListener.onInverseChecked(isChecked);
             }
         });
     }
@@ -185,6 +185,7 @@ public class SettingsView extends FrameLayout {
             @Override
             public void onItemSelected(int position) {
                 if (settingsListener != null) {
+                    inverseCheckbox.setChecked(false);
                     settingsListener.onUpdateImage(images.get(position).bitmap);
                     imageNameTextView.setText(images.get(position).name);
                     exitSettingsView();

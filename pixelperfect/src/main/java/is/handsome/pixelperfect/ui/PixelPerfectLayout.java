@@ -107,8 +107,10 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    public void invertImageBitmap() {
-        setImageAlpha(0.5f);
+    public void invertImageBitmap(boolean enabled) {
+        if (enabled) {
+            setImageAlpha(0.5f);
+        }
         Bitmap srcBitmap = ((BitmapDrawable) pixelPerfectOverlayImageView.getDrawable()).getBitmap();
         Bitmap invertedBitmap = PixelPerfectUtils.invertBitmap(srcBitmap);
         pixelPerfectOverlayImageView.setImageBitmap(invertedBitmap);
