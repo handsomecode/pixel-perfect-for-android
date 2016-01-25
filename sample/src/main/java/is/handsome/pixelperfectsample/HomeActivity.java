@@ -84,7 +84,9 @@ public class HomeActivity extends AppCompatActivity {
     private Bitmap takeActivityScreenshot() {
         View rootView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).getRootView();
         rootView.setDrawingCacheEnabled(true);
-        return rootView.getDrawingCache();
+        Bitmap screenshotBitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+        return screenshotBitmap;
     }
 
     @Override
