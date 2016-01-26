@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -36,8 +37,8 @@ public class PixelPerfectLayout extends FrameLayout {
     private boolean justClick;
     private boolean wasActionDown;
 
-    private float micro_offset_dx;
-    private float micro_offset_dy;
+    private float microOffsetDx;
+    private float microOffsetDy;
 
     public PixelPerfectLayout(Context context) {
         super(context);
@@ -90,20 +91,26 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     public void updateImage(Bitmap bitmap) {
-        pixelPerfectOverlayImageView.setTranslationY(0);
-        if (bitmap == null) {
-            pixelPerfectOverlayImageView.setImageDrawable(null);
-        } else {
+        if (bitmap != null) {
+            ViewGroup.LayoutParams layoutParams = pixelPerfectOverlayImageView.getLayoutParams();
+            layoutParams.width = bitmap.getWidth();
+            layoutParams.height = bitmap.getHeight();
+            pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
             pixelPerfectOverlayImageView.setImageBitmap(bitmap);
+
+            ViewGroup.LayoutParams containerParams = getLayoutParams();
+            containerParams.width = layoutParams.width + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+            containerParams.height = layoutParams.height + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+            setLayoutParams(containerParams);
+
+            layoutListener.onMockupOverlayUpdate();
         }
     }
 
     public void updateImage(String fullName) {
-        pixelPerfectOverlayImageView.setTranslationY(0);
-        if (TextUtils.isEmpty(fullName)) {
-            pixelPerfectOverlayImageView.setImageDrawable(null);
-        } else {
-            pixelPerfectOverlayImageView.setImageBitmap(PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName));
+        if (!TextUtils.isEmpty(fullName)) {
+            Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName);
+            updateImage(bitmap);
         }
     }
 
@@ -117,14 +124,13 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private void initOverlay() {
-        pixelPerfectOverlayImageView = new PixelPerfectMockupImageView(getContext());
+        pixelPerfectOverlayImageView = new ImageView(getContext());
         FrameLayout.LayoutParams layoutParams = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
 
-        int margin = (int) getContext().getResources().getDimension(R.dimen.overlay_border_size);
+        int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);
         pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
-        pixelPerfectOverlayImageView.setAdjustViewBounds(true);
         pixelPerfectOverlayImageView.setVisibility(INVISIBLE);
         pixelPerfectOverlayImageView.setAlpha(0.5f);
         addView(pixelPerfectOverlayImageView);
@@ -178,21 +184,21 @@ public class PixelPerfectLayout extends FrameLayout {
                 moveMode = MoveMode.VERTICAL;
             }
             justClick = false;
-            micro_offset_dx = 0;
-            micro_offset_dy = 0;
+            microOffsetDx = 0;
+            microOffsetDy = 0;
             lastMotionEvent = MotionEvent.obtain(event);
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
                 if (layoutListener != null) {
                     float dx = event.getRawX() - lastMotionEvent.getRawX();
                     if (Math.abs(dx) < MICRO_OFFSET) {
-                        micro_offset_dx += dx / (MICRO_OFFSET * 2);
-                        dx = Math.round(micro_offset_dx);
+                        microOffsetDx += dx / (MICRO_OFFSET * 2);
+                        dx = Math.round(microOffsetDx);
                         if (dx != 0) {
-                            micro_offset_dx = 0;
+                            microOffsetDx = 0;
                         }
                     } else {
-                        micro_offset_dx = 0;
+                        microOffsetDx = 0;
                     }
                     layoutListener.onMockupOverlayMoveX((int) dx);
                 }
@@ -200,13 +206,13 @@ public class PixelPerfectLayout extends FrameLayout {
                 if (layoutListener != null) {
                     float dy = event.getRawY() - lastMotionEvent.getRawY();
                     if (Math.abs(dy) < MICRO_OFFSET) {
-                        micro_offset_dy += dy / (MICRO_OFFSET * 2);
-                        dy = Math.round(micro_offset_dy);
+                        microOffsetDy += dy / (MICRO_OFFSET * 2);
+                        dy = Math.round(microOffsetDy);
                         if (dy != 0) {
-                            micro_offset_dy = 0;
+                            microOffsetDy = 0;
                         }
                     } else {
-                        micro_offset_dy = 0;
+                        microOffsetDy = 0;
                     }
                     layoutListener.onMockupOverlayMoveY((int) dy);
                 }

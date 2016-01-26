@@ -21,6 +21,8 @@ public class PixelPerfectController {
 
         void onMockupOverlayMoveY(int dy);
 
+        void onMockupOverlayUpdate();
+
         void onOffsetViewMoveX(int dx);
 
         void onOffsetViewMoveY(int dy);
@@ -77,13 +79,9 @@ public class PixelPerfectController {
     }
 
     private void addOverlayMockup(Context context) {
-        int overlayWidth = PixelPerfectUtils.getWindowWidth(windowManager)
-                + 2 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
-        int overlayHeight = PixelPerfectUtils.getWindowHeight(windowManager)
-                + 2 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
         overlayParams = new WindowManager.LayoutParams(
-                overlayWidth,
-                overlayHeight,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
@@ -128,6 +126,11 @@ public class PixelPerfectController {
 
                     offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
                 }
+            }
+
+            @Override
+            public void onMockupOverlayUpdate() {
+                windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
             }
 
             @Override
