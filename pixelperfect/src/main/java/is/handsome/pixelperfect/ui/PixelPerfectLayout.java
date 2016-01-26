@@ -178,6 +178,8 @@ public class PixelPerfectLayout extends FrameLayout {
                 moveMode = MoveMode.VERTICAL;
             }
             justClick = false;
+            micro_offset_dx = 0;
+            micro_offset_dy = 0;
             lastMotionEvent = MotionEvent.obtain(event);
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
@@ -185,7 +187,7 @@ public class PixelPerfectLayout extends FrameLayout {
                     float dx = event.getRawX() - lastMotionEvent.getRawX();
                     if (Math.abs(dx) < MICRO_OFFSET) {
                         micro_offset_dx += dx / (MICRO_OFFSET * 2);
-                        dx = Math.round(micro_offset_dx + dx / MICRO_OFFSET);
+                        dx = Math.round(micro_offset_dx);
                         if (dx != 0) {
                             micro_offset_dx = 0;
                         }
@@ -199,7 +201,7 @@ public class PixelPerfectLayout extends FrameLayout {
                     float dy = event.getRawY() - lastMotionEvent.getRawY();
                     if (Math.abs(dy) < MICRO_OFFSET) {
                         micro_offset_dy += dy / (MICRO_OFFSET * 2);
-                        dy = Math.round(micro_offset_dy + dy / MICRO_OFFSET);
+                        dy = Math.round(micro_offset_dy);
                         if (dy != 0) {
                             micro_offset_dy = 0;
                         }
