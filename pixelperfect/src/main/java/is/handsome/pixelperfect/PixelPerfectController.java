@@ -17,11 +17,11 @@ import is.handsome.pixelperfect.ui.SettingsView;
 public class PixelPerfectController {
 
     public interface LayoutListener {
-        void onMockupOverlayMoveX(int dx);
+        void onOverlayMoveX(int dx);
 
-        void onMockupOverlayMoveY(int dy);
+        void onOverlayMoveY(int dy);
 
-        void onMockupOverlayUpdate();
+        void onOverlayUpdate();
 
         void onOffsetViewMoveX(int dx);
 
@@ -59,8 +59,14 @@ public class PixelPerfectController {
     private int fixedOffsetY = 0;
     private boolean settingsOpened = false;
 
+    private int overlayBorderSize;
+    private int statusBarHeight;
+
     public PixelPerfectController(Context context) {
         Context applicationContext = context.getApplicationContext();
+        overlayBorderSize = (int) context.getResources().getDimension(R.dimen.overlay_border_size);
+        statusBarHeight = (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
+
         pixelPerfectLayout = new PixelPerfectLayout(applicationContext);
         settingsView = new SettingsView(applicationContext);
         offsetPixelsView = (ViewGroup) LayoutInflater.from(applicationContext).inflate(R.layout.view_offset_pixels, null);
@@ -87,18 +93,8 @@ public class PixelPerfectController {
                 PixelFormat.TRANSLUCENT);
 
         overlayParams.gravity = Gravity.TOP | Gravity.START;
+        setInitialOverlayPosition();
 
-        overlayParams.y = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
-        fixedOffsetY = Math.abs(overlayParams.y);
-
-        overlayParams.x = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
-        fixedOffsetX = Math.abs(overlayParams.x);
-
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        //        && PixelPerfectUtils.isTranslucentStatusBar(context)) {
-        overlayParams.y -= (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
-        fixedOffsetY = Math.abs(overlayParams.y);
-        //}
         windowManager.addView(pixelPerfectLayout, overlayParams);
 
         final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);
@@ -107,7 +103,7 @@ public class PixelPerfectController {
         pixelPerfectLayout.setLayoutListener(new LayoutListener() {
 
             @Override
-            public void onMockupOverlayMoveX(int dx) {
+            public void onOverlayMoveX(int dx) {
                 if (overlayParams.x + dx + pixelPerfectLayout.getWidth() >= overlayMinimumVisibleSize
                         && PixelPerfectUtils.getWindowWidth(windowManager) - overlayParams.x - dx >= overlayMinimumVisibleSize) {
                     overlayParams.x += dx;
@@ -118,7 +114,7 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void onMockupOverlayMoveY(int dy) {
+            public void onOverlayMoveY(int dy) {
                 if (overlayParams.y + dy + pixelPerfectLayout.getHeight() >= overlayMinimumVisibleSize
                         && PixelPerfectUtils.getWindowHeight(windowManager) - statusBarSize - overlayParams.y - dy >= overlayMinimumVisibleSize) {
                     overlayParams.y += dy;
@@ -129,7 +125,8 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void onMockupOverlayUpdate() {
+            public void onOverlayUpdate() {
+                setInitialOverlayPosition();
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
             }
 
@@ -166,6 +163,21 @@ public class PixelPerfectController {
             }
         });
     }
+
+    private void setInitialOverlayPosition() {
+        overlayParams.x = -1 * overlayBorderSize;
+        fixedOffsetX = Math.abs(overlayParams.x);
+
+        overlayParams.y = -1 * overlayBorderSize;
+        fixedOffsetY = Math.abs(overlayParams.y);
+
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        //        && PixelPerfectUtils.isTranslucentStatusBar(context)) {
+        overlayParams.y -= statusBarHeight;
+        fixedOffsetY = Math.abs(overlayParams.y);
+        //}
+    }
+
 
     private void addSettingsView() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(

@@ -20,8 +20,11 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class PixelPerfectUtils {
+
+    public static int MAX_TEXTURE_SIZE = 2000; //4096;
 
     private static Rect outRect = new Rect();
     private static int[] location = new int[2];
@@ -141,6 +144,26 @@ public class PixelPerfectUtils {
             }
         }
         return inSampleSize;
+    }
+
+    public static ArrayList<Bitmap> splitLargeBitmap(Bitmap bitmap) {
+        int arraySize = bitmap.getHeight() / MAX_TEXTURE_SIZE;
+        if (bitmap.getHeight() % MAX_TEXTURE_SIZE > 0) {
+            arraySize++;
+        }
+        ArrayList<Bitmap> bitmaps = new ArrayList<>(arraySize);
+        for (int i = 0; i < arraySize; i++) {
+            int height = (i != arraySize - 1) ? MAX_TEXTURE_SIZE : bitmap.getHeight() - MAX_TEXTURE_SIZE * i;
+            Bitmap splitBitmap = Bitmap.createBitmap(bitmap.getWidth(), height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(splitBitmap);
+
+            int srcHeight = (i != arraySize - 1) ? MAX_TEXTURE_SIZE * (i + 1) : bitmap.getHeight();
+            Rect src = new Rect(0, MAX_TEXTURE_SIZE * i, bitmap.getWidth(), srcHeight);
+            Rect dest = new Rect(0, 0, splitBitmap.getWidth(), splitBitmap.getHeight());
+            canvas.drawBitmap(bitmap, src, dest, null);
+            bitmaps.add(splitBitmap);
+        }
+        return bitmaps;
     }
 
     private PixelPerfectUtils() {

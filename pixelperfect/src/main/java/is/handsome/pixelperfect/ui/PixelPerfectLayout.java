@@ -11,14 +11,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
 
-public class PixelPerfectLayout extends FrameLayout {
+public class PixelPerfectLayout extends LinearLayout {
 
     private static int MICRO_OFFSET = 8;
 
@@ -92,19 +92,54 @@ public class PixelPerfectLayout extends FrameLayout {
 
     public void updateImage(Bitmap bitmap) {
         if (bitmap != null) {
-            ViewGroup.LayoutParams layoutParams = pixelPerfectOverlayImageView.getLayoutParams();
-            layoutParams.width = bitmap.getWidth();
-            layoutParams.height = bitmap.getHeight();
-            pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
-            pixelPerfectOverlayImageView.setImageBitmap(bitmap);
+            //removeExtraImageViews();
 
-            ViewGroup.LayoutParams containerParams = getLayoutParams();
-            containerParams.width = layoutParams.width + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
-            containerParams.height = layoutParams.height + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
-            setLayoutParams(containerParams);
+            /*if (bitmap.getHeight() > PixelPerfectUtils.MAX_TEXTURE_SIZE) {
+                ArrayList<Bitmap> bitmaps = PixelPerfectUtils.splitLargeBitmap(bitmap);
 
-            layoutListener.onMockupOverlayUpdate();
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) pixelPerfectOverlayImageView.getLayoutParams();
+                layoutParams.width = 900;
+                layoutParams.height = 1000;
+                pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
+                //pixelPerfectOverlayImageView.setImageBitmap(bitmaps.get(0));
+                pixelPerfectOverlayImageView.setBackgroundColor(Color.RED);
+                pixelPerfectOverlayImageView.setImageDrawable(null);
+
+                for (int i = 1; i < 5; i++) {
+                    ImageView splitImageView = new ImageView(getContext());
+                    LinearLayout.LayoutParams splitLayoutParams = new LayoutParams(900,
+                            2000);
+                    splitLayoutParams.setMargins(layoutParams.leftMargin, -1 * layoutParams.topMargin,
+                            layoutParams.rightMargin, layoutParams.bottomMargin);
+                    splitImageView.setAlpha(0.5f);
+                    //splitImageView.setImageBitmap(bitmaps.get(i));
+                    addView(splitImageView, splitLayoutParams);
+                    splitImageView.setImageDrawable(null);
+                    splitImageView.setBackgroundColor((i % 2 == 0) ? Color.GREEN : Color.BLUE);
+                }
+
+                ViewGroup.LayoutParams containerParams = getLayoutParams();
+                containerParams.width = 900 + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+                containerParams.height = 8000 + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+                setLayoutParams(containerParams);
+            } else {*/
+                updateMainOverlayImage(bitmap);
+            //}
+            layoutListener.onOverlayUpdate();
         }
+    }
+
+    private void updateMainOverlayImage(Bitmap bitmap) {
+        LinearLayout.LayoutParams layoutParams = (LayoutParams) pixelPerfectOverlayImageView.getLayoutParams();
+        layoutParams.width = bitmap.getWidth();
+        layoutParams.height = bitmap.getHeight();
+        pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
+        pixelPerfectOverlayImageView.setImageBitmap(bitmap);
+
+        ViewGroup.LayoutParams containerParams = getLayoutParams();
+        containerParams.width = layoutParams.width + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+        containerParams.height = layoutParams.height + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+        setLayoutParams(containerParams);
     }
 
     public void updateImage(String fullName) {
@@ -125,8 +160,8 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private void initOverlay() {
         pixelPerfectOverlayImageView = new ImageView(getContext());
-        FrameLayout.LayoutParams layoutParams = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
 
         int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);
@@ -138,7 +173,9 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private void init() {
         touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        setOrientation(VERTICAL);
         setBackgroundResource(R.drawable.bg_overlay);
+        //setBackgroundColor(Color.GRAY);
         initOverlay();
 
         gestureDetector = new GestureDetector(getContext(), new PixelPerfectLayoutGestureListener());
@@ -200,7 +237,7 @@ public class PixelPerfectLayout extends FrameLayout {
                     } else {
                         microOffsetDx = 0;
                     }
-                    layoutListener.onMockupOverlayMoveX((int) dx);
+                    layoutListener.onOverlayMoveX((int) dx);
                 }
             } else {
                 if (layoutListener != null) {
@@ -214,7 +251,7 @@ public class PixelPerfectLayout extends FrameLayout {
                     } else {
                         microOffsetDy = 0;
                     }
-                    layoutListener.onMockupOverlayMoveY((int) dy);
+                    layoutListener.onOverlayMoveY((int) dy);
                 }
             }
             float dx = event.getRawX() - lastMotionEvent.getRawX();
@@ -292,5 +329,12 @@ public class PixelPerfectLayout extends FrameLayout {
         moveMode = MoveMode.UNDEFINED;
         wasActionDown = false;
         justClick = false;
+    }
+
+    private void removeExtraImageViews() {
+        int childCount = getChildCount();
+        for (int i = childCount - 1; i > 0; i--) {
+            removeView(getChildAt(i));
+        }
     }
 }
