@@ -71,6 +71,10 @@ public class SettingsView extends FrameLayout {
         this.settingsListener = listener;
     }
 
+    public void setInverseMode() {
+        inverseCheckbox.setChecked(!inverseCheckbox.isChecked());
+    }
+
     public void addUserImages(List<PixelPerfectImage> userImages) {
         if (userImages != null) {
             images.addAll(0, userImages);

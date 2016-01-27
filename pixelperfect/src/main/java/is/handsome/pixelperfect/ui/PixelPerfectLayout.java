@@ -103,7 +103,7 @@ public class PixelPerfectLayout extends FrameLayout {
             containerParams.height = layoutParams.height + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
             setLayoutParams(containerParams);
 
-            layoutListener.onMockupOverlayUpdate();
+            layoutListener.onOverlayUpdate();
         }
     }
 
@@ -200,7 +200,7 @@ public class PixelPerfectLayout extends FrameLayout {
                     } else {
                         microOffsetDx = 0;
                     }
-                    layoutListener.onMockupOverlayMoveX((int) dx);
+                    layoutListener.onOverlayMoveX((int) dx);
                 }
             } else {
                 if (layoutListener != null) {
@@ -214,7 +214,7 @@ public class PixelPerfectLayout extends FrameLayout {
                     } else {
                         microOffsetDy = 0;
                     }
-                    layoutListener.onMockupOverlayMoveY((int) dy);
+                    layoutListener.onOverlayMoveY((int) dy);
                 }
             }
             float dx = event.getRawX() - lastMotionEvent.getRawX();
@@ -248,6 +248,7 @@ public class PixelPerfectLayout extends FrameLayout {
         public boolean onDoubleTap(MotionEvent event) {
             //magnifierFrameLayout.updateTouchData(event);
             //showMagnifierMode((int) event.getX(), (int) event.getY());
+            layoutListener.openFastActionsOverlay();
             return true;
         }
 
