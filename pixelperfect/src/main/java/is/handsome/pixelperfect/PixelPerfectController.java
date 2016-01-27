@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import is.handsome.pixelperfect.ui.FastActionsOverlayView;
 import is.handsome.pixelperfect.ui.PixelPerfectLayout;
 import is.handsome.pixelperfect.ui.SettingsView;
 
@@ -34,7 +33,9 @@ public class PixelPerfectController {
 
         void openSettings();
 
-        void openFastActionsOverlay();
+        void setInverseMode();
+
+        void onFixOffset();
     }
 
     public interface SettingsListener {
@@ -47,15 +48,10 @@ public class PixelPerfectController {
         void onInverseChecked(boolean enabled);
     }
 
-    public interface FastActionsOverlayListener {
-        void onInverseChange();
-    }
-
     private final WindowManager windowManager;
 
     private SettingsView settingsView;
     private PixelPerfectLayout pixelPerfectLayout;
-    private FastActionsOverlayView fastActionsOverlayView;
     private ViewGroup offsetPixelsView;
     private TextView offsetXTextView;
     private TextView offsetYTextView;
@@ -70,7 +66,6 @@ public class PixelPerfectController {
     public PixelPerfectController(Context context) {
         Context applicationContext = context.getApplicationContext();
         pixelPerfectLayout = new PixelPerfectLayout(applicationContext);
-        fastActionsOverlayView = new FastActionsOverlayView(applicationContext);
         settingsView = new SettingsView(applicationContext);
         offsetPixelsView = (ViewGroup) LayoutInflater.from(applicationContext).inflate(R.layout.view_offset_pixels, null);
         offsetXTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_x_text_view);
@@ -82,7 +77,6 @@ public class PixelPerfectController {
 
     private void addViewsToWindow(Context context) {
         addOverlayMockup(context);
-        addFastActionsListenerOverlay();
         addOffsetPixelsView();
         addSettingsView();
         show();
@@ -176,9 +170,13 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void openFastActionsOverlay() {
-                fastActionsOverlayView.setVisibility(View.VISIBLE);
-                fastActionsOverlayView.startVisibilityTimer();
+            public void setInverseMode() {
+                settingsView.setInverseMode();
+            }
+
+            @Override
+            public void onFixOffset() {
+                fixOffset();
             }
         });
     }
@@ -208,11 +206,7 @@ public class PixelPerfectController {
 
             @Override
             public void onFixOffset() {
-                fixedOffsetX = -1 * overlayParams.x;
-                fixedOffsetY = -1 * overlayParams.y;
-
-                offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
-                offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
+                fixOffset();
             }
 
             @Override
@@ -225,25 +219,12 @@ public class PixelPerfectController {
         settingsView.setImageOverlay(1);
     }
 
-    private void addFastActionsListenerOverlay() {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.TRANSLUCENT);
+    private void fixOffset() {
+        fixedOffsetX = -1 * overlayParams.x;
+        fixedOffsetY = -1 * overlayParams.y;
 
-        params.gravity = Gravity.TOP | Gravity.START;
-        windowManager.addView(fastActionsOverlayView, params);
-
-        fastActionsOverlayView.setVisibility(View.INVISIBLE);
-        fastActionsOverlayView.setListener(new FastActionsOverlayListener() {
-
-            @Override
-            public void onInverseChange() {
-                settingsView.setInverseMode();
-            }
-        });
+        offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
+        offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
     }
 
     private void addOffsetPixelsView() {
@@ -279,7 +260,6 @@ public class PixelPerfectController {
         if (settingsView.getVisibility() == View.VISIBLE) {
             settingsOpened = true;
         }
-        fastActionsOverlayView.setVisibility(View.GONE);
         settingsView.setVisibility(View.GONE);
     }
 
@@ -287,6 +267,5 @@ public class PixelPerfectController {
         windowManager.removeView(pixelPerfectLayout);
         windowManager.removeView(offsetPixelsView);
         windowManager.removeView(settingsView);
-        windowManager.removeView(fastActionsOverlayView);
     }
 }

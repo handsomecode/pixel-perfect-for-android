@@ -21,6 +21,7 @@ import is.handsome.pixelperfect.R;
 public class PixelPerfectLayout extends FrameLayout {
 
     private static int MICRO_OFFSET = 8;
+    private static int LONG_PRESS_TIMEOUT = 500;
 
     public enum MoveMode {
         VERTICAL, HORIZONTAL, UNDEFINED
@@ -36,6 +37,7 @@ public class PixelPerfectLayout extends FrameLayout {
     private int touchSlop;
     private boolean justClick;
     private boolean wasActionDown;
+    private boolean wasDoubleAction;
 
     private float microOffsetDx;
     private float microOffsetDy;
@@ -246,17 +248,32 @@ public class PixelPerfectLayout extends FrameLayout {
 
         @Override
         public boolean onDoubleTap(MotionEvent event) {
-            //magnifierFrameLayout.updateTouchData(event);
-            //showMagnifierMode((int) event.getX(), (int) event.getY());
-            layoutListener.openFastActionsOverlay();
+            wasDoubleAction = false;
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!wasDoubleAction) {
+                        layoutListener.onFixOffset();
+                        wasDoubleAction = true;
+                    }
+                }
+            }, LONG_PRESS_TIMEOUT);
             return true;
         }
 
         @Override
-        public boolean onSingleTapConfirmed(MotionEvent event) {
-            if (layoutListener != null) {
-                layoutListener.openSettings();
+        public boolean onDoubleTapEvent(MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_UP && !wasDoubleAction) {
+                layoutListener.setInverseMode();
+                wasDoubleAction = true;
+                return true;
             }
+            return super.onDoubleTapEvent(event);
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent event) {
+            layoutListener.openSettings();
             return true;
         }
     }
