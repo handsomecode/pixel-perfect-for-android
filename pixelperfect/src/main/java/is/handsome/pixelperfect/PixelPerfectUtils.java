@@ -2,6 +2,7 @@ package is.handsome.pixelperfect;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,6 +44,16 @@ public class PixelPerfectUtils {
         Point displaySize = new Point();
         windowManager.getDefaultDisplay().getSize(displaySize);
         return displaySize.y;
+    }
+
+    public static int getWindowWidth(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
+        return getWindowWidth(windowManager);
+    }
+
+    public static int getWindowHeight(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
+        return getWindowHeight(windowManager);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

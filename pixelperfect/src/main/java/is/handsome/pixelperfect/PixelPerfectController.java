@@ -21,7 +21,7 @@ public class PixelPerfectController {
 
         void onOverlayMoveY(int dy);
 
-        void onOverlayUpdate();
+        void onOverlayUpdate(int width, int height);
 
         void onOffsetViewMoveX(int dx);
 
@@ -31,7 +31,7 @@ public class PixelPerfectController {
 
         void showOffsetView(int xPos, int yPos);
 
-        void openSettings();
+        void openSettings(boolean goToImages);
 
         void setInverseMode();
 
@@ -63,6 +63,9 @@ public class PixelPerfectController {
     private int fixedOffsetY = 0;
     private boolean settingsOpened = false;
 
+    private int overlayBorderSize;
+    private int statusBarHeight;
+
     public PixelPerfectController(Context context) {
         Context applicationContext = context.getApplicationContext();
         pixelPerfectLayout = new PixelPerfectLayout(applicationContext);
@@ -71,8 +74,15 @@ public class PixelPerfectController {
         offsetXTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_x_text_view);
         offsetYTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_y_text_view);
 
+        overlayBorderSize = (int) context.getResources().getDimension(R.dimen.overlay_border_size);
+        statusBarHeight = (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
+
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(context);
+    }
+
+    public void setImage(String imageName) {
+        settingsView.setImageOverlay(imageName);
     }
 
     private void addViewsToWindow(Context context) {
@@ -90,19 +100,7 @@ public class PixelPerfectController {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
 
-        overlayParams.gravity = Gravity.TOP | Gravity.START;
-
-        overlayParams.y = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
-        fixedOffsetY = Math.abs(overlayParams.y);
-
-        overlayParams.x = -1 * (int) context.getResources().getDimension(R.dimen.overlay_border_size);
-        fixedOffsetX = Math.abs(overlayParams.x);
-
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        //        && PixelPerfectUtils.isTranslucentStatusBar(context)) {
-        overlayParams.y -= (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
-        fixedOffsetY = Math.abs(overlayParams.y);
-        //}
+        setInitialOverlayPosition();
         windowManager.addView(pixelPerfectLayout, overlayParams);
 
         final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);
@@ -133,20 +131,21 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void onOverlayUpdate() {
+            public void onOverlayUpdate(int width, int height) {
+                setInitialOverlayPosition(width, height);
                 windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
             }
 
             @Override
             public void onOffsetViewMoveX(int dx) {
-                offsetPixelsViewParams.x += dx;
-                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                //offsetPixelsViewParams.x += dx;
+                //windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
 
             @Override
             public void onOffsetViewMoveY(int dy) {
-                offsetPixelsViewParams.y += dy;
-                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                //offsetPixelsViewParams.y += dy;
+                //windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
 
             @Override
@@ -163,10 +162,11 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void openSettings() {
-                settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
-                settingsView.updateOffset(fixedOffsetX + overlayParams.x, fixedOffsetY + overlayParams.y);
-                settingsView.setVisibility(View.VISIBLE);
+            public void openSettings(boolean showImages) {
+                displaySettingsView();
+                if (showImages) {
+                    settingsView.openImagesSettingsScreen();
+                }
             }
 
             @Override
@@ -179,6 +179,38 @@ public class PixelPerfectController {
                 fixOffset();
             }
         });
+    }
+
+    private void setInitialOverlayPosition(int width, int height) {
+        overlayParams.gravity = Gravity.TOP | Gravity.START;
+
+        int screenWidth = PixelPerfectUtils.getWindowWidth(windowManager);
+        int screenHeight = PixelPerfectUtils.getWindowHeight(windowManager);
+
+        int marginHorizontal = (screenWidth - width) / 2;
+        int marginVertical = (screenHeight - height) / 2;
+
+        overlayParams.x = -1 * overlayBorderSize + marginHorizontal;
+        fixedOffsetX = Math.abs(overlayParams.x);
+
+        overlayParams.y = -1 * overlayBorderSize - statusBarHeight + marginVertical;
+        fixedOffsetY = Math.abs(overlayParams.y);
+    }
+
+    private void setInitialOverlayPosition() {
+        overlayParams.gravity = Gravity.TOP | Gravity.START;
+
+        overlayParams.x = -1 * overlayBorderSize + statusBarHeight;
+        fixedOffsetX = Math.abs(overlayParams.x);
+
+        overlayParams.y = -1 * overlayBorderSize + statusBarHeight;
+        fixedOffsetY = Math.abs(overlayParams.y);
+    }
+
+    private void displaySettingsView() {
+        settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
+        settingsView.updateOffset(fixedOffsetX + overlayParams.x, fixedOffsetY + overlayParams.y);
+        settingsView.setVisibility(View.VISIBLE);
     }
 
     private void addSettingsView() {
@@ -216,7 +248,6 @@ public class PixelPerfectController {
             }
         });
         settingsView.addUserImages(PixelPerfectConfig.get().userImages);
-        settingsView.setImageOverlay(1);
     }
 
     private void fixOffset() {

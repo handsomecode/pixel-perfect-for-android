@@ -82,10 +82,24 @@ public class SettingsView extends FrameLayout {
     }
 
     public void setImageOverlay(int position) {
-        if (settingsListener != null && images.size() > position) {
+        if (position >= 0 && position < images.size()) {
             settingsListener.onUpdateImage(images.get(position).bitmap);
             imageNameTextView.setText(images.get(position).name);
         }
+    }
+
+    public void setImageOverlay(String imageName) {
+        int position = indexOfImage(imageName);
+        setImageOverlay(position);
+    }
+
+    public int indexOfImage(String imageName) {
+        for (PixelPerfectImage image: images) {
+            if (image.name.equalsIgnoreCase(imageName)) {
+                return images.indexOf(image);
+            }
+        }
+        return -1;
     }
 
     public void updateOpacityProgress(float currentAlpha) {
@@ -100,6 +114,11 @@ public class SettingsView extends FrameLayout {
         } else {
             setVisibility(GONE);
         }
+    }
+
+    public void openImagesSettingsScreen() {
+        recyclerView.setVisibility(VISIBLE);
+        exitButton.setImageResource(R.drawable.ic_back);
     }
 
     public void updateOffset(int x, int y) {

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">PixelPerfect</string>
     <string name="settings_name">Pixel Perfect</string>
+    <string name="no_overlay_image_text">Tap to set\noverlay image</string>
 </resources>

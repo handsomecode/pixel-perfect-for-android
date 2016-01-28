@@ -3,16 +3,19 @@ package is.handsome.pixelperfect.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import is.handsome.pixelperfect.PixelPerfectController;
 import is.handsome.pixelperfect.PixelPerfectUtils;
@@ -28,6 +31,7 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     private ImageView pixelPerfectOverlayImageView;
+    private TextView noOverlayImageTextView;
     private PixelPerfectController.LayoutListener layoutListener;
     private MagnifierContainerFrameLayout magnifierFrameLayout;
     private MoveMode moveMode = MoveMode.UNDEFINED;
@@ -95,6 +99,9 @@ public class PixelPerfectLayout extends FrameLayout {
 
     public void updateImage(Bitmap bitmap) {
         if (bitmap != null) {
+            if (noOverlayImageTextView.getVisibility() == VISIBLE) {
+                noOverlayImageTextView.setVisibility(GONE);
+            }
             ViewGroup.LayoutParams layoutParams = pixelPerfectOverlayImageView.getLayoutParams();
             layoutParams.width = bitmap.getWidth();
             layoutParams.height = bitmap.getHeight();
@@ -106,7 +113,7 @@ public class PixelPerfectLayout extends FrameLayout {
             containerParams.height = layoutParams.height + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
             setLayoutParams(containerParams);
 
-            layoutListener.onOverlayUpdate();
+            layoutListener.onOverlayUpdate(bitmap.getWidth(), bitmap.getHeight());
         }
     }
 
@@ -128,15 +135,29 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private void initOverlay() {
         pixelPerfectOverlayImageView = new ImageView(getContext());
-        FrameLayout.LayoutParams layoutParams = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
+        int statusBarHeight = (int) getContext().getResources().getDimension(R.dimen.android_status_bar_height);
+        final FrameLayout.LayoutParams layoutParams = new LayoutParams(PixelPerfectUtils.getWindowWidth(getContext()) - statusBarHeight * 2,
+                PixelPerfectUtils.getWindowHeight(getContext()) - statusBarHeight * 3);
 
         int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);
         pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
         pixelPerfectOverlayImageView.setVisibility(INVISIBLE);
         pixelPerfectOverlayImageView.setAlpha(0.5f);
+        pixelPerfectOverlayImageView.setImageDrawable(null);
         addView(pixelPerfectOverlayImageView);
+        initNoOverlayImageView(layoutParams);
+
+    }
+
+    private void initNoOverlayImageView(ViewGroup.LayoutParams imageParams) {
+        noOverlayImageTextView = new TextView(getContext());
+        noOverlayImageTextView.setBackgroundColor(getResources().getColor(R.color.black_50_alpha));
+        noOverlayImageTextView.setText(R.string.no_overlay_image_text);
+        noOverlayImageTextView.setTextSize(22);
+        noOverlayImageTextView.setGravity(Gravity.CENTER);
+        noOverlayImageTextView.setTextColor(Color.WHITE);
+        addView(noOverlayImageTextView, imageParams);
     }
 
     private void init() {
@@ -277,7 +298,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent event) {
-            layoutListener.openSettings();
+            layoutListener.openSettings(noOverlayImageTextView.getVisibility() == VISIBLE);
             return true;
         }
     }
@@ -289,9 +310,7 @@ public class PixelPerfectLayout extends FrameLayout {
             lastMotionEvent = MotionEvent.obtain(event);
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
-            if (layoutListener != null) {
-                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
-            }
+            layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
             moveMockupOverlay(event);
             return true;
         }

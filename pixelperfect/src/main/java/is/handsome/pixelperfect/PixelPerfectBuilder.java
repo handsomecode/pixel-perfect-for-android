@@ -74,6 +74,12 @@ public class PixelPerfectBuilder {
         return this;
     }
 
+    public static void setImage(String imageName) {
+        if (isCreated()) {
+            pixelPerfectController.setImage(imageName);
+        }
+    }
+
     /**
      * checks if Pixel Perfect Tool
      * is displayed on the screen now

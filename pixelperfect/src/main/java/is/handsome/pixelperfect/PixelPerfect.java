@@ -28,4 +28,8 @@ public class PixelPerfect {
     public static void destroy() {
         PixelPerfectBuilder.destroy();
     }
+
+    public static void setImage(String imageName) {
+        PixelPerfectBuilder.setImage(imageName);
+    }
 }
