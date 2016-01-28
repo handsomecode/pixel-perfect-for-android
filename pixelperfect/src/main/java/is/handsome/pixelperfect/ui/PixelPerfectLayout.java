@@ -31,10 +31,11 @@ public class PixelPerfectLayout extends FrameLayout {
     private PixelPerfectController.LayoutListener layoutListener;
     private MagnifierContainerFrameLayout magnifierFrameLayout;
     private MoveMode moveMode = MoveMode.UNDEFINED;
+    private int touchSlop;
 
     private GestureDetector gestureDetector;
     private MotionEvent lastMotionEvent;
-    private int touchSlop;
+    private MotionEvent doubleTapEvent;
     private boolean justClick;
     private boolean wasActionDown;
     private boolean wasDoubleAction;
@@ -247,15 +248,18 @@ public class PixelPerfectLayout extends FrameLayout {
         }
 
         @Override
-        public boolean onDoubleTap(MotionEvent event) {
+        public boolean onDoubleTap(final MotionEvent event) {
             wasDoubleAction = false;
+            doubleTapEvent = MotionEvent.obtain(event);
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!wasDoubleAction) {
+                    if (!wasDoubleAction
+                            && Math.abs(event.getY() - doubleTapEvent.getY()) < touchSlop
+                            && Math.abs(event.getX() - doubleTapEvent.getX()) < touchSlop) {
                         layoutListener.onFixOffset();
-                        wasDoubleAction = true;
                     }
+                    wasDoubleAction = true;
                 }
             }, LONG_PRESS_TIMEOUT);
             return true;
