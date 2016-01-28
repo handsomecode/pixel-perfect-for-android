@@ -45,7 +45,7 @@ public class PixelPerfectController {
 
         void onFixOffset();
 
-        void onInverseChecked(boolean enabled);
+        boolean onInverseChecked(boolean enabled);
     }
 
     private final WindowManager windowManager;
@@ -242,9 +242,10 @@ public class PixelPerfectController {
             }
 
             @Override
-            public void onInverseChecked(boolean enabled) {
-                pixelPerfectLayout.invertImageBitmap(enabled);
+            public boolean onInverseChecked(boolean enabled) {
+                boolean inverted = pixelPerfectLayout.invertImageBitmap(enabled);
                 settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
+                return inverted;
             }
         });
         settingsView.addUserImages(PixelPerfectConfig.get().userImages);

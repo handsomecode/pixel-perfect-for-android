@@ -124,13 +124,17 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    public void invertImageBitmap(boolean enabled) {
-        if (enabled) {
-            setImageAlpha(0.5f);
+    public boolean invertImageBitmap(boolean enabled) {
+        if (pixelPerfectOverlayImageView.getDrawable() != null) {
+            if (enabled) {
+                setImageAlpha(0.5f);
+            }
+            Bitmap srcBitmap = ((BitmapDrawable) pixelPerfectOverlayImageView.getDrawable()).getBitmap();
+            Bitmap invertedBitmap = PixelPerfectUtils.invertBitmap(srcBitmap);
+            pixelPerfectOverlayImageView.setImageBitmap(invertedBitmap);
+            return true;
         }
-        Bitmap srcBitmap = ((BitmapDrawable) pixelPerfectOverlayImageView.getDrawable()).getBitmap();
-        Bitmap invertedBitmap = PixelPerfectUtils.invertBitmap(srcBitmap);
-        pixelPerfectOverlayImageView.setImageBitmap(invertedBitmap);
+        return false;
     }
 
     private void initOverlay() {
