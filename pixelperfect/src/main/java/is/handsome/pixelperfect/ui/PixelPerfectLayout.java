@@ -43,6 +43,7 @@ public class PixelPerfectLayout extends FrameLayout {
     private boolean justClick;
     private boolean wasActionDown;
     private boolean wasDoubleAction;
+    private boolean letFastActions;
 
     private float microOffsetDx;
     private float microOffsetDy;
@@ -101,6 +102,7 @@ public class PixelPerfectLayout extends FrameLayout {
         if (bitmap != null) {
             if (noOverlayImageTextView.getVisibility() == VISIBLE) {
                 noOverlayImageTextView.setVisibility(GONE);
+                letFastActions = true;
             }
             ViewGroup.LayoutParams layoutParams = pixelPerfectOverlayImageView.getLayoutParams();
             layoutParams.width = bitmap.getWidth();
@@ -124,11 +126,11 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    public boolean invertImageBitmap(boolean enabled) {
+    public boolean invertImageBitmap(boolean saveOpacity) {
+        if (!saveOpacity) {
+            setImageAlpha(0.5f);
+        }
         if (pixelPerfectOverlayImageView.getDrawable() != null) {
-            if (enabled) {
-                setImageAlpha(0.5f);
-            }
             Bitmap srcBitmap = ((BitmapDrawable) pixelPerfectOverlayImageView.getDrawable()).getBitmap();
             Bitmap invertedBitmap = PixelPerfectUtils.invertBitmap(srcBitmap);
             pixelPerfectOverlayImageView.setImageBitmap(invertedBitmap);
@@ -279,7 +281,7 @@ public class PixelPerfectLayout extends FrameLayout {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!wasDoubleAction
+                    if (letFastActions && !wasDoubleAction
                             && Math.abs(event.getY() - doubleTapEvent.getY()) < touchSlop
                             && Math.abs(event.getX() - doubleTapEvent.getX()) < touchSlop) {
                         layoutListener.onFixOffset();
@@ -292,7 +294,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_UP && !wasDoubleAction) {
+            if (letFastActions && event.getAction() == MotionEvent.ACTION_UP && !wasDoubleAction) {
                 layoutListener.setInverseMode();
                 wasDoubleAction = true;
                 return true;
@@ -314,7 +316,9 @@ public class PixelPerfectLayout extends FrameLayout {
             lastMotionEvent = MotionEvent.obtain(event);
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
-            layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
+            if (letFastActions) {
+                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
+            }
             moveMockupOverlay(event);
             return true;
         }

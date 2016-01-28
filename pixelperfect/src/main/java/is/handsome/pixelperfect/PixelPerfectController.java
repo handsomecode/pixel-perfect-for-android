@@ -45,7 +45,7 @@ public class PixelPerfectController {
 
         void onFixOffset();
 
-        boolean onInverseChecked(boolean enabled);
+        boolean onInverseChecked(boolean saveOpacity);
     }
 
     private final WindowManager windowManager;
@@ -201,10 +201,10 @@ public class PixelPerfectController {
         overlayParams.gravity = Gravity.TOP | Gravity.START;
 
         overlayParams.x = -1 * overlayBorderSize + statusBarHeight;
-        fixedOffsetX = Math.abs(overlayParams.x);
+        fixedOffsetX = -1 * overlayParams.x;
 
         overlayParams.y = -1 * overlayBorderSize + statusBarHeight;
-        fixedOffsetY = Math.abs(overlayParams.y);
+        fixedOffsetY = -1 * overlayParams.y;
     }
 
     private void displaySettingsView() {
@@ -242,8 +242,8 @@ public class PixelPerfectController {
             }
 
             @Override
-            public boolean onInverseChecked(boolean enabled) {
-                boolean inverted = pixelPerfectLayout.invertImageBitmap(enabled);
+            public boolean onInverseChecked(boolean saveOpacity) {
+                boolean inverted = pixelPerfectLayout.invertImageBitmap(saveOpacity);
                 settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
                 return inverted;
             }

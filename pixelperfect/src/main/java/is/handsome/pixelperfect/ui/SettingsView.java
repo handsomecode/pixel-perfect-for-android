@@ -164,9 +164,7 @@ public class SettingsView extends FrameLayout {
         inverseCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!settingsListener.onInverseChecked(isChecked)) {
-                    inverseCheckbox.setChecked(false);
-                }
+                settingsListener.onInverseChecked(!isChecked);
             }
         });
     }
