@@ -94,7 +94,8 @@ public class PixelPerfectLayout extends LinearLayout {
         if (bitmap != null) {
             //removeExtraImageViews();
 
-            /*if (bitmap.getHeight() > PixelPerfectUtils.MAX_TEXTURE_SIZE) {
+            /*int maxTextureSize = PixelPerfectUtils.getMaxTextureSize();
+            if (maxTextureSize > 0 && bitmap.getHeight() > maxTextureSize) {
                 ArrayList<Bitmap> bitmaps = PixelPerfectUtils.splitLargeBitmap(bitmap);
 
                 LinearLayout.LayoutParams layoutParams = (LayoutParams) pixelPerfectOverlayImageView.getLayoutParams();

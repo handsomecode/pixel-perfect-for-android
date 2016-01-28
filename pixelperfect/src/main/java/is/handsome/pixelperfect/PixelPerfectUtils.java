@@ -12,6 +12,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.opengl.GLES10;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class PixelPerfectUtils {
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 
-    public static int MAX_TEXTURE_SIZE = 2000; //4096;
+public class PixelPerfectUtils {
 
     private static Rect outRect = new Rect();
     private static int[] location = new int[2];
@@ -119,6 +124,64 @@ public class PixelPerfectUtils {
         return bitmap;
     }
 
+    public static int getMaxTextureSize() {
+        // approach adopted from: http://stackoverflow.com/questions/26985858/gles10-glgetintegerv-returns-0-in-lollipop-only
+        EGL10 egl = (EGL10) EGLContext.getEGL();
+
+        EGLDisplay dpy = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+        int[] vers = new int[2];
+        egl.eglInitialize(dpy, vers);
+
+        int[] configAttr = {
+                EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER,
+                EGL10.EGL_LEVEL, 0,
+                EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
+                EGL10.EGL_NONE
+        };
+
+        EGLConfig[] configs = new EGLConfig[1];
+
+        int[] numConfig = new int[1];
+
+        egl.eglChooseConfig(dpy, configAttr, configs, 1, numConfig);
+
+        if (numConfig[0] == 0) {
+            // what to do here?
+        }
+
+        EGLConfig config = configs[0];
+
+        int[] surfAttr = {
+                EGL10.EGL_WIDTH, 64,
+                EGL10.EGL_HEIGHT, 64,
+                EGL10.EGL_NONE
+        };
+
+        EGLSurface surf = egl.eglCreatePbufferSurface(dpy, config, surfAttr);
+
+        final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;  // missing in EGL10
+
+        int[] ctxAttrib = {
+                EGL_CONTEXT_CLIENT_VERSION, 1,
+                EGL10.EGL_NONE
+        };
+
+        EGLContext ctx = egl.eglCreateContext(dpy, config, EGL10.EGL_NO_CONTEXT, ctxAttrib);
+
+        egl.eglMakeCurrent(dpy, surf, surf, ctx);
+
+        int[] maxSize = new int[1];
+
+        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+
+        egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+        egl.eglDestroySurface(dpy, surf);
+        egl.eglDestroyContext(dpy, ctx);
+        egl.eglTerminate(dpy);
+
+        return maxSize[0];
+    }
+
     private static Bitmap decodeSampledBitmapFromInputStream(InputStream inputStream, int reqWidth) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -147,18 +210,19 @@ public class PixelPerfectUtils {
     }
 
     public static ArrayList<Bitmap> splitLargeBitmap(Bitmap bitmap) {
-        int arraySize = bitmap.getHeight() / MAX_TEXTURE_SIZE;
-        if (bitmap.getHeight() % MAX_TEXTURE_SIZE > 0) {
+        int maxTextureSize = getMaxTextureSize();
+        int arraySize = bitmap.getHeight() / maxTextureSize;
+        if (bitmap.getHeight() % maxTextureSize > 0) {
             arraySize++;
         }
         ArrayList<Bitmap> bitmaps = new ArrayList<>(arraySize);
         for (int i = 0; i < arraySize; i++) {
-            int height = (i != arraySize - 1) ? MAX_TEXTURE_SIZE : bitmap.getHeight() - MAX_TEXTURE_SIZE * i;
+            int height = (i != arraySize - 1) ? maxTextureSize : bitmap.getHeight() - maxTextureSize * i;
             Bitmap splitBitmap = Bitmap.createBitmap(bitmap.getWidth(), height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(splitBitmap);
 
-            int srcHeight = (i != arraySize - 1) ? MAX_TEXTURE_SIZE * (i + 1) : bitmap.getHeight();
-            Rect src = new Rect(0, MAX_TEXTURE_SIZE * i, bitmap.getWidth(), srcHeight);
+            int srcHeight = (i != arraySize - 1) ? maxTextureSize * (i + 1) : bitmap.getHeight();
+            Rect src = new Rect(0, maxTextureSize * i, bitmap.getWidth(), srcHeight);
             Rect dest = new Rect(0, 0, splitBitmap.getWidth(), splitBitmap.getHeight());
             canvas.drawBitmap(bitmap, src, dest, null);
             bitmaps.add(splitBitmap);
