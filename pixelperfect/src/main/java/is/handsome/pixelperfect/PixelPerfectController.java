@@ -138,14 +138,14 @@ public class PixelPerfectController {
 
             @Override
             public void onOffsetViewMoveX(int dx) {
-                //offsetPixelsViewParams.x += dx;
-                //windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                offsetPixelsViewParams.x += dx;
+                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
 
             @Override
             public void onOffsetViewMoveY(int dy) {
-                //offsetPixelsViewParams.y += dy;
-                //windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                offsetPixelsViewParams.y += dy;
+                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
             }
 
             @Override
@@ -155,10 +155,12 @@ public class PixelPerfectController {
 
             @Override
             public void showOffsetView(int xPos, int yPos) {
-                offsetPixelsView.setVisibility(View.VISIBLE);
-                offsetPixelsViewParams.x = xPos - offsetPixelsView.getWidth() / 2;
-                offsetPixelsViewParams.y = yPos - offsetPixelsView.getHeight() * 3;
-                windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                if (offsetPixelsView.getVisibility() != View.VISIBLE) {
+                    offsetPixelsView.setVisibility(View.VISIBLE);
+                    offsetPixelsViewParams.x = xPos - offsetPixelsView.getWidth() / 2;
+                    offsetPixelsViewParams.y = yPos - offsetPixelsView.getHeight() * 3;
+                    windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                }
             }
 
             @Override

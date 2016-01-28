@@ -25,6 +25,7 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private static int MICRO_OFFSET = 8;
     private static int LONG_PRESS_TIMEOUT = 500;
+    private static int OFFSET_VIEW_TIMEOUT = 200;
 
     public enum MoveMode {
         VERTICAL, HORIZONTAL, UNDEFINED
@@ -44,6 +45,7 @@ public class PixelPerfectLayout extends FrameLayout {
     private boolean wasActionDown;
     private boolean wasDoubleAction;
     private boolean letFastActions;
+    private long savedTime;
 
     private float microOffsetDx;
     private float microOffsetDy;
@@ -217,6 +219,9 @@ public class PixelPerfectLayout extends FrameLayout {
             microOffsetDx = 0;
             microOffsetDy = 0;
             lastMotionEvent = MotionEvent.obtain(event);
+            if (letFastActions) {
+                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
+            }
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
                 if (layoutListener != null) {
@@ -247,13 +252,9 @@ public class PixelPerfectLayout extends FrameLayout {
                     layoutListener.onOverlayMoveY((int) dy);
                 }
             }
-            float dx = event.getRawX() - lastMotionEvent.getRawX();
-            if (Math.abs(dx) >= 3) {
-                layoutListener.onOffsetViewMoveX((int) dx);
-            }
-            float dy = event.getRawY() - lastMotionEvent.getRawY();
-            if (Math.abs(dy) >= 3) {
-                layoutListener.onOffsetViewMoveY((int) dy);
+            if (letFastActions) {
+                layoutListener.onOffsetViewMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
+                layoutListener.onOffsetViewMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
             }
             lastMotionEvent = MotionEvent.obtain(event);
         }
@@ -309,14 +310,15 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    private boolean handleTouch(MotionEvent event) {
+    private boolean handleTouch(final MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             justClick = true;
             wasActionDown = true;
             lastMotionEvent = MotionEvent.obtain(event);
+            savedTime = System.currentTimeMillis();
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
-            if (letFastActions) {
+            if (letFastActions && justClick && System.currentTimeMillis() - savedTime > OFFSET_VIEW_TIMEOUT) {
                 layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
             }
             moveMockupOverlay(event);
