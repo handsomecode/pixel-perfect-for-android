@@ -58,6 +58,7 @@ public class PixelPerfectController {
 
     private WindowManager.LayoutParams offsetPixelsViewParams;
     private WindowManager.LayoutParams overlayParams;
+    private WindowManager.LayoutParams settingsParams;
 
     private int fixedOffsetX = 0;
     private int fixedOffsetY = 0;
@@ -197,6 +198,11 @@ public class PixelPerfectController {
 
         overlayParams.y = -1 * overlayBorderSize - statusBarHeight + marginVertical;
         fixedOffsetY = Math.abs(overlayParams.y);
+
+        windowManager.removeView(pixelPerfectLayout);
+        windowManager.removeView(settingsView);
+        windowManager.addView(pixelPerfectLayout, overlayParams);
+        windowManager.addView(settingsView, settingsParams);
     }
 
     private void setInitialOverlayPosition() {
@@ -216,15 +222,15 @@ public class PixelPerfectController {
     }
 
     private void addSettingsView() {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        settingsParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
                 PixelFormat.TRANSLUCENT);
 
-        params.gravity = Gravity.TOP | Gravity.START;
-        windowManager.addView(settingsView, params);
+        settingsParams.gravity = Gravity.TOP | Gravity.START;
+        windowManager.addView(settingsView, settingsParams);
 
         settingsView.setVisibility(View.GONE);
         settingsView.setListener(new SettingsListener() {
