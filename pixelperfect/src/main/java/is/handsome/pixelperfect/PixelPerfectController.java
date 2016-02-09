@@ -159,10 +159,12 @@ public class PixelPerfectController {
             @Override
             public void showOffsetView(int xPos, int yPos) {
                 if (offsetPixelsView.getVisibility() != View.VISIBLE) {
-                    offsetPixelsView.setVisibility(View.VISIBLE);
                     offsetPixelsViewParams.x = xPos - offsetPixelsView.getWidth() / 2;
                     offsetPixelsViewParams.y = yPos - offsetPixelsView.getHeight() * 3;
                     windowManager.updateViewLayout(offsetPixelsView, offsetPixelsViewParams);
+                    offsetXTextView.setText(String.format(offsetTextTemplate, fixedOffsetX + overlayParams.x));
+                    offsetYTextView.setText(String.format(offsetTextTemplate, fixedOffsetY + overlayParams.y));
+                    offsetPixelsView.setVisibility(View.VISIBLE);
                 }
             }
 

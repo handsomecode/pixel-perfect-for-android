@@ -49,6 +49,9 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private float microOffsetDx;
     private float microOffsetDy;
+    private float offsetViewDx;
+    private float offsetViewDy;
+
 
     public PixelPerfectLayout(Context context) {
         super(context);
@@ -224,37 +227,44 @@ public class PixelPerfectLayout extends FrameLayout {
             }
         } else {
             if (moveMode == MoveMode.HORIZONTAL) {
-                if (layoutListener != null) {
-                    float dx = event.getRawX() - lastMotionEvent.getRawX();
-                    if (Math.abs(dx) < MICRO_OFFSET) {
-                        microOffsetDx += dx / (MICRO_OFFSET * 2);
-                        dx = Math.round(microOffsetDx);
-                        if (dx != 0) {
-                            microOffsetDx = 0;
-                        }
-                    } else {
+                float dx = event.getRawX() - lastMotionEvent.getRawX();
+                if (Math.abs(dx) < MICRO_OFFSET) {
+                    microOffsetDx += dx / (MICRO_OFFSET * 2);
+                    dx = Math.round(microOffsetDx);
+                    if (dx != 0) {
                         microOffsetDx = 0;
                     }
-                    layoutListener.onOverlayMoveX((int) dx);
+                } else {
+                    microOffsetDx = 0;
                 }
+                layoutListener.onOverlayMoveX((int) dx);
             } else {
-                if (layoutListener != null) {
-                    float dy = event.getRawY() - lastMotionEvent.getRawY();
-                    if (Math.abs(dy) < MICRO_OFFSET) {
-                        microOffsetDy += dy / (MICRO_OFFSET * 2);
-                        dy = Math.round(microOffsetDy);
-                        if (dy != 0) {
-                            microOffsetDy = 0;
-                        }
-                    } else {
+                float dy = event.getRawY() - lastMotionEvent.getRawY();
+                if (Math.abs(dy) < MICRO_OFFSET) {
+                    microOffsetDy += dy / (MICRO_OFFSET * 2);
+                    dy = Math.round(microOffsetDy);
+                    if (dy != 0) {
                         microOffsetDy = 0;
                     }
-                    layoutListener.onOverlayMoveY((int) dy);
+                } else {
+                    microOffsetDy = 0;
                 }
+                layoutListener.onOverlayMoveY((int) dy);
             }
             if (letFastActions) {
-                layoutListener.onOffsetViewMoveX((int) (event.getRawX() - lastMotionEvent.getRawX()));
-                layoutListener.onOffsetViewMoveY((int) (event.getRawY() - lastMotionEvent.getRawY()));
+                if ((int) (event.getRawX() - lastMotionEvent.getRawX() + offsetViewDx) == 0) {
+                    offsetViewDx += event.getRawX() - lastMotionEvent.getRawX();
+                } else {
+                    layoutListener.onOffsetViewMoveX((int) (event.getRawX() - lastMotionEvent.getRawX() + offsetViewDx));
+                    offsetViewDx = (event.getRawX() - lastMotionEvent.getRawX() + offsetViewDx) % 1;
+                }
+
+                if ((int) (event.getRawY() - lastMotionEvent.getRawY() + offsetViewDy) == 0) {
+                    offsetViewDy += event.getRawY() - lastMotionEvent.getRawY();
+                } else {
+                    layoutListener.onOffsetViewMoveY((int) (event.getRawY() - lastMotionEvent.getRawY() + offsetViewDy));
+                    offsetViewDy = (event.getRawY() - lastMotionEvent.getRawY() + offsetViewDy) % 1;
+                }
             }
             lastMotionEvent = MotionEvent.obtain(event);
         }
