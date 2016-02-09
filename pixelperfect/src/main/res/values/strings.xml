@@ -2,4 +2,7 @@
     <string name="app_name">PixelPerfect</string>
     <string name="settings_name">Pixel Perfect</string>
     <string name="no_overlay_image_text">Tap to set\noverlay image</string>
+
+    <string name="offset_text">%d px</string>
+    <string name="settings_offset_text">(%1$dpx, %2$dpx)</string>
 </resources>

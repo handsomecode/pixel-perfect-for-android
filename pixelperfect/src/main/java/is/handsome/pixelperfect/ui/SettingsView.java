@@ -43,7 +43,6 @@ public class SettingsView extends FrameLayout {
     private CheckBox inverseCheckbox;
 
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
 
     public SettingsView(Context context) {
         super(context);
@@ -122,7 +121,7 @@ public class SettingsView extends FrameLayout {
     }
 
     public void updateOffset(int x, int y) {
-        offsetTextView.setText("(" + x + "px, " + y + "px)");
+        offsetTextView.setText(String.format(getResources().getString(R.string.settings_offset_text), x, y));
     }
 
     private void init() {
@@ -153,7 +152,7 @@ public class SettingsView extends FrameLayout {
             @Override
             public void onClick(View v) {
                 settingsListener.onFixOffset();
-                offsetTextView.setText("(0px, 0px)");
+                offsetTextView.setText(String.format(getResources().getString(R.string.settings_offset_text), 0, 0));
             }
         });
 
@@ -198,7 +197,7 @@ public class SettingsView extends FrameLayout {
 
         recyclerView.setHasFixedSize(true);
 
-        layoutManager = new GridLayoutManager(getContext(), 3);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
         addImagesContent();

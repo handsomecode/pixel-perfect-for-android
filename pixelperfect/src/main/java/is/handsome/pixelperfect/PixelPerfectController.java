@@ -66,6 +66,7 @@ public class PixelPerfectController {
 
     private int overlayBorderSize;
     private int statusBarHeight;
+    private String offsetTextTemplate;
 
     public PixelPerfectController(Context context) {
         Context applicationContext = context.getApplicationContext();
@@ -77,6 +78,7 @@ public class PixelPerfectController {
 
         overlayBorderSize = (int) context.getResources().getDimension(R.dimen.overlay_border_size);
         statusBarHeight = (int) context.getResources().getDimension(R.dimen.android_status_bar_height);
+        offsetTextTemplate = context.getString(R.string.offset_text);
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(context);
@@ -93,7 +95,7 @@ public class PixelPerfectController {
         show();
     }
 
-    private void addOverlayMockup(Context context) {
+    private void addOverlayMockup(final Context context) {
         overlayParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -116,7 +118,7 @@ public class PixelPerfectController {
                     overlayParams.x += dx;
                     windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
 
-                    offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
+                    offsetXTextView.setText(String.format(offsetTextTemplate, fixedOffsetX + overlayParams.x));
                 }
             }
 
@@ -127,7 +129,7 @@ public class PixelPerfectController {
                     overlayParams.y += dy;
                     windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
 
-                    offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
+                    offsetYTextView.setText(String.format(offsetTextTemplate, fixedOffsetY + overlayParams.y));
                 }
             }
 
@@ -263,8 +265,8 @@ public class PixelPerfectController {
         fixedOffsetX = -1 * overlayParams.x;
         fixedOffsetY = -1 * overlayParams.y;
 
-        offsetXTextView.setText(fixedOffsetX + overlayParams.x + " px");
-        offsetYTextView.setText(fixedOffsetY + overlayParams.y + " px");
+        offsetXTextView.setText(String.format(offsetTextTemplate, fixedOffsetX + overlayParams.x));
+        offsetYTextView.setText(String.format(offsetTextTemplate, fixedOffsetY + overlayParams.y));
     }
 
     private void addOffsetPixelsView() {
