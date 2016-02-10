@@ -198,10 +198,10 @@ public class PixelPerfectController {
         int marginVertical = (screenHeight - height) / 2;
 
         overlayParams.x = -1 * overlayBorderSize + marginHorizontal;
-        fixedOffsetX = Math.abs(overlayParams.x);
+        fixedOffsetX = -1 * overlayParams.x;
 
         overlayParams.y = -1 * overlayBorderSize - statusBarHeight + marginVertical;
-        fixedOffsetY = Math.abs(overlayParams.y);
+        fixedOffsetY = -1 * overlayParams.y;
 
         windowManager.removeView(pixelPerfectLayout);
         windowManager.removeView(settingsView);
