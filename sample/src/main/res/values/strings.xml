@@ -3,4 +3,6 @@
     <string name="pixel_perfect">Pixel Perfect</string>
     <string name="button_show">Show</string>
     <string name="button_hide">Hide</string>
+    <string name="permission_text">Please, turn on Permit drawing over other apps to be able to see Pixel Perfect overlays</string>
+    <string name="button_go_to_settings">Go to settings</string>
 </resources>

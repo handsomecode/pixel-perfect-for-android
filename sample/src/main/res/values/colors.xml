@@ -10,4 +10,5 @@
     <color name="black_50_alpha">#80000000</color>
     <color name="black_70_alpha">#B3000000</color>
 
+    <color name="blue">#0000ff</color>
 </resources>

@@ -1,5 +1,6 @@
 package is.handsome.pixelperfect;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -53,12 +54,6 @@ public class PixelPerfectBuilder {
      * @return
      */
     public boolean show(Activity activity) {
-
-        if (overlayPermRequest(activity)) {
-            //once permission is granted then you must call show() again
-            return false;
-        }
-
         if (pixelPerfectController != null) {
             pixelPerfectController.show();
             return true;
@@ -88,17 +83,6 @@ public class PixelPerfectBuilder {
         return pixelPerfectController != null;
     }
 
-    /**
-     * asks if volume buttons
-     * can be used for Opacity widget
-     *
-     * @param use
-     */
-    public PixelPerfectBuilder useVolumeButtons(boolean use) {
-        PixelPerfectConfig.get().useVolumeButtons = use;
-        return this;
-    }
-
     public static void show() {
         pixelPerfectController.show();
     }
@@ -111,23 +95,21 @@ public class PixelPerfectBuilder {
         return pixelPerfectController.isShown();
     }
 
-    /**
-     * request overlay permission when api 23 and above
-     *
-     * @param context
-     * @return
-     */
-    private boolean overlayPermRequest(Context context) {
-        boolean permNeeded = false;
+    @TargetApi(Build.VERSION_CODES.M)
+    public static boolean hasPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(context)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + context.getPackageName()));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-                permNeeded = true;
-            }
+            return Settings.canDrawOverlays(context);
         }
-        return permNeeded;
+        return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public static void askForPermission(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + context.getPackageName()));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
     }
 }

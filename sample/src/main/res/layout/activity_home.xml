@@ -47,4 +47,30 @@
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:text="@string/button_show"/>
+
+    <LinearLayout
+        android:id="@+id/pixel_perfect_permission_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/permission_text"/>
+
+        <TextView
+            android:id="@+id/pixel_perfect_go_to_settings_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/button_go_to_settings"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:onClick="openPermissionSettings"/>
+    </LinearLayout>
 </LinearLayout>

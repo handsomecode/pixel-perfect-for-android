@@ -21,6 +21,7 @@ import timber.log.Timber;
 public class HomeActivity extends AppCompatActivity {
 
     private Button pixelPerfectButton;
+    private View permissionLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,21 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (PixelPerfect.hasPermission(this)) {
+            pixelPerfectButton.setVisibility(View.VISIBLE);
+            permissionLinearLayout.setVisibility(View.GONE);
+        } else {
+            pixelPerfectButton.setVisibility(View.GONE);
+            permissionLinearLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void init() {
         pixelPerfectButton = (Button) findViewById(R.id.pixel_perfect_button);
+        permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
 
         if (PixelPerfect.isShown()) {
             pixelPerfectButton.setText(R.string.button_hide);
@@ -117,5 +131,9 @@ public class HomeActivity extends AppCompatActivity {
         if (PixelPerfect.isCreated()) {
             PixelPerfect.destroy();
         }
+    }
+
+    public void openPermissionSettings(View view) {
+        PixelPerfect.askForPermission(this);
     }
 }

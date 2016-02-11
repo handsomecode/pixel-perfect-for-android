@@ -1,5 +1,7 @@
 package is.handsome.pixelperfect;
 
+import android.content.Context;
+
 public class PixelPerfect {
 
     public static PixelPerfectBuilder create() {
@@ -31,5 +33,13 @@ public class PixelPerfect {
 
     public static void setImage(String imageName) {
         PixelPerfectBuilder.setImage(imageName);
+    }
+
+    public static boolean hasPermission(Context context) {
+        return PixelPerfectBuilder.hasPermission(context);
+    }
+
+    public static void askForPermission(Context context) {
+        PixelPerfectBuilder.askForPermission(context);
     }
 }
