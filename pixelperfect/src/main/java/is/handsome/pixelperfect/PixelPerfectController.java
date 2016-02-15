@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +49,7 @@ public class PixelPerfectController {
         boolean onInverseChecked(boolean saveOpacity);
     }
 
-    private final WindowManager windowManager;
+    private WindowManager windowManager;
 
     private SettingsView settingsView;
     private PixelPerfectLayout pixelPerfectLayout;
@@ -69,6 +70,20 @@ public class PixelPerfectController {
     private String offsetTextTemplate;
 
     public PixelPerfectController(Context context) {
+        initController(context);
+    }
+
+    public PixelPerfectController(Context context, PixelPerfect.Config config) {
+        initController(context);
+        if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
+            settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
+        }
+        if (!TextUtils.isEmpty(config.getOverlayInitialImageName())) {
+            settingsView.setImageOverlay(config.getOverlayInitialImageName());
+        }
+    }
+
+    private void initController(Context context) {
         Context applicationContext = context.getApplicationContext();
         pixelPerfectLayout = new PixelPerfectLayout(applicationContext);
         settingsView = new SettingsView(applicationContext);
@@ -82,10 +97,6 @@ public class PixelPerfectController {
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(context);
-    }
-
-    public void setImage(String imageName) {
-        settingsView.setImageOverlay(imageName);
     }
 
     private void addViewsToWindow(Context context) {
@@ -260,7 +271,6 @@ public class PixelPerfectController {
                 return inverted;
             }
         });
-        settingsView.addUserImages(PixelPerfectSingleton.get().userImages);
     }
 
     private void fixOffset() {

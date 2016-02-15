@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import is.handsome.pixelperfect.ImagesAdapter;
-import is.handsome.pixelperfect.PixelPerfectImage;
 import is.handsome.pixelperfect.PixelPerfectController;
+import is.handsome.pixelperfect.PixelPerfectImage;
 import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfect.R;
 
@@ -33,16 +33,19 @@ public class SettingsView extends FrameLayout {
 
     private PixelPerfectController.SettingsListener settingsListener;
     private List<PixelPerfectImage> images = new ArrayList<>();
+    private String overlayImageAssetsPath = "pixelperfect";
 
     private SeekBar opacitySeekBar;
     private View opacityDemoView;
-    private View firstScreenOptionsView;
+    private View firstScreenSettingsView;
+    private View secondScreenSettingsView;
     private ImageView exitButton;
     private TextView imageNameTextView;
     private TextView offsetTextView;
     private CheckBox inverseCheckbox;
 
     private RecyclerView recyclerView;
+    private TextView emptyListTextView;
 
     public SettingsView(Context context) {
         super(context);
@@ -74,10 +77,10 @@ public class SettingsView extends FrameLayout {
         inverseCheckbox.setChecked(!inverseCheckbox.isChecked());
     }
 
-    public void addUserImages(List<PixelPerfectImage> userImages) {
-        if (userImages != null) {
-            images.addAll(0, userImages);
-        }
+    public void setImageAssetsPath(String overlayImageAssetsPath) {
+        this.overlayImageAssetsPath = overlayImageAssetsPath;
+        updateImagesContent();
+        updateAdapter();
     }
 
     public void setImageOverlay(int position) {
@@ -106,9 +109,9 @@ public class SettingsView extends FrameLayout {
     }
 
     public void onBack() {
-        if (recyclerView.getVisibility() == VISIBLE) {
-            recyclerView.setVisibility(GONE);
-            firstScreenOptionsView.setVisibility(VISIBLE);
+        if (secondScreenSettingsView.getVisibility() == VISIBLE) {
+            secondScreenSettingsView.setVisibility(GONE);
+            firstScreenSettingsView.setVisibility(VISIBLE);
             exitButton.setImageResource(R.drawable.ic_settings_cancel);
         } else {
             setVisibility(GONE);
@@ -116,7 +119,7 @@ public class SettingsView extends FrameLayout {
     }
 
     public void openImagesSettingsScreen() {
-        recyclerView.setVisibility(VISIBLE);
+        secondScreenSettingsView.setVisibility(VISIBLE);
         exitButton.setImageResource(R.drawable.ic_back);
     }
 
@@ -142,8 +145,8 @@ public class SettingsView extends FrameLayout {
         findViewById(R.id.settings_images_option_linear_layout).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                findViewById(R.id.settings_linear_layout).setVisibility(GONE);
-                recyclerView.setVisibility(VISIBLE);
+                findViewById(R.id.settings_first_screen_linear_layout).setVisibility(GONE);
+                secondScreenSettingsView.setVisibility(VISIBLE);
                 exitButton.setImageResource(R.drawable.ic_back);
             }
         });
@@ -156,7 +159,8 @@ public class SettingsView extends FrameLayout {
             }
         });
 
-        firstScreenOptionsView = findViewById(R.id.settings_linear_layout);
+        firstScreenSettingsView = findViewById(R.id.settings_first_screen_linear_layout);
+        secondScreenSettingsView = findViewById(R.id.settings_second_screen_frame_layout);
         imageNameTextView = (TextView) findViewById(R.id.settings_image_name);
         offsetTextView = (TextView) findViewById(R.id.settings_offset_text_view);
         inverseCheckbox = (CheckBox) findViewById(R.id.inverse_checkbox);
@@ -194,50 +198,64 @@ public class SettingsView extends FrameLayout {
 
     private void initImagesRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.settings_images_recycler_view);
+        emptyListTextView = (TextView) findViewById(R.id.settings_empty_list_text_view);
 
         recyclerView.setHasFixedSize(true);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
-        addImagesContent();
-
-        recyclerView.setAdapter(new ImagesAdapter(getContext(), images, new AdapterListener() {
-
-            @Override
-            public void onItemSelected(int position) {
-                if (settingsListener != null) {
-                    settingsListener.onUpdateImage(images.get(position).bitmap);
-                    if (inverseCheckbox.isChecked()) {
-                        settingsListener.onInverseChecked(true);
-                    }
-                    imageNameTextView.setText(images.get(position).name);
-                    exitSettingsView();
-                }
-            }
-        }));
+        updateImagesContent();
+        updateAdapter();
     }
 
-    private void addImagesContent() {
+    private void updateAdapter() {
+        if (images.isEmpty()) {
+            recyclerView.setVisibility(GONE);
+            emptyListTextView.setVisibility(VISIBLE);
+            emptyListTextView.setText(String.format(getResources().getString(R.string.settings_empty_list_message),
+                    overlayImageAssetsPath));
+        } else {
+            recyclerView.setVisibility(VISIBLE);
+            emptyListTextView.setVisibility(GONE);
+            recyclerView.setAdapter(new ImagesAdapter(getContext(), images, new AdapterListener() {
+
+                @Override
+                public void onItemSelected(int position) {
+                    if (settingsListener != null) {
+                        settingsListener.onUpdateImage(images.get(position).bitmap);
+                        if (inverseCheckbox.isChecked()) {
+                            settingsListener.onInverseChecked(true);
+                        }
+                        imageNameTextView.setText(images.get(position).name);
+                        exitSettingsView();
+                    }
+                }
+            }));
+        }
+    }
+
+    private void updateImagesContent() {
         String[] filenames;
 
         try {
-            filenames = getContext().getAssets().list("pixelperfect");
+            filenames = getContext().getAssets().list(overlayImageAssetsPath);
         } catch (IOException e) {
             filenames = new String[0];
         }
+        images.clear();
         for (int i = 0; i < filenames.length; i++) {
             PixelPerfectImage pixelPerfectImage = new PixelPerfectImage();
             pixelPerfectImage.name = filenames[i];
             //TODO: add bitmap decoding max size
-            pixelPerfectImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), "pixelperfect" + "/" + filenames[i]);
+            pixelPerfectImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), overlayImageAssetsPath + "/" + filenames[i]);
             images.add(pixelPerfectImage);
         }
     }
 
     private void exitSettingsView() {
-        firstScreenOptionsView.setVisibility(VISIBLE);
-        recyclerView.setVisibility(GONE);
+        firstScreenSettingsView.setVisibility(VISIBLE);
+        secondScreenSettingsView.setVisibility(GONE);
         exitButton.setImageResource(R.drawable.ic_settings_cancel);
         setVisibility(GONE);
     }

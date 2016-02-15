@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class PixelPerfect {
@@ -21,6 +20,18 @@ public class PixelPerfect {
             this.overlayImageAssetsPath = configBuilder.overlayImageAssetsPath;
             this.overlayInitialImageName = configBuilder.overlayInitialImageName;
             this.overlayScaleFactor = configBuilder.overlayScaleFactor;
+        }
+
+        public String getOverlayImageAssetsPath() {
+            return overlayImageAssetsPath;
+        }
+
+        public String getOverlayInitialImageName() {
+            return overlayInitialImageName;
+        }
+
+        public float getOverlayScaleFactor() {
+            return overlayScaleFactor;
         }
 
         public static class Builder {
@@ -49,6 +60,7 @@ public class PixelPerfect {
     }
 
     private static PixelPerfectController pixelPerfectController;
+
     private static AppLifeCycleObserver.Listener foregroundListener = new AppLifeCycleObserver.Listener() {
         @Override
         public void onBecameForeground() {
@@ -69,20 +81,11 @@ public class PixelPerfect {
      * @return
      */
     public static void show(Context context) {
-        if (pixelPerfectController != null) {
-            pixelPerfectController.show();
-            return;
-        }
-
-        pixelPerfectController = new PixelPerfectController(context);
-        AppLifeCycleObserver.get(context).addListener(foregroundListener);
+        showPixelPerfectController(context, null);
     }
 
     public static void show(Context context, PixelPerfect.Config config) {
-        show(context);
-        if (!TextUtils.isEmpty(config.overlayInitialImageName)) {
-            pixelPerfectController.setImage(config.overlayInitialImageName);
-        }
+        showPixelPerfectController(context, config);
     }
 
     public static boolean isShown() {
@@ -98,7 +101,7 @@ public class PixelPerfect {
         try {
             AppLifeCycleObserver.get().removeListener(foregroundListener);
         } catch (IllegalStateException exception) {
-            Log.w("PixelPerfect", "Error during listener removing", exception);
+            Log.w(PixelPerfect.class.getSimpleName(), "Error during listener removing", exception);
         }
 
         if (pixelPerfectController != null) {
@@ -123,5 +126,16 @@ public class PixelPerfect {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
+    }
+
+    private static void showPixelPerfectController(Context context, PixelPerfect.Config config) {
+        if (pixelPerfectController != null) {
+            pixelPerfectController.show();
+            return;
+        }
+
+        pixelPerfectController = config == null ? new PixelPerfectController(context) :
+                new PixelPerfectController(context, config);
+        AppLifeCycleObserver.get(context).addListener(foregroundListener);
     }
 }
