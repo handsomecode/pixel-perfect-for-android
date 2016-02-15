@@ -59,22 +59,19 @@ public class HomeActivity extends AppCompatActivity {
         if (PixelPerfect.isShown()) {
             pixelPerfectButton.setText(R.string.button_hide);
         }
+
         pixelPerfectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!PixelPerfect.isCreated()) {
-                    boolean shownSuccessfully = PixelPerfect.create().withImages(createImages()).show(HomeActivity.this);
-                    if (shownSuccessfully) {
-                        pixelPerfectButton.setText(R.string.button_hide);
-                    }
+                if (PixelPerfect.isShown()) {
+                    PixelPerfect.hide();
+                    pixelPerfectButton.setText(R.string.button_show);
                 } else {
-                    if (PixelPerfect.isShown()) {
-                        PixelPerfect.hide();
-                        pixelPerfectButton.setText(R.string.button_show);
-                    } else {
-                        PixelPerfect.show();
-                        pixelPerfectButton.setText(R.string.button_hide);
-                    }
+                    PixelPerfect.Config config = new PixelPerfect.Config.Builder()
+                            .overlayInitialImageName("im_cat.png")
+                            .build();
+                    PixelPerfect.show(HomeActivity.this, config);
+                    pixelPerfectButton.setText(R.string.button_hide);
                 }
             }
         });
@@ -128,8 +125,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (PixelPerfect.isCreated()) {
-            PixelPerfect.destroy();
+        if (PixelPerfect.isShown()) {
+            PixelPerfect.hide();
         }
     }
 

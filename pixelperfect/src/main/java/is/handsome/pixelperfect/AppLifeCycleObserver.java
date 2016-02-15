@@ -30,11 +30,11 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
     private Runnable checkRunnable;
 
-    public static AppLifeCycleObserver get(Activity activity){
+    public static AppLifeCycleObserver get(Context context){
         if (instance == null) {
-            Context applicationContext = activity.getApplicationContext();
+            Context applicationContext = context.getApplicationContext();
             if (applicationContext instanceof Application) {
-                PixelPerfectConfig.get().topActivity = activity;
+                //PixelPerfectAppConfig.get().topActivity = activity;
                 return init((Application) applicationContext);
             }
             throw new IllegalStateException (
@@ -80,7 +80,7 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
     @Override
     public void onActivityResumed(Activity activity) {
 
-        PixelPerfectConfig.get().topActivity = activity;
+        PixelPerfectSingleton.get().topActivity = activity;
         paused = false;
         boolean wasBackground = !foreground;
         foreground = true;
@@ -105,7 +105,7 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
     @Override
     public void onActivityPaused(Activity activity) {
 
-        PixelPerfectConfig.get().topActivity = null;
+        PixelPerfectSingleton.get().topActivity = null;
         paused = true;
 
         if (checkRunnable != null) {

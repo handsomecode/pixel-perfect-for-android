@@ -65,7 +65,7 @@ public class PixelPerfectUtils {
     }
 
     static Bitmap takeActivityScreenshot() {
-        View rootView = ((ViewGroup) PixelPerfectConfig.get().getTopActivity()
+        View rootView = ((ViewGroup) PixelPerfectSingleton.get().getTopActivity()
                 .findViewById(android.R.id.content)).getChildAt(0).getRootView();
         rootView.setDrawingCacheEnabled(true);
         return rootView.getDrawingCache();

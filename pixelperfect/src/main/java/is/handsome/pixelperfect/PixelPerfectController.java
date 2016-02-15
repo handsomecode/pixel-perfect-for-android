@@ -260,7 +260,7 @@ public class PixelPerfectController {
                 return inverted;
             }
         });
-        settingsView.addUserImages(PixelPerfectConfig.get().userImages);
+        settingsView.addUserImages(PixelPerfectSingleton.get().userImages);
     }
 
     private void fixOffset() {
