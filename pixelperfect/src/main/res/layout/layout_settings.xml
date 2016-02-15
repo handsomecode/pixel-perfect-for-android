@@ -9,20 +9,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="20dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
         android:layout_marginTop="45dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/white"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:padding="8dp"
+            android:orientation="horizontal"
+            android:background="@color/color_accent">
 
             <ImageView
                 android:id="@+id/settings_exit_button"
@@ -38,10 +37,21 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/settings_name"
-                android:textColor="@color/color_accent"
+                android:textColor="@color/white"
                 android:textSize="20sp"/>
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#00849d"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="6dp"
+            android:background="#a6e0ff"/>
 
         <FrameLayout
             android:id="@+id/settings_second_screen_frame_layout"
@@ -59,8 +69,8 @@
                 android:id="@+id/settings_empty_list_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:gravity="center_horizontal"
+                android:layout_marginBottom="60dp"
+                android:gravity="center"
                 android:textColor="@color/black"
                 android:textSize="18sp"/>
 
