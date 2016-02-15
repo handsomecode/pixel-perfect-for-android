@@ -34,7 +34,6 @@ public class PixelPerfectLayout extends FrameLayout {
     private ImageView pixelPerfectOverlayImageView;
     private TextView noOverlayImageTextView;
     private PixelPerfectController.LayoutListener layoutListener;
-    private MagnifierContainerFrameLayout magnifierFrameLayout;
     private MoveMode moveMode = MoveMode.UNDEFINED;
     private int touchSlop;
 
@@ -177,31 +176,6 @@ public class PixelPerfectLayout extends FrameLayout {
         initOverlay();
 
         gestureDetector = new GestureDetector(getContext(), new PixelPerfectLayoutGestureListener());
-
-        magnifierFrameLayout = new MagnifierContainerFrameLayout(getContext());
-
-        //Feature is turned off temporary
-        /*addView(magnifierFrameLayout,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));*/
-        magnifierFrameLayout.setListener(new MagnifierContainerFrameLayout.MagnifierListener() {
-            @Override
-            public void onMockupDown(MotionEvent event) {
-                justClick = true;
-                wasActionDown = true;
-                lastMotionEvent = MotionEvent.obtain(event);
-            }
-
-            @Override
-            public void onMockupMove(MotionEvent event) {
-                moveMockupOverlay(event);
-
-                magnifierFrameLayout.setVisibility(INVISIBLE);
-                Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
-                magnifierFrameLayout.setVisibility(VISIBLE);
-                magnifierFrameLayout.setMagnifierSrc(bitmap, true);
-            }
-        });
-        magnifierFrameLayout.setVisibility(INVISIBLE);
     }
 
     private void moveMockupOverlay(MotionEvent event) {
@@ -270,14 +244,6 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
-    private void showMagnifierMode(int x, int y) {
-        magnifierFrameLayout.setVisibility(INVISIBLE);
-        Bitmap bitmap = PixelPerfectUtils.combineBitmaps(pixelPerfectOverlayImageView);
-        magnifierFrameLayout.setVisibility(VISIBLE);
-        magnifierFrameLayout.setMagnifierSrc(bitmap, false);
-        magnifierFrameLayout.setMagnifierViewPosition(x, y);
-    }
-
     private class PixelPerfectLayoutGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
@@ -327,16 +293,12 @@ public class PixelPerfectLayout extends FrameLayout {
             lastMotionEvent = MotionEvent.obtain(event);
             savedTime = System.currentTimeMillis();
             return true;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown && magnifierFrameLayout.getVisibility() != VISIBLE) {
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown) {
             if (letFastActions && justClick && System.currentTimeMillis() - savedTime > OFFSET_VIEW_TIMEOUT) {
                 layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
             }
             moveMockupOverlay(event);
             return true;
-        }
-        if (event.getAction() == MotionEvent.ACTION_MOVE && magnifierFrameLayout.getVisibility() == VISIBLE) {
-            clearTouchData();
-            return magnifierFrameLayout.handleMagnifierMove(event);
         }
         if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
             clearTouchData();

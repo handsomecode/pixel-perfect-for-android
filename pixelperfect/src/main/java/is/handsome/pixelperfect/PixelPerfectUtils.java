@@ -12,10 +12,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Build;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -23,16 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class PixelPerfectUtils {
-
-    private static Rect outRect = new Rect();
-    private static int[] location = new int[2];
-
-    public static boolean inViewBounds(View view, int x, int y) {
-        view.getDrawingRect(outRect);
-        view.getLocationOnScreen(location);
-        outRect.offset(location[0], location[1]);
-        return outRect.contains(x, y);
-    }
 
     public static int getWindowWidth(WindowManager windowManager) {
         Point displaySize = new Point();
@@ -62,33 +49,6 @@ public class PixelPerfectUtils {
         int flags = window.getAttributes().flags;
         return (flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                 == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-    }
-
-    static Bitmap takeActivityScreenshot() {
-        View rootView = ((ViewGroup) PixelPerfectSingleton.get().getTopActivity()
-                .findViewById(android.R.id.content)).getChildAt(0).getRootView();
-        rootView.setDrawingCacheEnabled(true);
-        return rootView.getDrawingCache();
-    }
-
-    public static Bitmap takeOverlayScreenshot(View view) {
-        View rootView = view.getRootView();
-        rootView.setDrawingCacheEnabled(true);
-        return rootView.getDrawingCache();
-    }
-
-    public static Bitmap combineBitmaps(View overlayView) {
-        Bitmap activityBitmap = takeActivityScreenshot();
-        Bitmap overlayBitmap = takeOverlayScreenshot(overlayView);
-        int width = activityBitmap.getWidth();
-        int height = activityBitmap.getHeight();
-        Bitmap comboBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas comboImage = new Canvas(comboBitmap);
-        Rect src = new Rect(0, 0, activityBitmap.getWidth(), activityBitmap.getHeight());
-        Rect dest = new Rect(0, 0, activityBitmap.getWidth(), activityBitmap.getHeight());
-        comboImage.drawBitmap(activityBitmap, src, dest, null);
-        comboImage.drawBitmap(overlayBitmap, 0, 0, null);
-        return comboBitmap;
     }
 
     public static Bitmap getBitmapFromAssets(Context context, String fullName) {

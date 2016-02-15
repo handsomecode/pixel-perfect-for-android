@@ -34,7 +34,6 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
         if (instance == null) {
             Context applicationContext = context.getApplicationContext();
             if (applicationContext instanceof Application) {
-                //PixelPerfectAppConfig.get().topActivity = activity;
                 return init((Application) applicationContext);
             }
             throw new IllegalStateException (
@@ -79,8 +78,6 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
 
     @Override
     public void onActivityResumed(Activity activity) {
-
-        PixelPerfectSingleton.get().topActivity = activity;
         paused = false;
         boolean wasBackground = !foreground;
         foreground = true;
@@ -104,8 +101,6 @@ public class AppLifeCycleObserver implements Application.ActivityLifecycleCallba
 
     @Override
     public void onActivityPaused(Activity activity) {
-
-        PixelPerfectSingleton.get().topActivity = null;
         paused = true;
 
         if (checkRunnable != null) {
