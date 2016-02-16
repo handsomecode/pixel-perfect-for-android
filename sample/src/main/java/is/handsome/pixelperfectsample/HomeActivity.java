@@ -64,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
                     PixelPerfect.Config config = new PixelPerfect.Config.Builder()
                             .overlayImagesAssetsPath("overlays")
                             //.overlayInitialImageName("im_cat.png")
+                            //.overlayScaleFactor(1.5f)
                             .build();
                     PixelPerfect.show(HomeActivity.this, config);
                     pixelPerfectButton.setText(R.string.button_hide);

@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -88,9 +87,6 @@ public class PixelPerfectLayout extends FrameLayout {
     }
 
     public void setImageVisible(boolean visible) {
-        if (visible && pixelPerfectOverlayImageView.getDrawable() == null) {
-            updateImage("");
-        }
         pixelPerfectOverlayImageView.setVisibility(visible ? VISIBLE : GONE);
     }
 
@@ -102,15 +98,15 @@ public class PixelPerfectLayout extends FrameLayout {
         return pixelPerfectOverlayImageView.getAlpha();
     }
 
-    public void updateImage(Bitmap bitmap) {
+    public void updateImage(Bitmap bitmap, float overlayScaleFactor) {
         if (bitmap != null) {
             if (noOverlayImageTextView.getVisibility() == VISIBLE) {
                 noOverlayImageTextView.setVisibility(GONE);
                 letFastActions = true;
             }
             ViewGroup.LayoutParams layoutParams = pixelPerfectOverlayImageView.getLayoutParams();
-            layoutParams.width = bitmap.getWidth();
-            layoutParams.height = bitmap.getHeight();
+            layoutParams.width = (int) (bitmap.getWidth() * overlayScaleFactor);
+            layoutParams.height = (int) (bitmap.getHeight() * overlayScaleFactor);
             pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
             pixelPerfectOverlayImageView.setImageBitmap(bitmap);
 
@@ -119,14 +115,7 @@ public class PixelPerfectLayout extends FrameLayout {
             containerParams.height = layoutParams.height + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
             setLayoutParams(containerParams);
 
-            layoutListener.onOverlayUpdate(bitmap.getWidth(), bitmap.getHeight());
-        }
-    }
-
-    public void updateImage(String fullName) {
-        if (!TextUtils.isEmpty(fullName)) {
-            Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), fullName);
-            updateImage(bitmap);
+            layoutListener.onOverlayUpdate(layoutParams.width, layoutParams.height);
         }
     }
 
@@ -145,9 +134,9 @@ public class PixelPerfectLayout extends FrameLayout {
 
     private void initOverlay() {
         pixelPerfectOverlayImageView = new ImageView(getContext());
-        int statusBarHeight = (int) getContext().getResources().getDimension(R.dimen.android_status_bar_height);
-        final FrameLayout.LayoutParams layoutParams = new LayoutParams(PixelPerfectUtils.getWindowWidth(getContext()) - statusBarHeight * 2,
-                PixelPerfectUtils.getWindowHeight(getContext()) - statusBarHeight * 3);
+        int marginPortion = (int) getContext().getResources().getDimension(R.dimen.stub_overlay_margin_portion);
+        final FrameLayout.LayoutParams layoutParams = new LayoutParams(PixelPerfectUtils.getWindowWidth(getContext()) - marginPortion * 2,
+                PixelPerfectUtils.getWindowHeight(getContext()) - marginPortion * 3);
 
         int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);

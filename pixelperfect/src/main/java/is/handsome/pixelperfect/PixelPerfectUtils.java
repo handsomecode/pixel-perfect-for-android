@@ -12,6 +12,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
 import android.view.Window;
 import android.view.WindowManager;
@@ -49,6 +50,13 @@ public class PixelPerfectUtils {
         int flags = window.getAttributes().flags;
         return (flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                 == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+    }
+
+    public static int getStatusBarHeight(Activity activity) {
+        Rect rectangle = new Rect();
+        Window window = activity.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        return rectangle.top;
     }
 
     public static Bitmap getBitmapFromAssets(Context context, String fullName) {

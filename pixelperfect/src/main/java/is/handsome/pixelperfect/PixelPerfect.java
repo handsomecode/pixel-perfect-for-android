@@ -1,6 +1,7 @@
 package is.handsome.pixelperfect;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,7 +39,7 @@ public class PixelPerfect {
 
             private String overlayImageAssetsPath;
             private String overlayInitialImageName;
-            private float overlayScaleFactor;
+            private float overlayScaleFactor = 1;
 
             public Builder overlayImagesAssetsPath(String overlayImagesAssetsPath) {
                 this.overlayImageAssetsPath = overlayImagesAssetsPath;
@@ -77,15 +78,15 @@ public class PixelPerfect {
      * shows pixel perfect tool that
      * displays screen overlay and settings view
      *
-     * @param context
+     * @param activity
      * @return
      */
-    public static void show(Context context) {
-        showPixelPerfectController(context, null);
+    public static void show(Activity activity) {
+        showPixelPerfectController(activity, null);
     }
 
-    public static void show(Context context, PixelPerfect.Config config) {
-        showPixelPerfectController(context, config);
+    public static void show(Activity activity, PixelPerfect.Config config) {
+        showPixelPerfectController(activity, config);
     }
 
     public static boolean isShown() {
@@ -128,14 +129,14 @@ public class PixelPerfect {
         }
     }
 
-    private static void showPixelPerfectController(Context context, PixelPerfect.Config config) {
+    private static void showPixelPerfectController(Activity activity, PixelPerfect.Config config) {
         if (pixelPerfectController != null) {
             pixelPerfectController.show();
             return;
         }
 
-        pixelPerfectController = config == null ? new PixelPerfectController(context) :
-                new PixelPerfectController(context, config);
-        AppLifeCycleObserver.get(context).addListener(foregroundListener);
+        pixelPerfectController = config == null ? new PixelPerfectController(activity) :
+                new PixelPerfectController(activity, config);
+        AppLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
     }
 }
