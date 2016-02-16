@@ -2,6 +2,7 @@ package is.handsome.pixelperfect.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -36,8 +38,8 @@ public class SettingsView extends FrameLayout {
     private String overlayImageAssetsPath = "pixelperfect";
 
     private SeekBar opacitySeekBar;
-    private View opacityDemoView;
-    private View firstScreenSettingsView;
+    private TextView opacityTitleTextView;
+    private LinearLayout firstScreenSettingsLinearLayout;
     private View secondScreenSettingsView;
     private ImageView exitButton;
     private TextView imageNameTextView;
@@ -46,6 +48,10 @@ public class SettingsView extends FrameLayout {
 
     private RecyclerView recyclerView;
     private TextView emptyListTextView;
+
+    private View mainLayout;
+    private View toolbarView;
+    private View opacityLayout;
 
     public SettingsView(Context context) {
         super(context);
@@ -96,7 +102,7 @@ public class SettingsView extends FrameLayout {
     }
 
     public int indexOfImage(String imageName) {
-        for (PixelPerfectImage image: images) {
+        for (PixelPerfectImage image : images) {
             if (image.name.equalsIgnoreCase(imageName)) {
                 return images.indexOf(image);
             }
@@ -111,7 +117,7 @@ public class SettingsView extends FrameLayout {
     public void onBack() {
         if (secondScreenSettingsView.getVisibility() == VISIBLE) {
             secondScreenSettingsView.setVisibility(GONE);
-            firstScreenSettingsView.setVisibility(VISIBLE);
+            firstScreenSettingsLinearLayout.setVisibility(VISIBLE);
             exitButton.setImageResource(R.drawable.ic_settings_cancel);
         } else {
             setVisibility(GONE);
@@ -139,6 +145,10 @@ public class SettingsView extends FrameLayout {
         };
         exitButton.setOnClickListener(exitButtonListener);
 
+        mainLayout = findViewById(R.id.settings_main_linear_layout);
+        opacityLayout = findViewById(R.id.settings_opacity_linear_layout);
+        toolbarView = findViewById(R.id.settings_toolbar_linear_layout);
+
         initOpacityWidget();
         initImagesRecyclerView();
 
@@ -159,7 +169,7 @@ public class SettingsView extends FrameLayout {
             }
         });
 
-        firstScreenSettingsView = findViewById(R.id.settings_first_screen_linear_layout);
+        firstScreenSettingsLinearLayout = (LinearLayout) findViewById(R.id.settings_first_screen_linear_layout);
         secondScreenSettingsView = findViewById(R.id.settings_second_screen_frame_layout);
         imageNameTextView = (TextView) findViewById(R.id.settings_image_name);
         offsetTextView = (TextView) findViewById(R.id.settings_offset_text_view);
@@ -179,21 +189,41 @@ public class SettingsView extends FrameLayout {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (settingsListener != null) {
                     settingsListener.onSetImageAlpha(progress / 100.0f);
-                    opacityDemoView.setAlpha(progress / 100.0f);
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                hideNonOpacityElements();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                showNonOpacityElements();
             }
         });
-        opacityDemoView = findViewById(R.id.settings_opacity_demo_view);
+        opacityTitleTextView = (TextView) findViewById(R.id.opacity_title_text_view);
+    }
+
+    private void hideNonOpacityElements() {
+        mainLayout.setBackgroundColor(Color.TRANSPARENT);
+        toolbarView.setVisibility(INVISIBLE);
+        for (int i = 0; i < firstScreenSettingsLinearLayout.getChildCount(); i++) {
+            firstScreenSettingsLinearLayout.getChildAt(i).setVisibility(INVISIBLE);
+        }
+        opacityLayout.setVisibility(VISIBLE);
+        opacityLayout.setBackgroundColor(getResources().getColor(R.color.black_50_alpha));
+        opacityTitleTextView.setTextColor(Color.WHITE);
+    }
+
+    private void showNonOpacityElements() {
+        mainLayout.setBackgroundColor(Color.WHITE);
+        toolbarView.setVisibility(VISIBLE);
+        for (int i = 0; i < firstScreenSettingsLinearLayout.getChildCount(); i++) {
+            firstScreenSettingsLinearLayout.getChildAt(i).setVisibility(VISIBLE);
+        }
+        opacityLayout.setBackgroundColor(Color.TRANSPARENT);
+        opacityTitleTextView.setTextColor(Color.BLACK);
     }
 
     private void initImagesRecyclerView() {
@@ -254,7 +284,7 @@ public class SettingsView extends FrameLayout {
     }
 
     private void exitSettingsView() {
-        firstScreenSettingsView.setVisibility(VISIBLE);
+        firstScreenSettingsLinearLayout.setVisibility(VISIBLE);
         secondScreenSettingsView.setVisibility(GONE);
         exitButton.setImageResource(R.drawable.ic_settings_cancel);
         setVisibility(GONE);

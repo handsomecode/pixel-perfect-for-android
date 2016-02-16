@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     PixelPerfect.Config config = new PixelPerfect.Config.Builder()
                             .overlayImagesAssetsPath("overlays")
-                            //.overlayInitialImageName("im_cat.png")
+                            .overlayInitialImageName("im_cat.png")
                             //.overlayScaleFactor(scaleFactor)
                             .build();
                     PixelPerfect.show(HomeActivity.this, config);
