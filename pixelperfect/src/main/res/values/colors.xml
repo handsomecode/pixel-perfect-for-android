@@ -8,5 +8,6 @@
     <color name="black">#000000</color>
     <color name="gray_dd">#dddddd</color>
 
-    <color name="color_accent">#00a5c4</color>
+    <color name="pixel_perfect_color">#00a5c4</color>
+    <color name="pixel_perfect_color_85_alpha">#D900a5c4</color>
 </resources>

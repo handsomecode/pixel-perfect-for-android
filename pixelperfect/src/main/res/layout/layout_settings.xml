@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/color_accent"
+            android:background="@color/pixel_perfect_color"
             android:orientation="horizontal"
             android:padding="8dp">
 
@@ -143,6 +143,7 @@
                     android:textSize="18sp"/>
 
                 <SeekBar
+                    style="@style/SeekBarAppTheme"
                     android:id="@+id/settings_opacity_seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -178,7 +179,7 @@
                     android:id="@+id/inverse_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/black_50_alpha"/>
+                    android:button="@drawable/apptheme_btn_check_holo_light"/>
 
             </LinearLayout>
 
