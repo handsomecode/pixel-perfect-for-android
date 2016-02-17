@@ -13,15 +13,17 @@ import java.util.List;
 
 import is.handsome.pixelperfect.ui.SettingsView;
 
-public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder>  {
+public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public ImageView imageView;
+        public View borderView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.recycler_item_text_view);
+            borderView = itemView.findViewById(R.id.recycler_item_image_container_frame_layout);
             imageView = (ImageView) itemView.findViewById(R.id.recycler_item_image_view);
         }
     }
@@ -29,6 +31,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     private List<PixelPerfectImage> images = Collections.EMPTY_LIST;
     private SettingsView.AdapterListener listener;
     private final LayoutInflater layoutInflater;
+    private int selectedPosition = -1;
 
     public ImagesAdapter(Context context, List<PixelPerfectImage> images, SettingsView.AdapterListener listener) {
         this.images = images;
@@ -43,16 +46,22 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         String name = images.get(position).name;
         holder.textView.setText(name.contains(".") ? name.substring(0, name.indexOf(".")) : name);
         if (images.get(position).bitmap != null) {
             holder.imageView.setImageBitmap(images.get(position).bitmap);
         }
+        holder.textView.setSelected(position == selectedPosition);
+        holder.borderView.setSelected(position == selectedPosition);
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onItemSelected(position);
+                notifyItemChanged(selectedPosition);
+                selectedPosition = holder.getAdapterPosition();
+                holder.textView.setSelected(true);
+                holder.borderView.setSelected(true);
+                listener.onItemSelected(selectedPosition);
             }
         });
     }
@@ -60,5 +69,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return images.size();
+    }
+
+    public void setSelectedPosition(int newSelectedPosition) {
+        notifyItemChanged(selectedPosition);
+        selectedPosition = newSelectedPosition;
+        notifyItemChanged(selectedPosition);
     }
 }

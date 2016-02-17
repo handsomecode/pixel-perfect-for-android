@@ -93,6 +93,7 @@ public class SettingsView extends FrameLayout {
         if (position >= 0 && position < images.size()) {
             settingsListener.onUpdateImage(images.get(position).bitmap);
             imageNameTextView.setText(images.get(position).name);
+            ((ImagesAdapter) recyclerView.getAdapter()).setSelectedPosition(position);
         }
     }
 
