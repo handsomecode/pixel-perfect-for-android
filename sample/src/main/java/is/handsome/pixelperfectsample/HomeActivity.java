@@ -1,14 +1,17 @@
 package is.handsome.pixelperfectsample;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
 import is.handsome.pixelperfect.PixelPerfect;
+import is.handsome.pixelperfect.PixelPerfectUtils;
 import is.handsome.pixelperfectsample.util.VisualWarnTree;
 import timber.log.Timber;
 
@@ -16,6 +19,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private Button pixelPerfectButton;
     private View permissionLinearLayout;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,10 @@ public class HomeActivity extends AppCompatActivity {
     private void init() {
         pixelPerfectButton = (Button) findViewById(R.id.pixel_perfect_button);
         permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
+        imageView = (ImageView) findViewById(R.id.home_image_view);
+
+        Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(this, "overlays/im_android.png");
+        imageView.setImageBitmap(bitmap);
 
         if (PixelPerfect.isShown()) {
             pixelPerfectButton.setText(R.string.button_hide);
@@ -63,8 +71,7 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     PixelPerfect.Config config = new PixelPerfect.Config.Builder()
                             .overlayImagesAssetsPath("overlays")
-                            .overlayInitialImageName("im_cat.png")
-                            //.overlayScaleFactor(scaleFactor)
+                            //.overlayInitialImageName("im_android.png")
                             .build();
                     PixelPerfect.show(HomeActivity.this, config);
                     pixelPerfectButton.setText(R.string.button_hide);
