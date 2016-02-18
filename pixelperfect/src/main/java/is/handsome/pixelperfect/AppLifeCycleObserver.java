@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 // Thanks to https://gist.github.com/steveliles/11116937
 
-public class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
+class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
 
     public static final String TAG = AppLifeCycleObserver.class.getSimpleName();
     public static final long CHECK_DELAY = 500;

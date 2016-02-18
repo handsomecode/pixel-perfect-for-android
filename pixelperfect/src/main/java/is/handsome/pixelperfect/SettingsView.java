@@ -1,4 +1,4 @@
-package is.handsome.pixelperfect.ui;
+package is.handsome.pixelperfect;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -21,13 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import is.handsome.pixelperfect.ImagesAdapter;
-import is.handsome.pixelperfect.PixelPerfectController;
-import is.handsome.pixelperfect.PixelPerfectImage;
-import is.handsome.pixelperfect.PixelPerfectUtils;
-import is.handsome.pixelperfect.R;
-
-public class SettingsView extends FrameLayout {
+class SettingsView extends FrameLayout {
 
     public interface AdapterListener {
         void onItemSelected(int position);

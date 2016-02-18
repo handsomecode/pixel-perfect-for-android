@@ -11,9 +11,7 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import is.handsome.pixelperfect.ui.SettingsView;
-
-public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
+class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;

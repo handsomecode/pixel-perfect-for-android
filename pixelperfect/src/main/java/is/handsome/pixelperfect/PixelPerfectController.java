@@ -13,10 +13,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import is.handsome.pixelperfect.ui.PixelPerfectLayout;
-import is.handsome.pixelperfect.ui.SettingsView;
-
-public class PixelPerfectController {
+class PixelPerfectController {
 
     public interface LayoutListener {
         void onOverlayMoveX(int dx);
@@ -85,6 +82,35 @@ public class PixelPerfectController {
         if (!TextUtils.isEmpty(config.getOverlayInitialImageName())) {
             settingsView.setImageOverlay(config.getOverlayInitialImageName());
         }
+    }
+
+    public void show() {
+        pixelPerfectLayout.setImageVisible(true);
+        pixelPerfectLayout.setVisibility(View.VISIBLE);
+        if (settingsOpened) {
+            settingsView.setVisibility(View.VISIBLE);
+            settingsOpened = false;
+        }
+    }
+
+    public boolean isShown() {
+        return pixelPerfectLayout.getVisibility() == View.VISIBLE;
+    }
+
+    public void hide() {
+        pixelPerfectLayout.setImageVisible(false);
+        pixelPerfectLayout.setVisibility(View.GONE);
+        offsetPixelsView.setVisibility(View.GONE);
+        if (settingsView.getVisibility() == View.VISIBLE) {
+            settingsOpened = true;
+        }
+        settingsView.setVisibility(View.GONE);
+    }
+
+    public void destroy() {
+        windowManager.removeView(pixelPerfectLayout);
+        windowManager.removeView(offsetPixelsView);
+        windowManager.removeView(settingsView);
     }
 
     private void initController(Activity activity) {
@@ -295,34 +321,5 @@ public class PixelPerfectController {
         offsetPixelsViewParams.gravity = Gravity.TOP | Gravity.START;
         offsetPixelsView.setVisibility(View.GONE);
         windowManager.addView(offsetPixelsView, offsetPixelsViewParams);
-    }
-
-    public void show() {
-        pixelPerfectLayout.setImageVisible(true);
-        pixelPerfectLayout.setVisibility(View.VISIBLE);
-        if (settingsOpened) {
-            settingsView.setVisibility(View.VISIBLE);
-            settingsOpened = false;
-        }
-    }
-
-    public boolean isShown() {
-        return pixelPerfectLayout.getVisibility() == View.VISIBLE;
-    }
-
-    public void hide() {
-        pixelPerfectLayout.setImageVisible(false);
-        pixelPerfectLayout.setVisibility(View.GONE);
-        offsetPixelsView.setVisibility(View.GONE);
-        if (settingsView.getVisibility() == View.VISIBLE) {
-            settingsOpened = true;
-        }
-        settingsView.setVisibility(View.GONE);
-    }
-
-    public void destroy() {
-        windowManager.removeView(pixelPerfectLayout);
-        windowManager.removeView(offsetPixelsView);
-        windowManager.removeView(settingsView);
     }
 }

@@ -1,4 +1,4 @@
-package is.handsome.pixelperfect.ui;
+package is.handsome.pixelperfect;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -16,11 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import is.handsome.pixelperfect.PixelPerfectController;
-import is.handsome.pixelperfect.PixelPerfectUtils;
-import is.handsome.pixelperfect.R;
-
-public class PixelPerfectLayout extends FrameLayout {
+class PixelPerfectLayout extends FrameLayout {
 
     private static int MICRO_OFFSET = 8;
     private static int LONG_PRESS_TIMEOUT = 500;
@@ -49,7 +45,6 @@ public class PixelPerfectLayout extends FrameLayout {
     private float microOffsetDy;
     private float offsetViewDx;
     private float offsetViewDy;
-
 
     public PixelPerfectLayout(Context context) {
         super(context);
@@ -233,6 +228,37 @@ public class PixelPerfectLayout extends FrameLayout {
         }
     }
 
+    private boolean handleTouch(final MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            justClick = true;
+            wasActionDown = true;
+            lastMotionEvent = MotionEvent.obtain(event);
+            savedTime = System.currentTimeMillis();
+            return true;
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown) {
+            if (letFastActions && justClick && System.currentTimeMillis() - savedTime > OFFSET_VIEW_TIMEOUT) {
+                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
+            }
+            moveMockupOverlay(event);
+            return true;
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+            clearTouchData();
+            return true;
+        }
+        clearTouchData();
+        return false;
+    }
+
+    private void clearTouchData() {
+        if (layoutListener != null) {
+            layoutListener.hideOffsetView();
+        }
+        moveMode = MoveMode.UNDEFINED;
+        wasActionDown = false;
+        justClick = false;
+    }
+
     private class PixelPerfectLayoutGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
@@ -273,36 +299,5 @@ public class PixelPerfectLayout extends FrameLayout {
             layoutListener.openSettings(noOverlayImageTextView.getVisibility() == VISIBLE);
             return true;
         }
-    }
-
-    private boolean handleTouch(final MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            justClick = true;
-            wasActionDown = true;
-            lastMotionEvent = MotionEvent.obtain(event);
-            savedTime = System.currentTimeMillis();
-            return true;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown) {
-            if (letFastActions && justClick && System.currentTimeMillis() - savedTime > OFFSET_VIEW_TIMEOUT) {
-                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
-            }
-            moveMockupOverlay(event);
-            return true;
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-            clearTouchData();
-            return true;
-        }
-        clearTouchData();
-        return false;
-    }
-
-    private void clearTouchData() {
-        if (layoutListener != null) {
-            layoutListener.hideOffsetView();
-        }
-        moveMode = MoveMode.UNDEFINED;
-        wasActionDown = false;
-        justClick = false;
     }
 }
