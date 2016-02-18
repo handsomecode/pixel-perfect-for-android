@@ -15,7 +15,7 @@ To add the library to the project update `build.gradle` file:
 
 ```gradle
  dependencies {
-   compile 'is.handsome.pixelperfect:pixelperfect:0.2'
+   compile 'is.handsome.pixelperfect:pixelperfect:0.2.1'
  }
 ```
 
