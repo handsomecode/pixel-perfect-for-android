@@ -16,20 +16,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:scaleType="center"
-            android:background="@color/black_50_alpha"/>
+            android:background="@color/black_50_alpha"
+            android:scaleType="center"/>
     </FrameLayout>
 
     <CheckBox
         android:id="@+id/pixel_perfect_checkbox"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:gravity="left"
         android:layout_gravity="center_vertical"
+        android:checked="false"
+        android:gravity="left"
         android:hint="@string/pixel_perfect"
-        android:textSize="20sp"
         android:padding="5dp"
-        android:checked="false"/>
+        android:textSize="20sp"/>
 
     <LinearLayout
         android:id="@+id/pixel_perfect_permission_linear_layout"

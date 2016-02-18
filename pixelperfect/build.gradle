@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/handsomecode/pixel-perfect-for-android'
     gitUrl = 'https://github.com/handsomecode/pixel-perfect-for-android.git'
 
-    libraryVersion = '0.1'
+    libraryVersion = '0.2.1'
 
     developerId = 'okonor'
     developerName = 'Olga Konoreva'
