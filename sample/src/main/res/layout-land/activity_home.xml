@@ -4,35 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1">
 
         <ImageView
             android:id="@+id/home_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:scaleType="center"
+            android:background="@color/black_50_alpha"/>
     </FrameLayout>
 
     <CheckBox
         android:id="@+id/pixel_perfect_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:gravity="top"
-        android:layout_gravity="center_horizontal"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:layout_gravity="center_vertical"
         android:hint="@string/pixel_perfect"
         android:textSize="20sp"
-        android:padding="4dp"
+        android:padding="5dp"
         android:checked="false"/>
 
     <LinearLayout
         android:id="@+id/pixel_perfect_permission_linear_layout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
         android:layout_margin="20dp"
         android:gravity="center"
         android:orientation="vertical"
@@ -42,7 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/permission_text"/>
+            android:text="@string/permission_text"
+            android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/pixel_perfect_go_to_settings_text_view"
@@ -52,6 +55,6 @@
             android:onClick="openPermissionSettings"
             android:text="@string/button_go_to_settings"
             android:textColor="@color/blue"
-            android:textSize="15sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 </LinearLayout>

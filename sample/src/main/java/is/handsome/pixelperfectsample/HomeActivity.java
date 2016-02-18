@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.crashlytics.android.Crashlytics;
@@ -17,9 +18,11 @@ import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private Button pixelPerfectButton;
+    private CheckBox pixelPerfectCheckBox;
     private View permissionLinearLayout;
     private ImageView imageView;
+
+    private int[] portraitDimens = {1440, 1080, 720, 480};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,39 +45,39 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (PixelPerfect.hasPermission(this)) {
-            pixelPerfectButton.setVisibility(View.VISIBLE);
+            pixelPerfectCheckBox.setVisibility(View.VISIBLE);
             permissionLinearLayout.setVisibility(View.GONE);
         } else {
-            pixelPerfectButton.setVisibility(View.GONE);
+            pixelPerfectCheckBox.setVisibility(View.GONE);
             permissionLinearLayout.setVisibility(View.VISIBLE);
         }
     }
 
     private void init() {
-        pixelPerfectButton = (Button) findViewById(R.id.pixel_perfect_button);
+        pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
         permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
         imageView = (ImageView) findViewById(R.id.home_image_view);
 
-        Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(this, "overlays/im_android.png");
+        int screenMinDimension = Math.min(PixelPerfectUtils.getWindowWidth(this), PixelPerfectUtils.getWindowHeight(this));
+        final String assetsFolderName = getPreferredFolderName(screenMinDimension);
+        Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(this, screenMinDimension == PixelPerfectUtils.getWindowWidth(this)
+                ? assetsFolderName + "/portrait.png" : assetsFolderName + "/landscape.png");
         imageView.setImageBitmap(bitmap);
 
         if (PixelPerfect.isShown()) {
-            pixelPerfectButton.setText(R.string.button_hide);
+            pixelPerfectCheckBox.setChecked(true);
         }
 
-        pixelPerfectButton.setOnClickListener(new View.OnClickListener() {
+        pixelPerfectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (PixelPerfect.isShown()) {
-                    PixelPerfect.hide();
-                    pixelPerfectButton.setText(R.string.button_show);
-                } else {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
                     PixelPerfect.Config config = new PixelPerfect.Config.Builder()
-                            .overlayImagesAssetsPath("overlays")
-                            //.overlayInitialImageName("im_android.png")
+                            .overlayImagesAssetsPath(assetsFolderName)
                             .build();
                     PixelPerfect.show(HomeActivity.this, config);
-                    pixelPerfectButton.setText(R.string.button_hide);
+                } else {
+                    PixelPerfect.hide();
                 }
             }
         });
@@ -90,5 +93,14 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openPermissionSettings(View view) {
         PixelPerfect.askForPermission(this);
+    }
+
+    private String getPreferredFolderName(int screenMinDimension) {
+        for (int width: portraitDimens) {
+            if (width <= screenMinDimension) {
+                return "overlays-" + String.valueOf(width);
+            }
+        }
+        return "overlays-" + 480;
     }
 }
