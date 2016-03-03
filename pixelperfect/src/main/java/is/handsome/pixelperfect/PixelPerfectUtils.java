@@ -19,7 +19,7 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+//FIXME: Maybe Utils?
 public class PixelPerfectUtils {
 
     public static int getWindowWidth(WindowManager windowManager) {

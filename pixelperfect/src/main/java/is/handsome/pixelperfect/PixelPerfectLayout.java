@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+//FIXME: maybe OverlayView?
 class PixelPerfectLayout extends FrameLayout {
 
     private static int MICRO_OFFSET = 8;
