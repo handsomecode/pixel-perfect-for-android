@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+// FIXME: controller is weird word for Android, maybe Overlay?
 class PixelPerfectController {
 
     public interface LayoutListener {

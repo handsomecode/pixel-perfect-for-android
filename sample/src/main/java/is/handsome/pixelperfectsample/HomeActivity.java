@@ -31,6 +31,7 @@ public class HomeActivity extends AppCompatActivity {
 
         init();
 
+        // FIXME: remove Timber and Crashlytics? from sample app
         if (savedInstanceState == null) {
             if (BuildConfig.DEBUG) {
                 Timber.plant(new Timber.DebugTree());
@@ -54,12 +55,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void init() {
+        //FIXME: improve readability of this method
         pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
         permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
         imageView = (ImageView) findViewById(R.id.home_image_view);
 
         int screenMinDimension = Math.min(PixelPerfectUtils.getWindowWidth(this), PixelPerfectUtils.getWindowHeight(this));
         final String assetsFolderName = getPreferredFolderName(screenMinDimension);
+        // FIXME: PixelPerfectUtils shouldn't be public
         Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(this, screenMinDimension == PixelPerfectUtils.getWindowWidth(this)
                 ? assetsFolderName + "/portrait.png" : assetsFolderName + "/landscape.png");
         imageView.setImageBitmap(bitmap);
@@ -86,6 +89,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        // FIXME: why do we need it?
         if (PixelPerfect.isShown()) {
             PixelPerfect.hide();
         }
