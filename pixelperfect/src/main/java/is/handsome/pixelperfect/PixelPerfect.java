@@ -60,17 +60,17 @@ public class PixelPerfect {
         }
     }
 
-    private static PixelPerfectController pixelPerfectController;
+    private static Overlay overlay;
 
     private static AppLifeCycleObserver.Listener foregroundListener = new AppLifeCycleObserver.Listener() {
         @Override
         public void onBecameForeground() {
-            pixelPerfectController.show();
+            overlay.show();
         }
 
         @Override
         public void onBecameBackground() {
-            pixelPerfectController.hide();
+            overlay.hide();
         }
     };
 
@@ -90,7 +90,7 @@ public class PixelPerfect {
     }
 
     public static boolean isShown() {
-        return pixelPerfectController != null && pixelPerfectController.isShown();
+        return overlay != null && overlay.isShown();
     }
 
     /**
@@ -105,9 +105,9 @@ public class PixelPerfect {
             Log.w(PixelPerfect.class.getSimpleName(), "Error during listener removing", exception);
         }
 
-        if (pixelPerfectController != null) {
-            pixelPerfectController.destroy();
-            pixelPerfectController = null;
+        if (overlay != null) {
+            overlay.destroy();
+            overlay = null;
         }
     }
 
@@ -130,13 +130,13 @@ public class PixelPerfect {
     }
 
     private static void showPixelPerfectController(Activity activity, PixelPerfect.Config config) {
-        if (pixelPerfectController != null) {
-            pixelPerfectController.show();
+        if (overlay != null) {
+            overlay.show();
             return;
         }
 
-        pixelPerfectController = config == null ? new PixelPerfectController(activity) :
-                new PixelPerfectController(activity, config);
+        overlay = config == null ? new Overlay(activity) :
+                new Overlay(activity, config);
         AppLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
     }
 }

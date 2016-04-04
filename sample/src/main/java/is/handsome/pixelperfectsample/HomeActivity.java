@@ -8,38 +8,22 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
 import is.handsome.pixelperfect.PixelPerfect;
-import is.handsome.pixelperfect.PixelPerfectUtils;
-import is.handsome.pixelperfectsample.util.VisualWarnTree;
-import timber.log.Timber;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private ImageView imageView;
     private CheckBox pixelPerfectCheckBox;
     private View permissionLinearLayout;
-    private ImageView imageView;
 
+    private String assetsFolderName;
     private int[] portraitDimens = {1440, 1080, 720, 480};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         init();
-
-        // FIXME: remove Timber and Crashlytics? from sample app
-        if (savedInstanceState == null) {
-            if (BuildConfig.DEBUG) {
-                Timber.plant(new Timber.DebugTree());
-                Timber.plant(new VisualWarnTree(this));
-            } else {
-                Fabric.with(this, new Crashlytics());
-            }
-        }
     }
 
     @Override
@@ -55,17 +39,29 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void init() {
-        //FIXME: improve readability of this method
-        pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
+        int screenMinDimension = Math.min(SampleUtils.getWindowWidth(this), SampleUtils.getWindowHeight(this));
+        assetsFolderName = getPreferredFolderName(screenMinDimension);
+        boolean isPortraitOrientation = screenMinDimension == SampleUtils.getWindowWidth(this);
+
+        initViews(isPortraitOrientation);
+    }
+
+    private void initViews(boolean isPortraitOrientation) {
+        initImage(isPortraitOrientation);
+        initCheckBox();
         permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
+    }
+
+    private void initImage(boolean isPortraitOrientation) {
         imageView = (ImageView) findViewById(R.id.home_image_view);
 
-        int screenMinDimension = Math.min(PixelPerfectUtils.getWindowWidth(this), PixelPerfectUtils.getWindowHeight(this));
-        final String assetsFolderName = getPreferredFolderName(screenMinDimension);
-        // FIXME: PixelPerfectUtils shouldn't be public
-        Bitmap bitmap = PixelPerfectUtils.getBitmapFromAssets(this, screenMinDimension == PixelPerfectUtils.getWindowWidth(this)
+        Bitmap bitmap = SampleUtils.getBitmapFromAssets(this, isPortraitOrientation
                 ? assetsFolderName + "/portrait.png" : assetsFolderName + "/landscape.png");
         imageView.setImageBitmap(bitmap);
+    }
+
+    private void initCheckBox() {
+        pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
 
         if (PixelPerfect.isShown()) {
             pixelPerfectCheckBox.setChecked(true);

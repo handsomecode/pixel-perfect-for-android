@@ -26,12 +26,12 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
         }
     }
 
-    private List<PixelPerfectImage> images = Collections.EMPTY_LIST;
+    private List<Image> images = Collections.EMPTY_LIST;
     private SettingsView.AdapterListener listener;
     private final LayoutInflater layoutInflater;
     private int selectedPosition = -1;
 
-    public ImagesAdapter(Context context, List<PixelPerfectImage> images, SettingsView.AdapterListener listener) {
+    public ImagesAdapter(Context context, List<Image> images, SettingsView.AdapterListener listener) {
         this.images = images;
         this.layoutInflater = LayoutInflater.from(context);
         this.listener = listener;
@@ -45,10 +45,10 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        String name = images.get(position).name;
+        String name = images.get(position).getName();
         holder.textView.setText(name.contains(".") ? name.substring(0, name.indexOf(".")) : name);
-        if (images.get(position).bitmap != null) {
-            holder.imageView.setImageBitmap(images.get(position).bitmap);
+        if (images.get(position).getBitmap() != null) {
+            holder.imageView.setImageBitmap(images.get(position).getBitmap());
         }
         holder.textView.setSelected(position == selectedPosition);
         holder.borderView.setSelected(position == selectedPosition);

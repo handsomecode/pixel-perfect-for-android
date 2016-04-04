@@ -16,8 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//FIXME: maybe OverlayView?
-class PixelPerfectLayout extends FrameLayout {
+class OverlayView extends FrameLayout {
 
     private static int MICRO_OFFSET = 8;
     private static int LONG_PRESS_TIMEOUT = 500;
@@ -29,7 +28,7 @@ class PixelPerfectLayout extends FrameLayout {
 
     private ImageView pixelPerfectOverlayImageView;
     private TextView noOverlayImageTextView;
-    private PixelPerfectController.LayoutListener layoutListener;
+    private Overlay.LayoutListener layoutListener;
     private MoveMode moveMode = MoveMode.UNDEFINED;
     private int touchSlop;
 
@@ -47,23 +46,23 @@ class PixelPerfectLayout extends FrameLayout {
     private float offsetViewDx;
     private float offsetViewDy;
 
-    public PixelPerfectLayout(Context context) {
+    public OverlayView(Context context) {
         super(context);
         init();
     }
 
-    public PixelPerfectLayout(Context context, AttributeSet attrs) {
+    public OverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PixelPerfectLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OverlayView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PixelPerfectLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public OverlayView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -78,7 +77,7 @@ class PixelPerfectLayout extends FrameLayout {
         return false;
     }
 
-    public void setLayoutListener(PixelPerfectController.LayoutListener listener) {
+    public void setLayoutListener(Overlay.LayoutListener listener) {
         layoutListener = listener;
     }
 
@@ -121,7 +120,7 @@ class PixelPerfectLayout extends FrameLayout {
         }
         if (pixelPerfectOverlayImageView.getDrawable() != null) {
             Bitmap srcBitmap = ((BitmapDrawable) pixelPerfectOverlayImageView.getDrawable()).getBitmap();
-            Bitmap invertedBitmap = PixelPerfectUtils.invertBitmap(srcBitmap);
+            Bitmap invertedBitmap = Utils.invertBitmap(srcBitmap);
             pixelPerfectOverlayImageView.setImageBitmap(invertedBitmap);
             return true;
         }
@@ -131,8 +130,8 @@ class PixelPerfectLayout extends FrameLayout {
     private void initOverlay() {
         pixelPerfectOverlayImageView = new ImageView(getContext());
         int marginPortion = (int) getContext().getResources().getDimension(R.dimen.stub_overlay_margin_portion);
-        final FrameLayout.LayoutParams layoutParams = new LayoutParams(PixelPerfectUtils.getWindowWidth(getContext()) - marginPortion * 2,
-                PixelPerfectUtils.getWindowHeight(getContext()) - marginPortion * 3);
+        final FrameLayout.LayoutParams layoutParams = new LayoutParams(Utils.getWindowWidth(getContext()) - marginPortion * 2,
+                Utils.getWindowHeight(getContext()) - marginPortion * 3);
 
         int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);

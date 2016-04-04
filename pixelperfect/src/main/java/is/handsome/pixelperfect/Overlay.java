@@ -13,8 +13,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-// FIXME: controller is weird word for Android, maybe Overlay?
-class PixelPerfectController {
+class Overlay {
 
     public interface LayoutListener {
         void onOverlayMoveX(int dx);
@@ -51,7 +50,7 @@ class PixelPerfectController {
     private WindowManager windowManager;
 
     private SettingsView settingsView;
-    private PixelPerfectLayout pixelPerfectLayout;
+    private OverlayView overlayView;
     private ViewGroup offsetPixelsView;
     private TextView offsetXTextView;
     private TextView offsetYTextView;
@@ -69,11 +68,11 @@ class PixelPerfectController {
     private String offsetTextTemplate;
     private float overlayScaleFactor;
 
-    public PixelPerfectController(Activity activity) {
+    public Overlay(Activity activity) {
         initController(activity);
     }
 
-    public PixelPerfectController(Activity activity, PixelPerfect.Config config) {
+    public Overlay(Activity activity, PixelPerfect.Config config) {
         overlayScaleFactor = config.getOverlayScaleFactor();
         initController(activity);
 
@@ -86,8 +85,8 @@ class PixelPerfectController {
     }
 
     public void show() {
-        pixelPerfectLayout.setImageVisible(true);
-        pixelPerfectLayout.setVisibility(View.VISIBLE);
+        overlayView.setImageVisible(true);
+        overlayView.setVisibility(View.VISIBLE);
         if (settingsOpened) {
             settingsView.setVisibility(View.VISIBLE);
             settingsOpened = false;
@@ -95,12 +94,12 @@ class PixelPerfectController {
     }
 
     public boolean isShown() {
-        return pixelPerfectLayout.getVisibility() == View.VISIBLE;
+        return overlayView.getVisibility() == View.VISIBLE;
     }
 
     public void hide() {
-        pixelPerfectLayout.setImageVisible(false);
-        pixelPerfectLayout.setVisibility(View.GONE);
+        overlayView.setImageVisible(false);
+        overlayView.setVisibility(View.GONE);
         offsetPixelsView.setVisibility(View.GONE);
         if (settingsView.getVisibility() == View.VISIBLE) {
             settingsOpened = true;
@@ -109,21 +108,21 @@ class PixelPerfectController {
     }
 
     public void destroy() {
-        windowManager.removeView(pixelPerfectLayout);
+        windowManager.removeView(overlayView);
         windowManager.removeView(offsetPixelsView);
         windowManager.removeView(settingsView);
     }
 
     private void initController(Activity activity) {
         Context applicationContext = activity.getApplicationContext();
-        pixelPerfectLayout = new PixelPerfectLayout(applicationContext);
+        overlayView = new OverlayView(applicationContext);
         settingsView = new SettingsView(applicationContext);
         offsetPixelsView = (ViewGroup) LayoutInflater.from(applicationContext).inflate(R.layout.view_offset_pixels, null);
         offsetXTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_x_text_view);
         offsetYTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_y_text_view);
 
         overlayBorderSize = (int) applicationContext.getResources().getDimension(R.dimen.overlay_border_size);
-        statusBarHeight = PixelPerfectUtils.getStatusBarHeight(activity);
+        statusBarHeight = Utils.getStatusBarHeight(activity);
         offsetTextTemplate = applicationContext.getString(R.string.offset_text);
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
@@ -146,18 +145,18 @@ class PixelPerfectController {
                 PixelFormat.TRANSLUCENT);
 
         setInitialOverlayPosition();
-        windowManager.addView(pixelPerfectLayout, overlayParams);
+        windowManager.addView(overlayView, overlayParams);
 
         final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);
 
-        pixelPerfectLayout.setLayoutListener(new LayoutListener() {
+        overlayView.setLayoutListener(new LayoutListener() {
 
             @Override
             public void onOverlayMoveX(int dx) {
-                if (overlayParams.x + dx + pixelPerfectLayout.getWidth() >= overlayMinimumVisibleSize
-                        && PixelPerfectUtils.getWindowWidth(windowManager) - overlayParams.x - dx >= overlayMinimumVisibleSize) {
+                if (overlayParams.x + dx + overlayView.getWidth() >= overlayMinimumVisibleSize
+                        && Utils.getWindowWidth(windowManager) - overlayParams.x - dx >= overlayMinimumVisibleSize) {
                     overlayParams.x += dx;
-                    windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+                    windowManager.updateViewLayout(overlayView, overlayParams);
 
                     offsetXTextView.setText(String.format(offsetTextTemplate, fixedOffsetX + overlayParams.x));
                 }
@@ -165,10 +164,10 @@ class PixelPerfectController {
 
             @Override
             public void onOverlayMoveY(int dy) {
-                if (overlayParams.y + dy + pixelPerfectLayout.getHeight() >= overlayMinimumVisibleSize
-                        && PixelPerfectUtils.getWindowHeight(windowManager) - statusBarHeight - overlayParams.y - dy >= overlayMinimumVisibleSize) {
+                if (overlayParams.y + dy + overlayView.getHeight() >= overlayMinimumVisibleSize
+                        && Utils.getWindowHeight(windowManager) - statusBarHeight - overlayParams.y - dy >= overlayMinimumVisibleSize) {
                     overlayParams.y += dy;
-                    windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+                    windowManager.updateViewLayout(overlayView, overlayParams);
 
                     offsetYTextView.setText(String.format(offsetTextTemplate, fixedOffsetY + overlayParams.y));
                 }
@@ -177,7 +176,7 @@ class PixelPerfectController {
             @Override
             public void onOverlayUpdate(int width, int height) {
                 setInitialOverlayPosition(width, height);
-                windowManager.updateViewLayout(pixelPerfectLayout, overlayParams);
+                windowManager.updateViewLayout(overlayView, overlayParams);
             }
 
             @Override
@@ -232,8 +231,8 @@ class PixelPerfectController {
     private void setInitialOverlayPosition(int imageWidth, int imageHeight) {
         overlayParams.gravity = Gravity.TOP | Gravity.START;
 
-        int screenWidth = PixelPerfectUtils.getWindowWidth(windowManager);
-        int screenHeight = PixelPerfectUtils.getWindowHeight(windowManager);
+        int screenWidth = Utils.getWindowWidth(windowManager);
+        int screenHeight = Utils.getWindowHeight(windowManager);
 
         int marginHorizontal = (screenWidth - imageWidth) / 2;
         int marginVertical = (screenHeight - imageHeight) / 2;
@@ -244,9 +243,9 @@ class PixelPerfectController {
         overlayParams.y = -1 * overlayBorderSize - statusBarHeight + (marginVertical > 0 ? marginVertical : 0);
         fixedOffsetY = -1 * overlayParams.y;
 
-        windowManager.removeView(pixelPerfectLayout);
+        windowManager.removeView(overlayView);
         windowManager.removeView(settingsView);
-        windowManager.addView(pixelPerfectLayout, overlayParams);
+        windowManager.addView(overlayView, overlayParams);
         windowManager.addView(settingsView, settingsParams);
     }
 
@@ -261,7 +260,7 @@ class PixelPerfectController {
     }
 
     private void displaySettingsView() {
-        settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
+        settingsView.updateOpacityProgress(overlayView.getImageAlpha());
         settingsView.updateOffset(fixedOffsetX + overlayParams.x, fixedOffsetY + overlayParams.y);
         settingsView.setVisibility(View.VISIBLE);
     }
@@ -281,12 +280,12 @@ class PixelPerfectController {
         settingsView.setListener(new SettingsListener() {
             @Override
             public void onSetImageAlpha(float alpha) {
-                pixelPerfectLayout.setImageAlpha(alpha);
+                overlayView.setImageAlpha(alpha);
             }
 
             @Override
             public void onUpdateImage(Bitmap bitmap) {
-                pixelPerfectLayout.updateImage(bitmap, overlayScaleFactor);
+                overlayView.updateImage(bitmap, overlayScaleFactor);
             }
 
             @Override
@@ -296,8 +295,8 @@ class PixelPerfectController {
 
             @Override
             public boolean onInverseChecked(boolean saveOpacity) {
-                boolean inverted = pixelPerfectLayout.invertImageBitmap(saveOpacity);
-                settingsView.updateOpacityProgress(pixelPerfectLayout.getImageAlpha());
+                boolean inverted = overlayView.invertImageBitmap(saveOpacity);
+                settingsView.updateOpacityProgress(overlayView.getImageAlpha());
                 return inverted;
             }
         });

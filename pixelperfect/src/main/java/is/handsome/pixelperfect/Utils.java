@@ -19,8 +19,8 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 import java.io.InputStream;
-//FIXME: Maybe Utils?
-public class PixelPerfectUtils {
+
+class Utils {
 
     public static int getWindowWidth(WindowManager windowManager) {
         Point displaySize = new Point();
@@ -46,7 +46,7 @@ public class PixelPerfectUtils {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static boolean isTranslucentStatusBar(Context context) {
-        Window window = ((Activity)context).getWindow();
+        Window window = ((Activity) context).getWindow();
         int flags = window.getAttributes().flags;
         return (flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                 == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
@@ -122,7 +122,7 @@ public class PixelPerfectUtils {
         return inSampleSize;
     }
 
-    private PixelPerfectUtils() {
+    private Utils() {
         throw new AssertionError("no instances");
     }
 }

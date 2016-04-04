@@ -2,6 +2,7 @@ package is.handsome.pixelperfect;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,8 +28,8 @@ class SettingsView extends FrameLayout {
         void onItemSelected(int position);
     }
 
-    private PixelPerfectController.SettingsListener settingsListener;
-    private List<PixelPerfectImage> images = new ArrayList<>();
+    private Overlay.SettingsListener settingsListener;
+    private List<Image> images = new ArrayList<>();
     private String overlayImageAssetsPath = "pixelperfect";
 
     private SeekBar opacitySeekBar;
@@ -70,7 +71,7 @@ class SettingsView extends FrameLayout {
         init();
     }
 
-    public void setListener(PixelPerfectController.SettingsListener listener) {
+    public void setListener(Overlay.SettingsListener listener) {
         this.settingsListener = listener;
     }
 
@@ -86,8 +87,8 @@ class SettingsView extends FrameLayout {
 
     public void setImageOverlay(int position) {
         if (position >= 0 && position < images.size()) {
-            settingsListener.onUpdateImage(images.get(position).bitmap);
-            imageNameTextView.setText(images.get(position).name);
+            settingsListener.onUpdateImage(images.get(position).getBitmap());
+            imageNameTextView.setText(images.get(position).getName());
             ((ImagesAdapter) recyclerView.getAdapter()).setSelectedPosition(position);
         }
     }
@@ -98,8 +99,8 @@ class SettingsView extends FrameLayout {
     }
 
     public int indexOfImage(String imageName) {
-        for (PixelPerfectImage image : images) {
-            if (image.name.equalsIgnoreCase(imageName)) {
+        for (Image image : images) {
+            if (image.getName().equalsIgnoreCase(imageName)) {
                 return images.indexOf(image);
             }
         }
@@ -252,11 +253,11 @@ class SettingsView extends FrameLayout {
                 @Override
                 public void onItemSelected(int position) {
                     if (settingsListener != null) {
-                        settingsListener.onUpdateImage(images.get(position).bitmap);
+                        settingsListener.onUpdateImage(images.get(position).getBitmap());
                         if (inverseCheckbox.isChecked()) {
                             settingsListener.onInverseChecked(true);
                         }
-                        imageNameTextView.setText(images.get(position).name);
+                        imageNameTextView.setText(images.get(position).getName());
                         exitSettingsView();
                     }
                 }
@@ -274,11 +275,10 @@ class SettingsView extends FrameLayout {
         }
         images.clear();
         for (int i = 0; i < filenames.length; i++) {
-            PixelPerfectImage pixelPerfectImage = new PixelPerfectImage();
-            pixelPerfectImage.name = filenames[i];
             //TODO: add bitmap decoding max size
-            pixelPerfectImage.bitmap = PixelPerfectUtils.getBitmapFromAssets(getContext(), overlayImageAssetsPath + "/" + filenames[i]);
-            images.add(pixelPerfectImage);
+            Bitmap bitmap = Utils.getBitmapFromAssets(getContext(), overlayImageAssetsPath + "/" + filenames[i]);
+            final Image image = new Image(filenames[i], bitmap);
+            images.add(image);
         }
     }
 
