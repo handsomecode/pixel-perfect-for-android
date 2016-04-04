@@ -1,218 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/settings_main_linear_layout"
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_background_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="20dp"
-    android:layout_marginLeft="6dp"
-    android:layout_marginRight="6dp"
-    android:layout_marginTop="45dp"
-    android:background="@color/white"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:background="@color/black_30_alpha">
 
     <LinearLayout
-        android:id="@+id/settings_toolbar_linear_layout"
+        android:id="@+id/settings_main_linear_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/bg_settings_view_border"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/pixel_perfect_color"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <ImageView
-                android:id="@+id/settings_exit_button"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="6dp"
-                android:src="@drawable/ic_settings_cancel"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/settings_name"
-                android:textColor="@color/white"
-                android:textSize="20sp"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="#00849d"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="6dp"
-            android:background="#a6e0ff"/>
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/settings_second_screen_frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:visibility="gone">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/settings_images_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/settings_empty_list_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="18sp"/>
-
-    </FrameLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/settings_first_screen_linear_layout"
+            android:id="@+id/settings_toolbar_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--        IMAGE        -->
-
             <LinearLayout
-                android:id="@+id/settings_images_option_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:background="@drawable/bg_settings_item"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
+                android:background="@color/pixel_perfect_color"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:id="@+id/settings_exit_button"
+                    android:layout_width="43dp"
+                    android:layout_height="43dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="6dp"
+                    android:src="@drawable/ic_settings_cancel"/>
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_image"
-                    android:textColor="@color/black"
-                    android:textSize="19sp"/>
-
-                <TextView
-                    android:id="@+id/settings_image_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="#6b6f72"/>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_marginLeft="16dp"
-                android:background="#cfcfcf"/>
-
-            <!--        TRANSPARENCY        -->
-
-            <LinearLayout
-                android:id="@+id/settings_opacity_linear_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/opacity_title_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_transparency"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"/>
-
-                <SeekBar
-                    style="@style/SeekBarAppTheme"
-                    android:id="@+id/settings_opacity_seek_bar"
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:progress="50"/>
+                    android:gravity="center"
+                    android:text="@string/settings_name"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"/>
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_marginLeft="16dp"
-                android:background="#cfcfcf"/>
-
-            <!--        INVERSE        -->
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/settings_inverse"
-                    android:textColor="@color/black"
-                    android:textSize="19sp"/>
-
-                <CheckBox
-                    android:id="@+id/inverse_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/apptheme_btn_check_holo_light"/>
-
-            </LinearLayout>
+                android:background="#00849d"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_marginLeft="14dp"
-                android:background="#cfcfcf"/>
+                android:layout_marginBottom="6dp"
+                android:background="#a6e0ff"/>
+        </LinearLayout>
 
-            <!--        OFFSET        -->
+        <FrameLayout
+            android:id="@+id/settings_second_screen_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/settings_images_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/settings_empty_list_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="60dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+        </FrameLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/settings_offset_option_linear_layout"
+                android:id="@+id/settings_first_screen_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="center_vertical"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_fix_offset_text"
-                    android:textColor="@color/black"
-                    android:textSize="19sp"/>
+                <!--        IMAGE        -->
 
-                <TextView
-                    android:id="@+id/settings_offset_text_view"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/settings_images_option_linear_layout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#6b6f72"/>
+                    android:background="@drawable/bg_settings_item"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_image"
+                        android:textColor="@color/black"
+                        android:textSize="19sp"/>
+
+                    <TextView
+                        android:id="@+id/settings_image_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="#6b6f72"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="16dp"
+                    android:background="#cfcfcf"/>
+
+                <!--        TRANSPARENCY        -->
+
+                <LinearLayout
+                    android:id="@+id/settings_opacity_linear_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/opacity_title_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_transparency"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"/>
+
+                    <SeekBar
+                        android:id="@+id/settings_opacity_seek_bar"
+                        style="@style/SeekBarAppTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:progress="50"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="16dp"
+                    android:background="#cfcfcf"/>
+
+                <!--        INVERSE        -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/settings_inverse"
+                        android:textColor="@color/black"
+                        android:textSize="19sp"/>
+
+                    <CheckBox
+                        android:id="@+id/inverse_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/apptheme_btn_check_holo_light"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="14dp"
+                    android:background="#cfcfcf"/>
+
+                <!--        OFFSET        -->
+
+                <LinearLayout
+                    android:id="@+id/settings_offset_option_linear_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_fix_offset_text"
+                        android:textColor="@color/black"
+                        android:textSize="19sp"/>
+
+                    <TextView
+                        android:id="@+id/settings_offset_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#6b6f72"/>
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

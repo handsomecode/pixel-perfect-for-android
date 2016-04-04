@@ -43,6 +43,7 @@ class SettingsView extends FrameLayout {
     private RecyclerView recyclerView;
     private TextView emptyListTextView;
 
+    private View backgroundLayout;
     private View mainLayout;
     private View toolbarView;
     private View opacityLayout;
@@ -140,6 +141,7 @@ class SettingsView extends FrameLayout {
         };
         exitButton.setOnClickListener(exitButtonListener);
 
+        backgroundLayout = findViewById(R.id.settings_background_frame_layout);
         mainLayout = findViewById(R.id.settings_main_linear_layout);
         opacityLayout = findViewById(R.id.settings_opacity_linear_layout);
         toolbarView = findViewById(R.id.settings_toolbar_linear_layout);
@@ -201,18 +203,20 @@ class SettingsView extends FrameLayout {
     }
 
     private void hideNonOpacityElements() {
+        backgroundLayout.setBackgroundColor(Color.TRANSPARENT);
         mainLayout.setBackgroundColor(Color.TRANSPARENT);
         toolbarView.setVisibility(INVISIBLE);
         for (int i = 0; i < firstScreenSettingsLinearLayout.getChildCount(); i++) {
             firstScreenSettingsLinearLayout.getChildAt(i).setVisibility(INVISIBLE);
         }
         opacityLayout.setVisibility(VISIBLE);
-        opacityLayout.setBackgroundColor(getResources().getColor(R.color.black_50_alpha));
+        opacityLayout.setBackgroundResource(R.color.black_50_alpha);
         opacityTitleTextView.setTextColor(Color.WHITE);
     }
 
     private void showNonOpacityElements() {
-        mainLayout.setBackgroundColor(Color.WHITE);
+        backgroundLayout.setBackgroundResource(R.color.black_30_alpha);
+        mainLayout.setBackgroundResource(R.drawable.bg_settings_view_border);
         toolbarView.setVisibility(VISIBLE);
         for (int i = 0; i < firstScreenSettingsLinearLayout.getChildCount(); i++) {
             firstScreenSettingsLinearLayout.getChildAt(i).setVisibility(VISIBLE);
