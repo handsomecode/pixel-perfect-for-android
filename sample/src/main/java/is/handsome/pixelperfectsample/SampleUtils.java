@@ -31,7 +31,7 @@ public class SampleUtils {
         InputStream inputStream = null;
         try {
             inputStream = context.getAssets().open(fullName);
-            return decodeSampledBitmapFromInputStream(inputStream, screenWidth);
+            return decodeBitmapFromInputStream(inputStream, screenWidth);
         } catch (IOException e) {
             return null;
         } finally {
@@ -45,17 +45,12 @@ public class SampleUtils {
         }
     }
 
-    private static Bitmap decodeSampledBitmapFromInputStream(InputStream inputStream, int reqWidth) {
+    private static Bitmap decodeBitmapFromInputStream(InputStream inputStream, int reqWidth) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(inputStream, null, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth);
         options.inJustDecodeBounds = false;
-        try {
-            inputStream.reset();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
 

@@ -82,11 +82,12 @@ public class PixelPerfect {
      * @return
      */
     public static void show(Activity activity) {
-        showPixelPerfectController(activity, null);
+        showOverlay(activity, null);
     }
 
+    //TODO: should we check activity to null ?
     public static void show(Activity activity, PixelPerfect.Config config) {
-        showPixelPerfectController(activity, config);
+        showOverlay(activity, config);
     }
 
     public static boolean isShown() {
@@ -129,7 +130,7 @@ public class PixelPerfect {
         }
     }
 
-    private static void showPixelPerfectController(Activity activity, PixelPerfect.Config config) {
+    private static void showOverlay(Activity activity, PixelPerfect.Config config) {
         if (overlay != null) {
             overlay.show();
             return;

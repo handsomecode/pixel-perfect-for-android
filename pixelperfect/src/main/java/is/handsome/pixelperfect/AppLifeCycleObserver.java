@@ -32,13 +32,11 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
 
     public static AppLifeCycleObserver get(Context context){
         if (instance == null) {
-            Context applicationContext = context.getApplicationContext();
-            if (applicationContext instanceof Application) {
-                return init((Application) applicationContext);
+            Context applicationContext = context;
+            if (!(applicationContext instanceof Application)) {
+                applicationContext = context.getApplicationContext();
             }
-            throw new IllegalStateException (
-                    "Foreground is not initialised and " +
-                            "cannot obtain the Application object");
+            return init((Application) applicationContext);
         }
         return instance;
     }
@@ -52,12 +50,25 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
         return instance;
     }
 
-    private static AppLifeCycleObserver init(Application application){
-        if (instance == null) {
-            instance = new AppLifeCycleObserver();
-            application.registerActivityLifecycleCallbacks(instance);
-        }
-        return instance;
+    public AppLifeCycleObserver() {
+        checkRunnable = new Runnable(){
+            @Override
+            public void run() {
+                if (foreground && paused) {
+                    foreground = false;
+                    Log.i(TAG, "went background");
+                    for (Listener listener : listeners) {
+                        try {
+                            listener.onBecameBackground();
+                        } catch (Exception exception) {
+                            Log.i(TAG, "Listener threw exception!", exception);
+                        }
+                    }
+                } else {
+                    Log.i(TAG, "still foreground");
+                }
+            }
+        };
     }
 
     public boolean isForeground(){
@@ -102,29 +113,10 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityPaused(Activity activity) {
         paused = true;
-
         if (checkRunnable != null) {
             handler.removeCallbacks(checkRunnable);
         }
-
-        handler.postDelayed(checkRunnable = new Runnable(){
-            @Override
-            public void run() {
-                if (foreground && paused) {
-                    foreground = false;
-                    Log.i(TAG, "went background");
-                    for (Listener listener : listeners) {
-                        try {
-                            listener.onBecameBackground();
-                        } catch (Exception exception) {
-                            Log.i(TAG, "Listener threw exception!", exception);
-                        }
-                    }
-                } else {
-                    Log.i(TAG, "still foreground");
-                }
-            }
-        }, CHECK_DELAY);
+        handler.postDelayed(checkRunnable, CHECK_DELAY);
     }
 
     @Override
@@ -141,4 +133,12 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityDestroyed(Activity activity) {}
+
+    private static AppLifeCycleObserver init(Application application){
+        if (instance == null) {
+            instance = new AppLifeCycleObserver();
+            application.registerActivityLifecycleCallbacks(instance);
+        }
+        return instance;
+    }
 }

@@ -69,12 +69,12 @@ class Overlay {
     private float overlayScaleFactor;
 
     public Overlay(Activity activity) {
-        initController(activity);
+        initOverlay(activity);
     }
 
     public Overlay(Activity activity, PixelPerfect.Config config) {
         overlayScaleFactor = config.getOverlayScaleFactor();
-        initController(activity);
+        initOverlay(activity);
 
         if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
             settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
@@ -113,7 +113,7 @@ class Overlay {
         windowManager.removeView(settingsView);
     }
 
-    private void initController(Activity activity) {
+    private void initOverlay(Activity activity) {
         Context applicationContext = activity.getApplicationContext();
         overlayView = new OverlayView(applicationContext);
         settingsView = new SettingsView(applicationContext);
