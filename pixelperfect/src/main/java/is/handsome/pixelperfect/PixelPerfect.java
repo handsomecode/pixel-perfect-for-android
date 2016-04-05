@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 public class PixelPerfect {
@@ -86,12 +87,11 @@ public class PixelPerfect {
      * @param activity
      * @return
      */
-    public static void show(Activity activity) {
+    public static void show(@NonNull Activity activity) {
         showOverlay(activity, null);
     }
 
-    //TODO: should we check activity to null ?
-    public static void show(Activity activity, PixelPerfect.Config config) {
+    public static void show(@NonNull Activity activity, PixelPerfect.Config config) {
         showOverlay(activity, config);
     }
 
