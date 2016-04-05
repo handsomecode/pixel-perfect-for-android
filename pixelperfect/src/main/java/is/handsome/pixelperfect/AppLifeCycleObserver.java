@@ -21,6 +21,7 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
 
         void onBecameForeground();
         void onBecameBackground();
+        void onDeviceRotate();
     }
 
     private static AppLifeCycleObserver instance;
@@ -120,7 +121,17 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
     }
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            for (Listener listener : listeners) {
+                try {
+                    listener.onDeviceRotate();
+                } catch (Exception exception) {
+                    Log.i(TAG, "Listener threw exception!", exception);
+                }
+            }
+        }
+    }
 
     @Override
     public void onActivityStarted(Activity activity) {}

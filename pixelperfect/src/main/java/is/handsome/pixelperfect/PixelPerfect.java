@@ -72,6 +72,11 @@ public class PixelPerfect {
         public void onBecameBackground() {
             overlay.hide();
         }
+
+        @Override
+        public void onDeviceRotate() {
+            overlay.updatePositionAfterRotation();
+        }
     };
 
     /**

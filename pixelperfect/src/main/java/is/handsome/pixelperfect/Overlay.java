@@ -97,6 +97,13 @@ class Overlay {
         return overlayView.getVisibility() == View.VISIBLE;
     }
 
+    public void updatePositionAfterRotation() {
+        int overlayParamX= overlayParams.x;
+        overlayParams.x = overlayParams.y;
+        overlayParams.y = overlayParamX;
+        windowManager.updateViewLayout(overlayView, overlayParams);
+    }
+
     public void hide() {
         overlayView.setImageVisible(false);
         overlayView.setVisibility(View.GONE);
