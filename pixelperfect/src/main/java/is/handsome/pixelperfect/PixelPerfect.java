@@ -95,8 +95,12 @@ public class PixelPerfect {
         showOverlay(activity, config);
     }
 
+    public static boolean isCreated() {
+        return overlay != null;
+    }
+
     public static boolean isShown() {
-        return overlay != null && overlay.isShown();
+        return isCreated() && overlay.isShown();
     }
 
     /**
@@ -112,6 +116,7 @@ public class PixelPerfect {
         }
 
         if (overlay != null) {
+            overlay.saveState();
             overlay.destroy();
             overlay = null;
         }
@@ -144,5 +149,6 @@ public class PixelPerfect {
         overlay = config == null ? new Overlay(activity) :
                 new Overlay(activity, config);
         AppLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
+        overlay.resetState();
     }
 }

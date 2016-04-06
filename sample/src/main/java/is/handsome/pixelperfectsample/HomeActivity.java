@@ -27,6 +27,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (pixelPerfectCheckBox.isChecked()) {
+            showPixelPerfect();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (PixelPerfect.hasPermission(this)) {
@@ -36,6 +44,18 @@ public class HomeActivity extends AppCompatActivity {
             pixelPerfectCheckBox.setVisibility(View.GONE);
             permissionLinearLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (PixelPerfect.isCreated()) {
+            PixelPerfect.hide();
+        }
+    }
+
+    public void openPermissionSettings(View view) {
+        PixelPerfect.askForPermission(this);
     }
 
     private void init() {
@@ -71,10 +91,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    PixelPerfect.Config config = new PixelPerfect.Config.Builder()
-                            .overlayImagesAssetsPath(assetsFolderName)
-                            .build();
-                    PixelPerfect.show(HomeActivity.this, config);
+                    showPixelPerfect();
                 } else {
                     PixelPerfect.hide();
                 }
@@ -82,21 +99,15 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // FIXME: why do we need it?
-        if (PixelPerfect.isShown()) {
-            PixelPerfect.hide();
-        }
-    }
-
-    public void openPermissionSettings(View view) {
-        PixelPerfect.askForPermission(this);
+    private void showPixelPerfect() {
+        PixelPerfect.Config config = new PixelPerfect.Config.Builder()
+                .overlayImagesAssetsPath(assetsFolderName)
+                .build();
+        PixelPerfect.show(HomeActivity.this, config);
     }
 
     private String getPreferredFolderName(int screenMinDimension) {
-        for (int width: portraitDimens) {
+        for (int width : portraitDimens) {
             if (width <= screenMinDimension) {
                 return "overlays-" + String.valueOf(width);
             }

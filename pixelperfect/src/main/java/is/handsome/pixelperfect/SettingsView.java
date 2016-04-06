@@ -38,6 +38,7 @@ class SettingsView extends FrameLayout {
     private View secondScreenSettingsView;
     private ImageView exitButton;
     private TextView imageNameTextView;
+    private String imageName;
     private TextView offsetTextView;
     private CheckBox inverseCheckbox;
 
@@ -79,6 +80,10 @@ class SettingsView extends FrameLayout {
         inverseCheckbox.setChecked(!inverseCheckbox.isChecked());
     }
 
+    public boolean isInverse() {
+        return inverseCheckbox.isChecked();
+    }
+
     public void setImageAssetsPath(String overlayImageAssetsPath) {
         this.overlayImageAssetsPath = overlayImageAssetsPath;
         updateImagesContent();
@@ -95,6 +100,7 @@ class SettingsView extends FrameLayout {
 
     public void setImageOverlay(String imageName) {
         int position = indexOfImage(imageName);
+        this.imageName = imageName;
         setImageOverlay(position);
     }
 
@@ -128,6 +134,10 @@ class SettingsView extends FrameLayout {
 
     public void updateOffset(int x, int y) {
         offsetTextView.setText(String.format(getResources().getString(R.string.settings_offset_text), x, y));
+    }
+
+    public String currentImageName() {
+        return imageName;
     }
 
     private void init() {
@@ -258,6 +268,7 @@ class SettingsView extends FrameLayout {
                             settingsListener.onInverseChecked(true);
                         }
                         imageNameTextView.setText(images.get(position).getName());
+                        imageName = images.get(position).getName();
                         exitSettingsView();
                     }
                 }
