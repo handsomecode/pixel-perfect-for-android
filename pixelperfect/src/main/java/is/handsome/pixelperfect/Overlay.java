@@ -102,6 +102,7 @@ class Overlay {
         overlayParams.x = overlayParams.y;
         overlayParams.y = overlayParamX;
         windowManager.updateViewLayout(overlayView, overlayParams);
+        overlayView.updateNoImageTextViewSize();
     }
 
     public void hide() {

@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -77,6 +78,15 @@ class OverlayView extends FrameLayout {
         return false;
     }
 
+    public void updateNoImageTextViewSize() {
+        if (noOverlayImageTextView.getVisibility() == View.VISIBLE) {
+            ViewGroup.LayoutParams containerParams = getLayoutParams();
+            containerParams.width = noOverlayImageTextView.getWidth() + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+            containerParams.height = noOverlayImageTextView.getHeight() + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+            setLayoutParams(containerParams);
+        }
+    }
+
     public void setLayoutListener(Overlay.LayoutListener listener) {
         layoutListener = listener;
     }
@@ -140,13 +150,12 @@ class OverlayView extends FrameLayout {
         pixelPerfectOverlayImageView.setAlpha(0.5f);
         pixelPerfectOverlayImageView.setImageDrawable(null);
         addView(pixelPerfectOverlayImageView);
-        initNoOverlayImageView(layoutParams);
-
+        initNoOverlayTextView(layoutParams);
     }
 
-    private void initNoOverlayImageView(ViewGroup.LayoutParams imageParams) {
+    private void initNoOverlayTextView(ViewGroup.LayoutParams imageParams) {
         noOverlayImageTextView = new TextView(getContext());
-        noOverlayImageTextView.setBackgroundColor(getResources().getColor(R.color.black_50_alpha));
+        noOverlayImageTextView.setBackgroundResource(R.color.black_50_alpha);
         noOverlayImageTextView.setText(R.string.no_overlay_image_text);
         noOverlayImageTextView.setTextSize(22);
         noOverlayImageTextView.setGravity(Gravity.CENTER);
