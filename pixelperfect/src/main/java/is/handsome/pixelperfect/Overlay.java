@@ -66,26 +66,27 @@ class Overlay {
     private int overlayBorderSize;
     private int statusBarHeight;
     private String offsetTextTemplate;
-    private float overlayScaleFactor;
+    private float overlayScaleFactor = 1;
 
     private OverlayStateStore overlayStateStore;
 
     public Overlay(Activity activity) {
         initOverlay(activity);
         restoreState();
+        show();
     }
 
     public Overlay(Activity activity, PixelPerfect.Config config) {
         overlayScaleFactor = config.getOverlayScaleFactor();
         initOverlay(activity);
-
+        restoreState();
         if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
             settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
         }
         if (!TextUtils.isEmpty(config.getOverlayInitialImageName())) {
             settingsView.setImageOverlay(config.getOverlayInitialImageName());
         }
-        restoreState();
+        show();
     }
 
     public void show() {
@@ -105,6 +106,10 @@ class Overlay {
         int overlayParamX = overlayParams.x;
         overlayParams.x = overlayParams.y;
         overlayParams.y = overlayParamX;
+
+        int height = Utils.getWindowHeight(windowManager);
+        int width = Utils.getWindowWidth(windowManager);
+
         windowManager.updateViewLayout(overlayView, overlayParams);
         overlayView.updateNoImageTextViewSize();
     }
@@ -114,11 +119,19 @@ class Overlay {
     }
 
     public void saveState() {
+        overlayStateStore.savePixelPerfectActive(true);
         overlayStateStore.savePosition(overlayParams.x, overlayParams.y);
-        overlayStateStore.saveImageName(settingsView.currentImageName());
+        if (overlayView.isNoImageOverlay()) {
+            overlayStateStore.saveImageName("no_image");
+        } else {
+            overlayStateStore.saveImageName(settingsView.currentImageName());
+        }
+        overlayStateStore.saveAssetsFolderName(settingsView.getOverlayImageAssetsPath());
         overlayStateStore.saveOpacity(overlayView.getImageAlpha());
         overlayStateStore.saveFixedOffset(fixedOffsetX, fixedOffsetY);
         overlayStateStore.saveInverse(settingsView.isInverse());
+        overlayStateStore.saveOrientation(overlayView.getContext().getResources().getConfiguration().orientation);
+        overlayStateStore.saveSettingsOpened(settingsView.getVisibility() == View.VISIBLE);
     }
 
     public void hide() {
@@ -139,11 +152,15 @@ class Overlay {
 
     private void restoreState() {
         if (overlayStateStore.getImageName() != null) {
-            settingsView.setImageOverlay(overlayStateStore.getImageName());
+            settingsView.setImageAssetsPath(overlayStateStore.getAssetsFolderName());
+            if (!overlayStateStore.getImageName().equalsIgnoreCase("no_image")) {
+                settingsView.setImageOverlay(overlayStateStore.getImageName());
+            }
             if (overlayStateStore.isInverse()) {
                 settingsView.setInverseMode();
             }
             settingsView.updateOpacityProgress(overlayStateStore.getOpacity());
+            settingsOpened = overlayStateStore.isSettingsOpened();
         }
     }
 
@@ -168,7 +185,6 @@ class Overlay {
         addOverlayMockup(context);
         addOffsetPixelsView();
         addSettingsView();
-        show();
     }
 
     private void addOverlayMockup(final Context context) {
@@ -179,7 +195,7 @@ class Overlay {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
 
-        setInitialOverlayPosition();
+        updateInitialOverlayPosition();
         windowManager.addView(overlayView, overlayParams);
 
         final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);
@@ -210,7 +226,7 @@ class Overlay {
 
             @Override
             public void onOverlayUpdate(int width, int height) {
-                setInitialOverlayPosition(width, height);
+                updateInitialOverlayPosition(width, height);
                 windowManager.updateViewLayout(overlayView, overlayParams);
             }
 
@@ -263,7 +279,7 @@ class Overlay {
         });
     }
 
-    private void setInitialOverlayPosition(int imageWidth, int imageHeight) {
+    private void updateInitialOverlayPosition(int imageWidth, int imageHeight) {
         overlayParams.gravity = Gravity.TOP | Gravity.START;
 
         int screenWidth = Utils.getWindowWidth(windowManager);
@@ -292,14 +308,22 @@ class Overlay {
         windowManager.addView(settingsView, settingsParams);
     }
 
-    private void setInitialOverlayPosition() {
+    private void updateInitialOverlayPosition() {
         overlayParams.gravity = Gravity.TOP | Gravity.START;
 
-        overlayParams.x = -1 * overlayBorderSize + statusBarHeight;
-        fixedOffsetX = -1 * overlayParams.x;
+        if (overlayStateStore.getImageName() != null) {
+            overlayParams.x = overlayStateStore.getPositionX();
+            fixedOffsetX = overlayStateStore.getFixedOffsetX();
 
-        overlayParams.y = -1 * overlayBorderSize + statusBarHeight;
-        fixedOffsetY = -1 * overlayParams.y;
+            overlayParams.y = overlayStateStore.getPositionY();
+            fixedOffsetY = overlayStateStore.getFixedOffsetY();
+        } else {
+            overlayParams.x = -1 * overlayBorderSize + statusBarHeight;
+            fixedOffsetX = -1 * overlayParams.x;
+
+            overlayParams.y = -1 * overlayBorderSize + statusBarHeight;
+            fixedOffsetY = -1 * overlayParams.y;
+        }
     }
 
     private void displaySettingsView() {

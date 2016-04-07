@@ -137,6 +137,10 @@ class OverlayView extends FrameLayout {
         return false;
     }
 
+    public boolean isNoImageOverlay() {
+        return noOverlayImageTextView.getVisibility() == VISIBLE;
+    }
+
     private void initOverlay() {
         pixelPerfectOverlayImageView = new ImageView(getContext());
         int marginPortion = (int) getContext().getResources().getDimension(R.dimen.stub_overlay_margin_portion);

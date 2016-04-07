@@ -63,7 +63,7 @@ public class PixelPerfect {
 
     private static Overlay overlay;
 
-    private static AppLifeCycleObserver.Listener foregroundListener = new AppLifeCycleObserver.Listener() {
+    private static ActivityLifeCycleObserver.Listener foregroundListener = new ActivityLifeCycleObserver.Listener() {
         @Override
         public void onBecameForeground() {
             overlay.show();
@@ -75,8 +75,9 @@ public class PixelPerfect {
         }
 
         @Override
-        public void onDeviceRotate() {
-            overlay.updatePositionAfterRotation();
+        public void onActivityStopped() {
+            overlay.saveState();
+            hide();
         }
     };
 
@@ -95,12 +96,8 @@ public class PixelPerfect {
         showOverlay(activity, config);
     }
 
-    public static boolean isCreated() {
-        return overlay != null;
-    }
-
     public static boolean isShown() {
-        return isCreated() && overlay.isShown();
+        return overlay != null && overlay.isShown();
     }
 
     /**
@@ -110,13 +107,12 @@ public class PixelPerfect {
      */
     public static void hide() {
         try {
-            AppLifeCycleObserver.get().removeListener(foregroundListener);
+            ActivityLifeCycleObserver.get().removeListener(foregroundListener);
         } catch (IllegalStateException exception) {
             Log.w(PixelPerfect.class.getSimpleName(), "Error during listener removing", exception);
         }
 
         if (overlay != null) {
-            overlay.saveState();
             overlay.destroy();
             overlay = null;
         }
@@ -148,7 +144,7 @@ public class PixelPerfect {
 
         overlay = config == null ? new Overlay(activity) :
                 new Overlay(activity, config);
-        AppLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
+        ActivityLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
         overlay.resetState();
     }
 }

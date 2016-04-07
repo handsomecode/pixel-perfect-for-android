@@ -2,6 +2,7 @@ package is.handsome.pixelperfect;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 
 class OverlayStateStore {
 
@@ -16,23 +17,32 @@ class OverlayStateStore {
 
     private final SharedPreferences preferences;
 
+    private boolean isPixelPerfectActive;
+
     private String imageName;
+    private String assetsFolderName;
     private boolean isInverse;
     private float opacity;
     private int positionX;
     private int positionY;
     private int fixedOffsetX;
     private int fixedOffsetY;
+    private int orientation;
+    private boolean isSettingsOpened;
 
     public OverlayStateStore(Context context) {
         preferences = context.getSharedPreferences(OverlayStateStore.class.getSimpleName(), Context.MODE_PRIVATE);
+        isPixelPerfectActive = preferences.getBoolean("isActive", false);
         imageName = preferences.getString("image", null);
+        assetsFolderName = preferences.getString("assetsName", "pixelperfect");
         isInverse = preferences.getBoolean("inverse", false);
         opacity = preferences.getFloat("getOpacity", 0.5f);
         positionX = preferences.getInt("positionX", 0);
         positionY = preferences.getInt("positionY", 0);
         fixedOffsetX = preferences.getInt("fixedOffsetX", 0);
         fixedOffsetY = preferences.getInt("fixedOffsetY", 0);
+        orientation = preferences.getInt("orientation", Configuration.ORIENTATION_UNDEFINED);
+        isSettingsOpened = preferences.getBoolean("settingsOpened", false);
     }
 
     public boolean isInverse() {
@@ -42,6 +52,15 @@ class OverlayStateStore {
     public void saveInverse(boolean isInverse) {
         this.isInverse = isInverse;
         preferences.edit().putBoolean("inverse", isInverse).apply();
+    }
+
+    public boolean isPixelPerfectActive() {
+        return isPixelPerfectActive;
+    }
+
+    public void savePixelPerfectActive(boolean isPixelPerfectActive) {
+        this.isPixelPerfectActive = isPixelPerfectActive;
+        preferences.edit().putBoolean("isActive", isPixelPerfectActive).apply();
     }
 
     public float getOpacity() {
@@ -92,14 +111,45 @@ class OverlayStateStore {
         preferences.edit().putString("image", imageName).apply();
     }
 
+    public String getAssetsFolderName() {
+        return assetsFolderName;
+    }
+
+    public void saveAssetsFolderName(String assetsFolderName) {
+        this.assetsFolderName = assetsFolderName;
+        preferences.edit().putString("assetsName", assetsFolderName).apply();
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public void saveOrientation(int orientation) {
+        this.orientation = orientation;
+        preferences.edit().putInt("orientation", orientation).apply();
+    }
+
+    public boolean isSettingsOpened() {
+        return isSettingsOpened;
+    }
+
+    public void saveSettingsOpened(boolean isSettingsOpened) {
+        this.isSettingsOpened = isSettingsOpened;
+        preferences.edit().putBoolean("settingsOpened", isSettingsOpened).apply();
+    }
+
     public void reset() {
+        isPixelPerfectActive = false;
         imageName = null;
+        assetsFolderName = "pixelperfect";
         isInverse = false;
         opacity = 0.5f;
         positionX = 0;
         positionY = 0;
         fixedOffsetX = 0;
         fixedOffsetY = 0;
+        isSettingsOpened = false;
         preferences.edit().clear().apply();
+        preferences.edit().putInt("orientation", orientation).apply();
     }
 }

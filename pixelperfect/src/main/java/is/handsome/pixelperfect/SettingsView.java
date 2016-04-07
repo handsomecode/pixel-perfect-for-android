@@ -140,6 +140,10 @@ class SettingsView extends FrameLayout {
         return imageName;
     }
 
+    public String getOverlayImageAssetsPath() {
+        return overlayImageAssetsPath;
+    }
+
     private void init() {
         inflate(getContext(), R.layout.layout_settings, this);
         exitButton = (ImageView) findViewById(R.id.settings_exit_button);

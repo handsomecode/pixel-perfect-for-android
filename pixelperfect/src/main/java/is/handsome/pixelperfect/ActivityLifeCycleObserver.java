@@ -12,26 +12,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 // Thanks to https://gist.github.com/steveliles/11116937
 
-class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
+class ActivityLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
 
-    public static final String TAG = AppLifeCycleObserver.class.getSimpleName();
+    public static final String TAG = ActivityLifeCycleObserver.class.getSimpleName();
     public static final long CHECK_DELAY = 500;
 
     public interface Listener {
 
         void onBecameForeground();
         void onBecameBackground();
-        void onDeviceRotate();
+        void onActivityStopped();
     }
 
-    private static AppLifeCycleObserver instance;
+    private static ActivityLifeCycleObserver instance;
 
     private boolean foreground = true, paused = true;
     private Handler handler = new Handler();
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
     private Runnable checkRunnable;
 
-    public static AppLifeCycleObserver get(Context context){
+    public static ActivityLifeCycleObserver get(Context context){
         if (instance == null) {
             Context applicationContext = context;
             if (!(applicationContext instanceof Application)) {
@@ -42,7 +42,7 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
         return instance;
     }
 
-    public static AppLifeCycleObserver get(){
+    public static ActivityLifeCycleObserver get(){
         if (instance == null) {
             throw new IllegalStateException (
                     "Foreground is not initialized - invoke " +
@@ -51,7 +51,7 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
         return instance;
     }
 
-    public AppLifeCycleObserver() {
+    public ActivityLifeCycleObserver() {
         checkRunnable = new Runnable(){
             @Override
             public void run() {
@@ -122,22 +122,26 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            for (Listener listener : listeners) {
-                try {
-                    listener.onDeviceRotate();
-                } catch (Exception exception) {
-                    Log.i(TAG, "Listener threw exception!", exception);
-                }
-            }
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        OverlayStateStore overlayStateStore = OverlayStateStore.getInstance(activity);
+        if (overlayStateStore.isPixelPerfectActive()) {
+            PixelPerfect.show(activity);
         }
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {}
-
-    @Override
-    public void onActivityStopped(Activity activity) {}
+    public void onActivityStopped(Activity activity) {
+        for (Listener listener : listeners) {
+            try {
+                listener.onActivityStopped();
+            } catch (Exception exception) {
+                Log.i(TAG, "Listener threw exception!", exception);
+            }
+        }
+    }
 
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
@@ -145,9 +149,9 @@ class AppLifeCycleObserver implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(Activity activity) {}
 
-    private static AppLifeCycleObserver init(Application application){
+    private static ActivityLifeCycleObserver init(Application application){
         if (instance == null) {
-            instance = new AppLifeCycleObserver();
+            instance = new ActivityLifeCycleObserver();
             application.registerActivityLifecycleCallbacks(instance);
         }
         return instance;

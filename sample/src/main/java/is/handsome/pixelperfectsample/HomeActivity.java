@@ -27,14 +27,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (pixelPerfectCheckBox.isChecked()) {
-            showPixelPerfect();
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         if (PixelPerfect.hasPermission(this)) {
@@ -43,14 +35,6 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             pixelPerfectCheckBox.setVisibility(View.GONE);
             permissionLinearLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (PixelPerfect.isCreated()) {
-            PixelPerfect.hide();
         }
     }
 
@@ -91,19 +75,15 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    showPixelPerfect();
+                    PixelPerfect.Config config = new PixelPerfect.Config.Builder()
+                            .overlayImagesAssetsPath(assetsFolderName)
+                            .build();
+                    PixelPerfect.show(HomeActivity.this, config);
                 } else {
                     PixelPerfect.hide();
                 }
             }
         });
-    }
-
-    private void showPixelPerfect() {
-        PixelPerfect.Config config = new PixelPerfect.Config.Builder()
-                .overlayImagesAssetsPath(assetsFolderName)
-                .build();
-        PixelPerfect.show(HomeActivity.this, config);
     }
 
     private String getPreferredFolderName(int screenMinDimension) {
