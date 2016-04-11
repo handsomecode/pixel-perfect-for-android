@@ -71,16 +71,14 @@ class Overlay {
 
     private OverlayStateStore overlayStateStore;
 
-    public Overlay(Activity activity) {
-        initOverlay(activity);
-        restoreState(activity);
+    public Overlay(Activity activity, boolean restoreState) {
+        initOverlay(activity, restoreState);
         show();
     }
 
     public Overlay(Activity activity, PixelPerfect.Config config) {
         overlayScaleFactor = config.getOverlayScaleFactor();
-        initOverlay(activity);
-        restoreState(activity);
+        initOverlay(activity, false);
         if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
             settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
         }
@@ -186,9 +184,12 @@ class Overlay {
         }
     }
 
-    private void initOverlay(final Activity activity) {
+    private void initOverlay(final Activity activity, boolean restoreState) {
         Context applicationContext = activity.getApplicationContext();
         overlayStateStore = OverlayStateStore.getInstance(applicationContext);
+        if (!restoreState) {
+            resetState();
+        }
         overlayView = new OverlayView(applicationContext);
         settingsView = new SettingsView(applicationContext);
         offsetPixelsView = (ViewGroup) LayoutInflater.from(applicationContext).inflate(R.layout.view_offset_pixels, null);
@@ -201,6 +202,7 @@ class Overlay {
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(applicationContext);
+        restoreState(activity);
     }
 
     private void addViewsToWindow(Context context) {

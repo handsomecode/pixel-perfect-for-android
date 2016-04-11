@@ -138,12 +138,23 @@ public class PixelPerfect {
 
     private static void showOverlay(Activity activity, PixelPerfect.Config config) {
         if (overlay != null) {
+            overlay.resetState();
             overlay.show();
             return;
         }
 
-        overlay = config == null ? new Overlay(activity) :
+        overlay = config == null ? new Overlay(activity, false) :
                 new Overlay(activity, config);
+        ActivityLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
+    }
+
+    static void showInner(Activity activity) {
+        if (overlay != null) {
+            overlay.show();
+            return;
+        }
+
+        overlay = new Overlay(activity, true);
         ActivityLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
         overlay.resetState();
     }
