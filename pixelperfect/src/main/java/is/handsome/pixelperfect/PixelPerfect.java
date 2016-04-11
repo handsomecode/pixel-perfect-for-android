@@ -75,8 +75,8 @@ public class PixelPerfect {
         }
 
         @Override
-        public void onActivityStopped() {
-            overlay.saveState();
+        public void onActivityStopped(Activity activity) {
+            overlay.saveState(activity);
             hide();
         }
     };

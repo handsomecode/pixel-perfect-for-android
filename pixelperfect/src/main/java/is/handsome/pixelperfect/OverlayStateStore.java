@@ -25,6 +25,8 @@ class OverlayStateStore {
     private float opacity;
     private int positionX;
     private int positionY;
+    private int width;
+    private int height;
     private int fixedOffsetX;
     private int fixedOffsetY;
     private int orientation;
@@ -39,6 +41,8 @@ class OverlayStateStore {
         opacity = preferences.getFloat("getOpacity", 0.5f);
         positionX = preferences.getInt("positionX", 0);
         positionY = preferences.getInt("positionY", 0);
+        width = preferences.getInt("width", 0);
+        height = preferences.getInt("height", 0);
         fixedOffsetX = preferences.getInt("fixedOffsetX", 0);
         fixedOffsetY = preferences.getInt("fixedOffsetY", 0);
         orientation = preferences.getInt("orientation", Configuration.ORIENTATION_UNDEFINED);
@@ -85,6 +89,21 @@ class OverlayStateStore {
         this.positionY = y;
         preferences.edit().putInt("positionX", positionX).apply();
         preferences.edit().putInt("positionY", positionY).apply();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void saveSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        preferences.edit().putInt("width", width).apply();
+        preferences.edit().putInt("height", height).apply();
     }
 
     public int getFixedOffsetX() {
@@ -146,10 +165,12 @@ class OverlayStateStore {
         opacity = 0.5f;
         positionX = 0;
         positionY = 0;
+        width = 0;
+        height = 0;
         fixedOffsetX = 0;
         fixedOffsetY = 0;
         isSettingsOpened = false;
+        orientation = Configuration.ORIENTATION_UNDEFINED;
         preferences.edit().clear().apply();
-        preferences.edit().putInt("orientation", orientation).apply();
     }
 }

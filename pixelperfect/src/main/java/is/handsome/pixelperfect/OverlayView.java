@@ -32,6 +32,7 @@ class OverlayView extends FrameLayout {
     private Overlay.LayoutListener layoutListener;
     private MoveMode moveMode = MoveMode.UNDEFINED;
     private int touchSlop;
+    private OverlayStateStore overlayStateStore;
 
     private GestureDetector gestureDetector;
     private MotionEvent lastMotionEvent;
@@ -81,8 +82,8 @@ class OverlayView extends FrameLayout {
     public void updateNoImageTextViewSize() {
         if (noOverlayImageTextView.getVisibility() == View.VISIBLE) {
             ViewGroup.LayoutParams containerParams = getLayoutParams();
-            containerParams.width = noOverlayImageTextView.getWidth() + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
-            containerParams.height = noOverlayImageTextView.getHeight() + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+            containerParams.width = overlayStateStore.getWidth() + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
+            containerParams.height = overlayStateStore.getHeight() + 2 * (int) getResources().getDimension(R.dimen.overlay_border_size);
             setLayoutParams(containerParams);
         }
     }
@@ -143,10 +144,8 @@ class OverlayView extends FrameLayout {
 
     private void initOverlay() {
         pixelPerfectOverlayImageView = new ImageView(getContext());
-        int marginPortion = (int) getContext().getResources().getDimension(R.dimen.stub_overlay_margin_portion);
-        final FrameLayout.LayoutParams layoutParams = new LayoutParams(Utils.getWindowWidth(getContext()) - marginPortion * 2,
-                Utils.getWindowHeight(getContext()) - marginPortion * 3);
-
+        final FrameLayout.LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
         layoutParams.setMargins(margin, margin, margin, margin);
         pixelPerfectOverlayImageView.setLayoutParams(layoutParams);
@@ -154,20 +153,31 @@ class OverlayView extends FrameLayout {
         pixelPerfectOverlayImageView.setAlpha(0.5f);
         pixelPerfectOverlayImageView.setImageDrawable(null);
         addView(pixelPerfectOverlayImageView);
-        initNoOverlayTextView(layoutParams);
+        initNoOverlayTextView();
     }
 
-    private void initNoOverlayTextView(ViewGroup.LayoutParams imageParams) {
+    private void initNoOverlayTextView() {
+        int marginPortion = (int) getContext().getResources().getDimension(R.dimen.stub_overlay_margin_portion);
+        int overlayWidth = overlayStateStore.getWidth() == 0 ?
+                Utils.getWindowWidth(getContext()) - marginPortion * 2 : overlayStateStore.getWidth();
+        int overlayHeight = overlayStateStore.getHeight() == 0 ?
+                Utils.getWindowHeight(getContext()) - marginPortion * 3 : overlayStateStore.getHeight();
+
+        final FrameLayout.LayoutParams noOverlayParams = new LayoutParams(overlayWidth, overlayHeight);
+        int margin = (int) getResources().getDimension(R.dimen.overlay_border_size);
+        noOverlayParams.setMargins(margin, margin, margin, margin);
+
         noOverlayImageTextView = new TextView(getContext());
         noOverlayImageTextView.setBackgroundResource(R.color.black_50_alpha);
         noOverlayImageTextView.setText(R.string.no_overlay_image_text);
         noOverlayImageTextView.setTextSize(22);
         noOverlayImageTextView.setGravity(Gravity.CENTER);
         noOverlayImageTextView.setTextColor(Color.WHITE);
-        addView(noOverlayImageTextView, imageParams);
+        addView(noOverlayImageTextView, noOverlayParams);
     }
 
     private void init() {
+        overlayStateStore = OverlayStateStore.getInstance(getContext());
         touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         setBackgroundResource(R.drawable.bg_overlay);
         initOverlay();

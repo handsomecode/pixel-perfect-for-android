@@ -3,6 +3,7 @@ package is.handsome.pixelperfect;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.text.TextUtils;
@@ -72,14 +73,14 @@ class Overlay {
 
     public Overlay(Activity activity) {
         initOverlay(activity);
-        restoreState();
+        restoreState(activity);
         show();
     }
 
     public Overlay(Activity activity, PixelPerfect.Config config) {
         overlayScaleFactor = config.getOverlayScaleFactor();
         initOverlay(activity);
-        restoreState();
+        restoreState(activity);
         if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
             settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
         }
@@ -102,25 +103,28 @@ class Overlay {
         return overlayView.getVisibility() == View.VISIBLE;
     }
 
-    public void updatePositionAfterRotation() {
-        int overlayParamX = overlayParams.x;
-        overlayParams.x = overlayParams.y;
-        overlayParams.y = overlayParamX;
-
-        int height = Utils.getWindowHeight(windowManager);
+    public void calculatePositionAfterRotation() {
         int width = Utils.getWindowWidth(windowManager);
+        int height = Utils.getWindowHeight(windowManager);
 
-        windowManager.updateViewLayout(overlayView, overlayParams);
+        overlayParams.x = (overlayParams.x + overlayStateStore.getWidth() / 2 ) * width / height
+                - overlayStateStore.getWidth() / 2;
+
+        overlayParams.y = (overlayParams.y + overlayStateStore.getHeight() / 2) * height / width
+                - overlayStateStore.getHeight() / 2;
+
         overlayView.updateNoImageTextViewSize();
+        windowManager.updateViewLayout(overlayView, overlayParams);
     }
 
     public void resetState() {
         overlayStateStore.reset();
     }
 
-    public void saveState() {
+    public void saveState(Activity activity) {
         overlayStateStore.savePixelPerfectActive(true);
         overlayStateStore.savePosition(overlayParams.x, overlayParams.y);
+        overlayStateStore.saveSize(overlayView.getWidth(), overlayView.getHeight());
         if (overlayView.isNoImageOverlay()) {
             overlayStateStore.saveImageName("no_image");
         } else {
@@ -130,7 +134,7 @@ class Overlay {
         overlayStateStore.saveOpacity(overlayView.getImageAlpha());
         overlayStateStore.saveFixedOffset(fixedOffsetX, fixedOffsetY);
         overlayStateStore.saveInverse(settingsView.isInverse());
-        overlayStateStore.saveOrientation(overlayView.getContext().getResources().getConfiguration().orientation);
+        overlayStateStore.saveOrientation(activity.getResources().getConfiguration().orientation);
         overlayStateStore.saveSettingsOpened(settingsView.getVisibility() == View.VISIBLE);
     }
 
@@ -150,7 +154,7 @@ class Overlay {
         windowManager.removeView(settingsView);
     }
 
-    private void restoreState() {
+    private void restoreState(Activity activity) {
         if (overlayStateStore.getImageName() != null) {
             settingsView.setImageAssetsPath(overlayStateStore.getAssetsFolderName());
             if (!overlayStateStore.getImageName().equalsIgnoreCase("no_image")) {
@@ -161,10 +165,14 @@ class Overlay {
             }
             settingsView.updateOpacityProgress(overlayStateStore.getOpacity());
             settingsOpened = overlayStateStore.isSettingsOpened();
+            if (overlayStateStore.getOrientation() != Configuration.ORIENTATION_UNDEFINED &&
+                    activity.getResources().getConfiguration().orientation != overlayStateStore.getOrientation()) {
+                calculatePositionAfterRotation();
+            }
         }
     }
 
-    private void initOverlay(Activity activity) {
+    private void initOverlay(final Activity activity) {
         Context applicationContext = activity.getApplicationContext();
         overlayStateStore = OverlayStateStore.getInstance(applicationContext);
         overlayView = new OverlayView(applicationContext);

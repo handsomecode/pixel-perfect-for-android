@@ -21,7 +21,7 @@ class ActivityLifeCycleObserver implements Application.ActivityLifecycleCallback
 
         void onBecameForeground();
         void onBecameBackground();
-        void onActivityStopped();
+        void onActivityStopped(Activity activity);
     }
 
     private static ActivityLifeCycleObserver instance;
@@ -136,7 +136,7 @@ class ActivityLifeCycleObserver implements Application.ActivityLifecycleCallback
     public void onActivityStopped(Activity activity) {
         for (Listener listener : listeners) {
             try {
-                listener.onActivityStopped();
+                listener.onActivityStopped(activity);
             } catch (Exception exception) {
                 Log.i(TAG, "Listener threw exception!", exception);
             }
