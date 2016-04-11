@@ -51,6 +51,11 @@ public class SampleUtils {
         BitmapFactory.decodeStream(inputStream, null, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth);
         options.inJustDecodeBounds = false;
+        try {
+            inputStream.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
 

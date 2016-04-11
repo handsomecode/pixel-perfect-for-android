@@ -107,11 +107,25 @@ class Overlay {
         int width = Utils.getWindowWidth(windowManager);
         int height = Utils.getWindowHeight(windowManager);
 
+        int overlayMinimumVisibleSize = (int) overlayView.getContext().getResources().getDimension(R.dimen.overlay_minimum_visible_size);
+
         overlayParams.x = (overlayParams.x + overlayStateStore.getWidth() / 2 ) * width / height
                 - overlayStateStore.getWidth() / 2;
 
+        if (overlayParams.x + overlayStateStore.getWidth() < overlayMinimumVisibleSize) {
+            overlayParams.x = overlayMinimumVisibleSize - overlayStateStore.getWidth();
+        } else if(overlayParams.x > Utils.getWindowWidth(windowManager) - overlayMinimumVisibleSize) {
+            overlayParams.x = Utils.getWindowWidth(windowManager) - overlayMinimumVisibleSize;
+        }
+
         overlayParams.y = (overlayParams.y + overlayStateStore.getHeight() / 2) * height / width
                 - overlayStateStore.getHeight() / 2;
+
+        if (overlayParams.y + overlayStateStore.getHeight() < overlayMinimumVisibleSize) {
+            overlayParams.y = overlayMinimumVisibleSize - overlayStateStore.getHeight();
+        } else if(overlayParams.y > Utils.getWindowHeight(windowManager) - overlayMinimumVisibleSize - statusBarHeight) {
+            overlayParams.y = Utils.getWindowHeight(windowManager) - overlayMinimumVisibleSize - statusBarHeight;
+        }
 
         overlayView.updateNoImageTextViewSize();
         windowManager.updateViewLayout(overlayView, overlayParams);

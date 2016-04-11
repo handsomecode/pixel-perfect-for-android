@@ -12,8 +12,9 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -53,10 +54,9 @@ class Utils {
     }
 
     public static int getStatusBarHeight(Activity activity) {
-        Rect rectangle = new Rect();
-        Window window = activity.getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
-        return rectangle.top;
+        int statusBarHeightDp = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 24 : 25;
+        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, statusBarHeightDp, displayMetrics);
     }
 
     public static Bitmap getBitmapFromAssets(Context context, String fullName) {
@@ -101,6 +101,11 @@ class Utils {
         BitmapFactory.decodeStream(inputStream, null, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth);
         options.inJustDecodeBounds = false;
+        try {
+            inputStream.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
 
