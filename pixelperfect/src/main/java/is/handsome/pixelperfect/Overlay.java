@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -234,6 +235,7 @@ class Overlay {
                 PixelFormat.TRANSLUCENT);
 
         updateInitialOverlayPosition();
+        disableOverlayAnimations();
         windowManager.addView(overlayView, overlayParams);
 
         final int overlayMinimumVisibleSize = (int) context.getResources().getDimension(R.dimen.overlay_minimum_visible_size);
@@ -339,11 +341,16 @@ class Overlay {
             overlayParams.y = -1 * overlayBorderSize - statusBarHeight + (marginVertical > 0 ? marginVertical : 0);
             fixedOffsetY = -1 * overlayParams.y;
         }
+        windowManager.updateViewLayout(overlayView, settingsParams);
+    }
 
-        windowManager.removeView(overlayView);
-        windowManager.removeView(settingsView);
-        windowManager.addView(overlayView, overlayParams);
-        windowManager.addView(settingsView, settingsParams);
+    private void disableOverlayAnimations() {
+        try {
+            int currentFlags = (Integer) overlayParams.getClass().getField("privateFlags").get(overlayParams);
+            overlayParams.getClass().getField("privateFlags").set(overlayParams, currentFlags|0x00000040);
+        } catch (Exception e) {
+            Log.e(Overlay.class.getSimpleName(), "Error trying to disable window scale animation", e);
+        }
     }
 
     private void updateInitialOverlayPosition() {
