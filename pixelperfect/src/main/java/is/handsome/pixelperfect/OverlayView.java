@@ -20,8 +20,7 @@ import android.widget.TextView;
 class OverlayView extends FrameLayout {
 
     private static int MICRO_OFFSET = 8;
-    private static int LONG_PRESS_TIMEOUT = 500;
-    private static int OFFSET_VIEW_TIMEOUT = 200;
+    private static int OFFSET_VIEW_TIMEOUT = 500;
 
     public enum MoveMode {
         VERTICAL, HORIZONTAL, UNDEFINED
@@ -298,7 +297,7 @@ class OverlayView extends FrameLayout {
                     }
                     wasDoubleAction = true;
                 }
-            }, LONG_PRESS_TIMEOUT);
+            }, OFFSET_VIEW_TIMEOUT);
             return true;
         }
 

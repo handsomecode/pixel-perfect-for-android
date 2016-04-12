@@ -201,7 +201,8 @@ class Overlay {
         overlayStateStore = OverlayStateStore.getInstance(applicationContext);
         overlayPositionStore = OverlayPositionStore.getInstance(applicationContext);
         if (!restoreState) {
-            resetState();
+            overlayStateStore.reset();
+            overlayPositionStore.reset();
         }
         overlayView = new OverlayView(applicationContext);
         settingsView = new SettingsView(applicationContext);
@@ -219,12 +220,12 @@ class Overlay {
     }
 
     private void addViewsToWindow(Context context) {
-        addOverlayMockup(context);
+        addOverlayView(context);
         addOffsetPixelsView();
         addSettingsView();
     }
 
-    private void addOverlayMockup(final Context context) {
+    private void addOverlayView(final Context context) {
         overlayParams = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
