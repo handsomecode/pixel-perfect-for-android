@@ -426,7 +426,7 @@ class Overlay {
                 PixelFormat.TRANSLUCENT);
 
         offsetPixelsViewParams.gravity = Gravity.TOP | Gravity.START;
-        offsetPixelsView.setVisibility(View.GONE);
+        offsetPixelsView.setVisibility(View.INVISIBLE);
         windowManager.addView(offsetPixelsView, offsetPixelsViewParams);
     }
 }
