@@ -72,6 +72,19 @@ class SettingsView extends FrameLayout {
         init();
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
+            onBack();
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
     public void setListener(Overlay.SettingsListener listener) {
         this.settingsListener = listener;
     }
@@ -92,7 +105,7 @@ class SettingsView extends FrameLayout {
 
     public void setImageOverlay(int position) {
         if (position >= 0 && position < images.size()) {
-            settingsListener.onUpdateImage(images.get(position).getBitmap());
+            settingsListener.onUpdateImage(images.get(position).getBitmap(), false);
             imageNameTextView.setText(images.get(position).getName());
             ((ImagesAdapter) recyclerView.getAdapter()).setSelectedPosition(position);
         }
@@ -130,6 +143,16 @@ class SettingsView extends FrameLayout {
     public void openImagesSettingsScreen() {
         secondScreenSettingsView.setVisibility(VISIBLE);
         exitButton.setImageResource(R.drawable.ic_back);
+    }
+
+    public OverlayStateStore.SettingsState getSettingsState() {
+        if (getVisibility() != VISIBLE) {
+            return OverlayStateStore.SettingsState.CLOSED;
+        }
+        if (secondScreenSettingsView.getVisibility() == VISIBLE) {
+            return OverlayStateStore.SettingsState.OPENED_IMAGES;
+        }
+        return OverlayStateStore.SettingsState.OPENED_MAIN;
     }
 
     public void updateOffset(int x, int y) {
@@ -267,7 +290,7 @@ class SettingsView extends FrameLayout {
                 @Override
                 public void onItemSelected(int position) {
                     if (settingsListener != null) {
-                        settingsListener.onUpdateImage(images.get(position).getBitmap());
+                        settingsListener.onUpdateImage(images.get(position).getBitmap(), true);
                         if (inverseCheckbox.isChecked()) {
                             settingsListener.onInverseChecked(true);
                         }
@@ -302,18 +325,5 @@ class SettingsView extends FrameLayout {
         secondScreenSettingsView.setVisibility(GONE);
         exitButton.setImageResource(R.drawable.ic_settings_cancel);
         setVisibility(GONE);
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        int action = event.getAction();
-        int keyCode = event.getKeyCode();
-
-        if (keyCode == KeyEvent.KEYCODE_BACK && action == KeyEvent.ACTION_DOWN) {
-            onBack();
-            return true;
-        }
-
-        return super.dispatchKeyEvent(event);
     }
 }

@@ -2,9 +2,26 @@ package is.handsome.pixelperfect;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 
 class OverlayStateStore {
+
+    public enum SettingsState {
+        CLOSED,
+        OPENED_MAIN,
+        OPENED_IMAGES;
+
+        public static SettingsState fromInteger(int x) {
+            switch (x) {
+                case 0:
+                    return CLOSED;
+                case 1:
+                    return OPENED_MAIN;
+                case 2:
+                    return OPENED_IMAGES;
+            }
+            return CLOSED;
+        }
+    }
 
     private static OverlayStateStore mInstance = null;
 
@@ -23,14 +40,9 @@ class OverlayStateStore {
     private String assetsFolderName;
     private boolean isInverse;
     private float opacity;
-    private int positionX;
-    private int positionY;
     private int width;
     private int height;
-    private int fixedOffsetX;
-    private int fixedOffsetY;
-    private int orientation;
-    private boolean isSettingsOpened;
+    private SettingsState settingsState;
 
     public OverlayStateStore(Context context) {
         preferences = context.getSharedPreferences(OverlayStateStore.class.getSimpleName(), Context.MODE_PRIVATE);
@@ -39,14 +51,9 @@ class OverlayStateStore {
         assetsFolderName = preferences.getString("assetsName", "pixelperfect");
         isInverse = preferences.getBoolean("inverse", false);
         opacity = preferences.getFloat("getOpacity", 0.5f);
-        positionX = preferences.getInt("positionX", 0);
-        positionY = preferences.getInt("positionY", 0);
         width = preferences.getInt("width", 0);
         height = preferences.getInt("height", 0);
-        fixedOffsetX = preferences.getInt("fixedOffsetX", 0);
-        fixedOffsetY = preferences.getInt("fixedOffsetY", 0);
-        orientation = preferences.getInt("orientation", Configuration.ORIENTATION_UNDEFINED);
-        isSettingsOpened = preferences.getBoolean("settingsOpened", false);
+        settingsState = SettingsState.fromInteger(preferences.getInt("settingsState", 0));
     }
 
     public boolean isInverse() {
@@ -76,21 +83,6 @@ class OverlayStateStore {
         preferences.edit().putFloat("getOpacity", opacity).apply();
     }
 
-    public int getPositionX() {
-        return positionX;
-    }
-
-    public int getPositionY() {
-        return positionY;
-    }
-
-    public void savePosition(int x, int y) {
-        this.positionX = x;
-        this.positionY = y;
-        preferences.edit().putInt("positionX", positionX).apply();
-        preferences.edit().putInt("positionY", positionY).apply();
-    }
-
     public int getWidth() {
         return width;
     }
@@ -104,21 +96,6 @@ class OverlayStateStore {
         this.height = height;
         preferences.edit().putInt("width", width).apply();
         preferences.edit().putInt("height", height).apply();
-    }
-
-    public int getFixedOffsetX() {
-        return fixedOffsetX;
-    }
-
-    public int getFixedOffsetY() {
-        return fixedOffsetY;
-    }
-
-    public void saveFixedOffset(int x, int y) {
-        this.fixedOffsetX = x;
-        this.fixedOffsetY = y;
-        preferences.edit().putInt("fixedOffsetX", fixedOffsetX).apply();
-        preferences.edit().putInt("fixedOffsetY", fixedOffsetY).apply();
     }
 
     public String getImageName() {
@@ -139,22 +116,13 @@ class OverlayStateStore {
         preferences.edit().putString("assetsName", assetsFolderName).apply();
     }
 
-    public int getOrientation() {
-        return orientation;
+    public SettingsState getSettingsState() {
+        return settingsState;
     }
 
-    public void saveOrientation(int orientation) {
-        this.orientation = orientation;
-        preferences.edit().putInt("orientation", orientation).apply();
-    }
-
-    public boolean isSettingsOpened() {
-        return isSettingsOpened;
-    }
-
-    public void saveSettingsOpened(boolean isSettingsOpened) {
-        this.isSettingsOpened = isSettingsOpened;
-        preferences.edit().putBoolean("settingsOpened", isSettingsOpened).apply();
+    public void saveSettingsState(SettingsState settingsState) {
+        this.settingsState = settingsState;
+        preferences.edit().putInt("settingsState", settingsState.ordinal()).apply();
     }
 
     public void reset() {
@@ -163,14 +131,9 @@ class OverlayStateStore {
         assetsFolderName = "pixelperfect";
         isInverse = false;
         opacity = 0.5f;
-        positionX = 0;
-        positionY = 0;
         width = 0;
         height = 0;
-        fixedOffsetX = 0;
-        fixedOffsetY = 0;
-        isSettingsOpened = false;
-        orientation = Configuration.ORIENTATION_UNDEFINED;
+        settingsState = SettingsState.CLOSED;
         preferences.edit().clear().apply();
     }
 }
