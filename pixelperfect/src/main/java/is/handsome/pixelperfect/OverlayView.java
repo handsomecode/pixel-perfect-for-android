@@ -41,7 +41,6 @@ class OverlayView extends FrameLayout {
     private boolean wasActionDown;
     private boolean wasDoubleAction;
     private boolean letFastActions;
-    private long savedTime;
 
     private float microOffsetDx;
     private float microOffsetDy;
@@ -256,12 +255,8 @@ class OverlayView extends FrameLayout {
             justClick = true;
             wasActionDown = true;
             lastMotionEvent = MotionEvent.obtain(event);
-            savedTime = System.currentTimeMillis();
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && wasActionDown) {
-            if (letFastActions && justClick && System.currentTimeMillis() - savedTime > OFFSET_VIEW_TIMEOUT) {
-                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
-            }
             moveMockupOverlay(event);
             return true;
         }
@@ -321,6 +316,13 @@ class OverlayView extends FrameLayout {
         public boolean onSingleTapConfirmed(MotionEvent event) {
             layoutListener.openSettings(noOverlayImageTextView.getVisibility() == VISIBLE);
             return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent event) {
+            if (letFastActions && justClick) {
+                layoutListener.showOffsetView((int) event.getRawX(), (int) event.getRawY());
+            }
         }
     }
 }
