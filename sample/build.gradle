@@ -1,15 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'org.moallemi.advanced-build-version'
 
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.21.2'
         classpath 'org.moallemi.gradle.advanced-build-version:gradle-plugin:1.5.1'
     }
 }
@@ -27,7 +24,7 @@ advancedVersioning {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "is.handsome.pixelperfectsample"
@@ -76,10 +73,5 @@ repositories {
 dependencies {
     compile project(':pixelperfect')
 
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.jakewharton.timber:timber:3.1.0'
-
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
-        transitive = true;
-    }
+    compile 'com.android.support:appcompat-v7:23.3.0'
 }

@@ -8,16 +8,16 @@ ext {
     libraryName = 'PixelPerfect'
     artifact = 'pixelperfect'
 
-    libraryDescription = 'A tool for creating Pixel Perfect UI on Android'
+    libraryDescription = 'A library for creating Pixel Perfect UI on Android'
 
     siteUrl = 'https://github.com/handsomecode/pixel-perfect-for-android'
     gitUrl = 'https://github.com/handsomecode/pixel-perfect-for-android.git'
 
-    libraryVersion = '0.2.1'
+    libraryVersion = '0.2.2'
 
-    developerId = 'okonor'
-    developerName = 'Olga Konoreva'
-    developerEmail = 'olgak@handsome.is'
+    developerId = 'handsomecode'
+    developerName = 'Handsome'
+    developerEmail = 'code@handsome.is'
 
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
@@ -31,8 +31,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "0.1"
+        versionCode 2
+        versionName "0.2"
     }
     buildTypes {
         release {
@@ -43,8 +43,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
 }
 
 /* commented because of TeamCity distribution
