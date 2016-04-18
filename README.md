@@ -6,7 +6,7 @@ Pixel Perfect Tool lets user to use the following features:
 - see and fix Overlay offset position
 - inverse Overlay Image.
 
-![Pixel Perfect Sample](https://s3.amazonaws.com/f.cl.ly/items/44371W2K3E2V3z1h3f2A/pixel_perfect_demo.gif?v=807da98a "Pixel Perfect Sample")
+![Pixel Perfect Sample](https://s3.amazonaws.com/f.cl.ly/items/1L3b1C3h1s2k2t350C2D/ezgif.com-resize.gif?v=391643b5 "Pixel Perfect Sample")
 
 
 ## Getting started
