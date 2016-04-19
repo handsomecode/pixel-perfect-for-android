@@ -16,14 +16,39 @@ public class HomeActivity extends AppCompatActivity {
     private CheckBox pixelPerfectCheckBox;
     private View permissionLinearLayout;
 
-    private String assetsFolderName;
     private int[] portraitDimens = {1440, 1080, 720, 480};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        init();
+
+        final String overlayImagesAssetsPath = constructOverlayImagesAssetsPath();
+        final String coverImageAssetsPath = constructCoverImageAssetsPath(overlayImagesAssetsPath);
+
+        imageView = (ImageView) findViewById(R.id.home_image_view);
+        Bitmap bitmap = SampleUtils.getBitmapFromAssets(this, coverImageAssetsPath);
+        imageView.setImageBitmap(bitmap);
+
+        pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
+        if (PixelPerfect.isShown()) {
+            pixelPerfectCheckBox.setChecked(true);
+        }
+        pixelPerfectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    PixelPerfect.Config config = new PixelPerfect.Config.Builder()
+                            .overlayImagesAssetsPath(overlayImagesAssetsPath)
+                            .build();
+                    PixelPerfect.show(HomeActivity.this, config);
+                } else {
+                    PixelPerfect.hide();
+                }
+            }
+        });
+
+        permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
     }
 
     @Override
@@ -42,56 +67,20 @@ public class HomeActivity extends AppCompatActivity {
         PixelPerfect.askForPermission(this);
     }
 
-    private void init() {
+
+    private String constructOverlayImagesAssetsPath() {
         int screenMinDimension = Math.min(SampleUtils.getWindowWidth(this), SampleUtils.getWindowHeight(this));
-        assetsFolderName = getPreferredFolderName(screenMinDimension);
-        boolean isPortraitOrientation = screenMinDimension == SampleUtils.getWindowWidth(this);
-
-        initViews(isPortraitOrientation);
-    }
-
-    private void initViews(boolean isPortraitOrientation) {
-        initImage(isPortraitOrientation);
-        initCheckBox();
-        permissionLinearLayout = findViewById(R.id.pixel_perfect_permission_linear_layout);
-    }
-
-    private void initImage(boolean isPortraitOrientation) {
-        imageView = (ImageView) findViewById(R.id.home_image_view);
-
-        Bitmap bitmap = SampleUtils.getBitmapFromAssets(this, isPortraitOrientation
-                ? assetsFolderName + "/portrait.png" : assetsFolderName + "/landscape.png");
-        imageView.setImageBitmap(bitmap);
-    }
-
-    private void initCheckBox() {
-        pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
-
-        if (PixelPerfect.isShown()) {
-            pixelPerfectCheckBox.setChecked(true);
-        }
-
-        pixelPerfectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    PixelPerfect.Config config = new PixelPerfect.Config.Builder()
-                            .overlayImagesAssetsPath(assetsFolderName)
-                            .build();
-                    PixelPerfect.show(HomeActivity.this, config);
-                } else {
-                    PixelPerfect.hide();
-                }
-            }
-        });
-    }
-
-    private String getPreferredFolderName(int screenMinDimension) {
         for (int width : portraitDimens) {
             if (width <= screenMinDimension) {
                 return "overlays-" + String.valueOf(width);
             }
         }
         return "overlays-" + 480;
+    }
+
+    private String constructCoverImageAssetsPath(String overlayImagesAssetsPath) {
+        int screenMinDimension = Math.min(SampleUtils.getWindowWidth(this), SampleUtils.getWindowHeight(this));
+        return screenMinDimension == SampleUtils.getWindowWidth(this)
+                ? overlayImagesAssetsPath + "/portrait.png" : overlayImagesAssetsPath + "/landscape.png";
     }
 }
