@@ -21,12 +21,13 @@ To add the library to the project update `build.gradle` file:
 
 To add your overlay images you should simply create folder in assets directory and specify its name in PixelPerfect config builder. Or use default 'pixelperfect' folder name.
 
-![assets folder](https://s3.amazonaws.com/f.cl.ly/items/1t083F0G3n2M2u2Y3T3W/Image%202016-04-19%20at%204.30.40%20PM.png?v=41eb3a49)
+![assets folder](https://s3.amazonaws.com/f.cl.ly/items/0117400844291c1r3A3N/Image%202016-04-19%20at%205.10.37%20PM.png?v=904f2d1d)
 
 To show PixelPerfect overlay you should add the following lines in your code:
 ```java
  PixelPerfect.Config config = new PixelPerfect.Config.Builder()
-         .overlayImagesAssetsPath(overlayImagesAssetsPath)
+         .overlayImagesAssetsPath("overlays-1080")
+         .overlayInitialImageName("portrait.png")
          .build();
  PixelPerfect.show(HomeActivity.this, config);
 ```
