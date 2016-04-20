@@ -53,9 +53,9 @@ class Utils {
                 == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
     }
 
-    public static int getStatusBarHeight(Activity activity) {
+    public static int getStatusBarHeight(Context context) {
         int statusBarHeightDp = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 24 : 25;
-        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, statusBarHeightDp, displayMetrics);
     }
 

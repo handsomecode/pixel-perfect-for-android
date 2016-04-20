@@ -85,15 +85,15 @@ public class PixelPerfect {
      * shows pixel perfect tool that
      * displays screen overlay and settings view
      *
-     * @param activity
+     * @param context
      * @return
      */
-    public static void show(@NonNull Activity activity) {
-        showOverlay(activity, null);
+    public static void show(@NonNull Context context) {
+        showOverlay(context, null);
     }
 
-    public static void show(@NonNull Activity activity, PixelPerfect.Config config) {
-        showOverlay(activity, config);
+    public static void show(@NonNull Context context, PixelPerfect.Config config) {
+        showOverlay(context, config);
     }
 
     public static boolean isShown() {
@@ -136,26 +136,26 @@ public class PixelPerfect {
         }
     }
 
-    private static void showOverlay(Activity activity, PixelPerfect.Config config) {
+    private static void showOverlay(Context context, PixelPerfect.Config config) {
         if (overlay != null) {
             overlay.resetState();
             overlay.show();
             return;
         }
 
-        overlay = config == null ? new Overlay(activity, false) :
-                new Overlay(activity, config);
-        ActivityLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
+        overlay = config == null ? new Overlay(context, false) :
+                new Overlay(context, config);
+        ActivityLifeCycleObserver.get(context.getApplicationContext()).addListener(foregroundListener);
     }
 
-    static void showInner(Activity activity) {
+    static void showInner(Context context) {
         if (overlay != null) {
             overlay.show();
             return;
         }
 
-        overlay = new Overlay(activity, true);
-        ActivityLifeCycleObserver.get(activity.getApplicationContext()).addListener(foregroundListener);
+        overlay = new Overlay(context, true);
+        ActivityLifeCycleObserver.get(context.getApplicationContext()).addListener(foregroundListener);
         overlay.resetState();
     }
 }

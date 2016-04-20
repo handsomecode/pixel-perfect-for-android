@@ -72,14 +72,14 @@ class Overlay {
     private OverlayStateStore overlayStateStore;
     private OverlayPositionStore overlayPositionStore;
 
-    public Overlay(Activity activity, boolean restoreState) {
-        initOverlay(activity, restoreState);
+    public Overlay(Context context, boolean restoreState) {
+        initOverlay(context, restoreState);
         show();
     }
 
-    public Overlay(Activity activity, PixelPerfect.Config config) {
+    public Overlay(Context context, PixelPerfect.Config config) {
         overlayScaleFactor = config.getOverlayScaleFactor();
-        initOverlay(activity, false);
+        initOverlay(context, false);
         if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
             settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
         }
@@ -179,7 +179,7 @@ class Overlay {
         fixedOffsetY = -overlayParams.y;
     }
 
-    private void restoreState(Activity activity) {
+    private void restoreState(Context context) {
         if (overlayStateStore.getImageName() != null) {
             settingsView.setImageAssetsPath(overlayStateStore.getAssetsFolderName());
             if (!overlayStateStore.getImageName().equalsIgnoreCase("no_image")) {
@@ -190,15 +190,15 @@ class Overlay {
             }
             settingsView.updateOpacityProgress(overlayStateStore.getOpacity());
             if (overlayPositionStore.getOrientation() != Configuration.ORIENTATION_UNDEFINED &&
-                    activity.getResources().getConfiguration().orientation != overlayPositionStore.getOrientation()) {
-                overlayPositionStore.saveOrientation(activity.getResources().getConfiguration().orientation);
+                    context.getResources().getConfiguration().orientation != overlayPositionStore.getOrientation()) {
+                overlayPositionStore.saveOrientation(context.getResources().getConfiguration().orientation);
                 calculatePositionAfterRotation();
             }
         }
     }
 
-    private void initOverlay(final Activity activity, boolean restoreState) {
-        Context applicationContext = activity.getApplicationContext();
+    private void initOverlay(final Context context, boolean restoreState) {
+        Context applicationContext = context.getApplicationContext();
         overlayStateStore = OverlayStateStore.getInstance(applicationContext);
         overlayPositionStore = OverlayPositionStore.getInstance(applicationContext);
         if (!restoreState) {
@@ -212,12 +212,12 @@ class Overlay {
         offsetYTextView = (TextView) offsetPixelsView.findViewById(R.id.offset_y_text_view);
 
         overlayBorderSize = (int) applicationContext.getResources().getDimension(R.dimen.overlay_border_size);
-        statusBarHeight = Utils.getStatusBarHeight(activity);
+        statusBarHeight = Utils.getStatusBarHeight(context);
         offsetTextTemplate = applicationContext.getString(R.string.offset_text);
 
         windowManager = (WindowManager) applicationContext.getSystemService(Service.WINDOW_SERVICE);
         addViewsToWindow(applicationContext);
-        restoreState(activity);
+        restoreState(context);
     }
 
     private void addViewsToWindow(Context context) {
