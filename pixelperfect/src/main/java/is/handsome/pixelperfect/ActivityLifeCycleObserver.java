@@ -128,7 +128,7 @@ class ActivityLifeCycleObserver implements Application.ActivityLifecycleCallback
     public void onActivityStarted(Activity activity) {
         OverlayStateStore overlayStateStore = OverlayStateStore.getInstance(activity);
         if (overlayStateStore.isPixelPerfectActive()) {
-            PixelPerfect.showInner(activity);
+            PixelPerfect.showOverlayInner(activity);
         }
     }
 

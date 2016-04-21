@@ -143,15 +143,23 @@ public class PixelPerfect {
             return;
         }
 
+        if (!hasPermission(context)) {
+            throw new IllegalStateException("permissions are not granted. You have to call askForPermission method before using showOverlay");
+        }
+
         overlay = config == null ? new Overlay(context, false) :
                 new Overlay(context, config);
         ActivityLifeCycleObserver.get(context.getApplicationContext()).addListener(foregroundListener);
     }
 
-    static void showInner(Context context) {
+    static void showOverlayInner(Context context) {
         if (overlay != null) {
             overlay.show();
             return;
+        }
+
+        if (!hasPermission(context)) {
+            throw new IllegalStateException("permissions are not granted. You have to call askForPermission method before using showOverlay");
         }
 
         overlay = new Overlay(context, true);
