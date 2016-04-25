@@ -31,9 +31,6 @@ public class HomeActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
 
         pixelPerfectCheckBox = (CheckBox) findViewById(R.id.pixel_perfect_checkbox);
-        if (PixelPerfect.isShown()) {
-            pixelPerfectCheckBox.setChecked(true);
-        }
         pixelPerfectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -57,6 +54,10 @@ public class HomeActivity extends AppCompatActivity {
         if (PixelPerfect.hasPermission(this)) {
             pixelPerfectCheckBox.setVisibility(View.VISIBLE);
             permissionLinearLayout.setVisibility(View.GONE);
+
+            if (PixelPerfect.isShown()) {
+                pixelPerfectCheckBox.setChecked(true);
+            }
         } else {
             pixelPerfectCheckBox.setVisibility(View.GONE);
             permissionLinearLayout.setVisibility(View.VISIBLE);
