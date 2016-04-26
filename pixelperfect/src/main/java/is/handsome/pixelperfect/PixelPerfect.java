@@ -93,7 +93,10 @@ public class PixelPerfect {
     }
 
     public static void show(@NonNull Context context, PixelPerfect.Config config) {
+        long beginingTime = System.currentTimeMillis();
         showOverlay(context, config);
+        long performanceTime = System.currentTimeMillis() - beginingTime;
+        Log.v("PP", "Performance : " + performanceTime + "ms");
     }
 
     public static boolean isShown() {

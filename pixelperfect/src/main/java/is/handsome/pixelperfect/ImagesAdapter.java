@@ -1,13 +1,14 @@
 package is.handsome.pixelperfect;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +29,6 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
     }
 
     private Context context;
-    private int widthDp;
-    private int heightDp;
     private String overlayImagesAssetsPath;
     private List<String> imageNames = Collections.EMPTY_LIST;
     private SettingsView.AdapterListener listener;
@@ -41,9 +40,6 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
         this.imageNames = imageNames;
         this.overlayImagesAssetsPath = overlayImagesAssetsPath;
         this.listener = listener;
-
-        this.widthDp = (int) context.getResources().getDimension(R.dimen.settings_screen_recycler_item_width);
-        this.heightDp = (int) context.getResources().getDimension(R.dimen.settings_screen_recycler_item_height);
         this.layoutInflater = LayoutInflater.from(context);
     }
 
@@ -57,11 +53,12 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, int position) {
         String name = imageNames.get(position);
         holder.textView.setText(name.contains(".") ? name.substring(0, name.indexOf(".")) : name);
-        Bitmap bitmap = Utils.getAdoptedBitmapFromAssets(context,
-                overlayImagesAssetsPath + "/" + imageNames.get(position), widthDp, heightDp);
-        if (bitmap != null) {
-            holder.imageView.setImageBitmap(bitmap);
-        }
+        Picasso.with(context)
+                .load("file:///android_asset/" + overlayImagesAssetsPath + "/" + imageNames.get(position))
+                .placeholder(R.drawable.ic_placeholder)
+                .resizeDimen(R.dimen.settings_screen_recycler_item_width, R.dimen.settings_screen_recycler_item_height)
+                .centerCrop()
+                .into(holder.imageView);
         holder.textView.setSelected(position == selectedPosition);
         holder.borderView.setSelected(position == selectedPosition);
         holder.imageView.setOnClickListener(new View.OnClickListener() {
