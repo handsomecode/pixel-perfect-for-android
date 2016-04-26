@@ -1,4 +1,4 @@
-# Pixel Perfect
+# PixelPerfect
 
 PixelPerfect is aimed to help you to create pixel perfect UI for Android apps. It lets developers and designers easily compare implementation with reference design and fix visual difference between them.
 
