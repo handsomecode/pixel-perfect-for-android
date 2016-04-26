@@ -1,17 +1,19 @@
 # Pixel Perfect
 
-The tool can be used by developers as well as designers to achieve the highest visual quality of an app and to add more transparency to the both sides.
-Pixel Perfect Tool lets user to use the following features:
-- control Overlay Transperency
-- see and fix Overlay offset position
-- inverse Overlay Image.
+PixelPerfect is aimed to help you to create pixel perfect UI for Android apps. It lets developers and designers easily compare implementation with reference design and fix visual difference between them.
 
 ![Pixel Perfect Sample](https://s3.amazonaws.com/f.cl.ly/items/1L3b1C3h1s2k2t350C2D/ezgif.com-resize.gif?v=391643b5 "Pixel Perfect Sample")
 
+Supported features:
+- Pick overlay image. 
+- Adjust transparency.
+- Move overlay.
+- Measure offset.
+- Inverse mode.
 
 ## Getting started
 
-To add the library to the project update `build.gradle` file:
+Update your `build.gradle` file:
 
 ```gradle
  dependencies {
@@ -19,24 +21,32 @@ To add the library to the project update `build.gradle` file:
  }
 ```
 
-To add your overlay images you should simply create folder in assets directory and specify its name in PixelPerfect config builder. Or use default 'pixelperfect' folder name.
+#### Show PixelPerfect
+```java
+  PixelPerfect.show(HomeActivity.this);
+```
 
-![assets folder](https://s3.amazonaws.com/f.cl.ly/items/0117400844291c1r3A3N/Image%202016-04-19%20at%205.10.37%20PM.png?v=904f2d1d)
+In default configuration PixelPerfect will be linked with 'pixelperfect' assets folder. If you want to use different folder, please read `Configuration` section.
+ 
+#### Hide PixelPerfect
+```java
+  PixelPerfect.hide();
+```
 
-To show PixelPerfect overlay you should add the following lines in your code:
+## Configuration
+
+`PixelPerfect.Config` provides possibility to configure major attributes of PixelPerfect. This snippet demonstrates usage of custom `overlayImagesAssetsPath` (assets folder for overlay images) and `overlayActiveImageName` (name of active by default overlay image):
+
 ```java
  PixelPerfect.Config config = new PixelPerfect.Config.Builder()
-         .overlayImagesAssetsPath("overlays-1080")
-         .overlayInitialImageName("portrait.png")
+         .overlayImagesAssetsPath("my_overlays")
+         .overlayActiveImageName("main.png")
          .build();
  PixelPerfect.show(HomeActivity.this, config);
 ```
 
-Or use default Pixel Perfect configuration:
-```java
- PixelPerfect.show(HomeActivity.this);
-```
+## Permissions and Android Marshmallow+
 
-Also you can use `PixelPerfect.hasPermission(context)` and `PixelPerfect.askForPermission(context)` methods to handle SYSTEM_ALERT_WINDOW permission carefully for Android M.
+PixelPerfect requires SYSTEM_ALERT_WINDOW permission to run properly. So for Marshmallow and later versions you have to handle permissions with `PixelPerfect.hasPermission(context)` and `PixelPerfect.askForPermission(context)` methods.
 
-Please, see sample application that demonstrates the main idea of the Pixel Perfect tool.
+You can find demonstartion of its usage in Sample app.
