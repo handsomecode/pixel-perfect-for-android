@@ -55,27 +55,12 @@ class Utils {
 
     public static int getStatusBarHeight(Context context) {
         int statusBarHeightDp = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 24 : 25;
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, statusBarHeightDp, displayMetrics);
+        return convertDipsToPixels(context, statusBarHeightDp);
     }
 
-    public static Bitmap getBitmapFromAssets(Context context, String fullName) {
-        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
-        InputStream inputStream = null;
-        try {
-            inputStream = context.getAssets().open(fullName);
-            return decodeBitmapFromInputStream(inputStream, screenWidth);
-        } catch (IOException e) {
-            return null;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    private static int convertDipsToPixels(Context context, int dips) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dips, displayMetrics);
     }
 
     public static Bitmap invertBitmap(Bitmap src) {
@@ -95,11 +80,50 @@ class Utils {
         return bitmap;
     }
 
-    private static Bitmap decodeBitmapFromInputStream(InputStream inputStream, int reqWidth) {
+    public static Bitmap getBitmapFromAssets(Context context, String fullName) {
+        InputStream inputStream = null;
+        try {
+            inputStream = context.getAssets().open(fullName);
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (IOException e) {
+            return null;
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static Bitmap getAdoptedBitmapFromAssets(Context context, String fullName,
+                                                    int reqWidth, int reqHeight) {
+        InputStream inputStream = null;
+        try {
+            inputStream = context.getAssets().open(fullName);
+            int reqWidthPixels = convertDipsToPixels(context, reqWidth);
+            int reqHeightPixels = convertDipsToPixels(context, reqHeight);
+            return decodeBitmapFromInputStream(inputStream, reqWidthPixels, reqHeightPixels);
+        } catch (IOException e) {
+            return null;
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static Bitmap decodeBitmapFromInputStream(InputStream inputStream, int reqWidth, int reqHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(inputStream, null, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
         try {
             inputStream.reset();
@@ -109,17 +133,24 @@ class Utils {
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth) {
+    private static int calculateInSampleSize(BitmapFactory.Options options,
+                                           int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (width > reqWidth) {
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
             final int halfWidth = width / 2;
-            while ((halfWidth / inSampleSize) > reqWidth) {
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
             }
         }
-        return inSampleSize;
+
+        return inSampleSize * 2;
     }
 
     private Utils() {

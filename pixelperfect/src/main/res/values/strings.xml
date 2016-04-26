@@ -9,5 +9,5 @@
     <string name="settings_inverse">Inverse</string>
     <string name="settings_fix_offset_text">Fix offset as reference</string>
     <string name="settings_offset_text">(%1$dpx, %2$dpx)</string>
-    <string name="settings_empty_list_message">Please, add overlay images to\n\'%s\' assets folder</string>
+    <string name="settings_empty_list_message">Please, add overlay imageNames to\n\'%s\' assets folder</string>
 </resources>

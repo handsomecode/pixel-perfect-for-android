@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class SettingsView extends FrameLayout {
@@ -29,7 +30,7 @@ class SettingsView extends FrameLayout {
     }
 
     private Overlay.SettingsListener settingsListener;
-    private List<Image> images = new ArrayList<>();
+    private List<String> imageNames = new ArrayList<>();
     private String overlayImageAssetsPath = "pixelperfect";
 
     private SeekBar opacitySeekBar;
@@ -99,14 +100,15 @@ class SettingsView extends FrameLayout {
 
     public void setImageAssetsPath(String overlayImageAssetsPath) {
         this.overlayImageAssetsPath = overlayImageAssetsPath;
-        updateImagesContent();
         updateAdapter();
     }
 
     public void setImageOverlay(int position) {
-        if (position >= 0 && position < images.size()) {
-            settingsListener.onUpdateImage(images.get(position).getBitmap(), false);
-            imageNameTextView.setText(images.get(position).getName());
+        if (position >= 0 && position < imageNames.size()) {
+            Bitmap entireBitmap = Utils.getBitmapFromAssets(getContext(),
+                    overlayImageAssetsPath + "/" + imageNames.get(position));
+            settingsListener.onUpdateImage(entireBitmap, false);
+            imageNameTextView.setText(imageNames.get(position));
             ((ImagesAdapter) recyclerView.getAdapter()).setSelectedPosition(position);
         }
     }
@@ -118,9 +120,9 @@ class SettingsView extends FrameLayout {
     }
 
     public int indexOfImage(String imageName) {
-        for (Image image : images) {
-            if (image.getName().equalsIgnoreCase(imageName)) {
-                return images.indexOf(image);
+        for (String image : imageNames) {
+            if (image.equalsIgnoreCase(imageName)) {
+                return imageNames.indexOf(image);
             }
         }
         return -1;
@@ -272,12 +274,13 @@ class SettingsView extends FrameLayout {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
-        updateImagesContent();
         updateAdapter();
     }
 
     private void updateAdapter() {
-        if (images.isEmpty()) {
+        updateImagesContent();
+
+        if (imageNames.isEmpty()) {
             recyclerView.setVisibility(GONE);
             emptyListTextView.setVisibility(VISIBLE);
             emptyListTextView.setText(String.format(getResources().getString(R.string.settings_empty_list_message),
@@ -285,17 +288,20 @@ class SettingsView extends FrameLayout {
         } else {
             recyclerView.setVisibility(VISIBLE);
             emptyListTextView.setVisibility(GONE);
-            recyclerView.setAdapter(new ImagesAdapter(getContext(), images, new AdapterListener() {
+            recyclerView.setAdapter(new ImagesAdapter(getContext(), imageNames, overlayImageAssetsPath,
+                    new AdapterListener() {
 
                 @Override
                 public void onItemSelected(int position) {
                     if (settingsListener != null) {
-                        settingsListener.onUpdateImage(images.get(position).getBitmap(), true);
+                        Bitmap entireBitmap = Utils.getBitmapFromAssets(getContext(),
+                                overlayImageAssetsPath + "/" + imageNames.get(position));
+                        settingsListener.onUpdateImage(entireBitmap, true);
                         if (inverseCheckbox.isChecked()) {
                             settingsListener.onInverseChecked(true);
                         }
-                        imageNameTextView.setText(images.get(position).getName());
-                        imageName = images.get(position).getName();
+                        imageNameTextView.setText(imageNames.get(position));
+                        imageName = imageNames.get(position);
                         exitSettingsView();
                     }
                 }
@@ -305,19 +311,12 @@ class SettingsView extends FrameLayout {
 
     private void updateImagesContent() {
         String[] filenames;
-
         try {
             filenames = getContext().getAssets().list(overlayImageAssetsPath);
         } catch (IOException e) {
             filenames = new String[0];
         }
-        images.clear();
-        for (int i = 0; i < filenames.length; i++) {
-            //TODO: add bitmap decoding max size
-            Bitmap bitmap = Utils.getBitmapFromAssets(getContext(), overlayImageAssetsPath + "/" + filenames[i]);
-            final Image image = new Image(filenames[i], bitmap);
-            images.add(image);
-        }
+        imageNames = Arrays.asList(filenames);
     }
 
     private void exitSettingsView() {

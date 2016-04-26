@@ -100,14 +100,6 @@ class OverlayPositionStore {
         }
     }
 
-    public int getFixedOffsetXLand() {
-        return fixedOffsetXLand;
-    }
-
-    public int getFixedOffsetYLand() {
-        return fixedOffsetYLand;
-    }
-
     public int getOrientation() {
         return orientation;
     }

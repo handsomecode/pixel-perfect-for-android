@@ -1,6 +1,7 @@
 package is.handsome.pixelperfect;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,15 +27,24 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
         }
     }
 
-    private List<Image> images = Collections.EMPTY_LIST;
+    private Context context;
+    private int widthDp;
+    private int heightDp;
+    private String overlayImagesAssetsPath;
+    private List<String> imageNames = Collections.EMPTY_LIST;
     private SettingsView.AdapterListener listener;
     private final LayoutInflater layoutInflater;
     private int selectedPosition = -1;
 
-    public ImagesAdapter(Context context, List<Image> images, SettingsView.AdapterListener listener) {
-        this.images = images;
-        this.layoutInflater = LayoutInflater.from(context);
+    public ImagesAdapter(Context context, List<String> imageNames, String overlayImagesAssetsPath, SettingsView.AdapterListener listener) {
+        this.context = context;
+        this.imageNames = imageNames;
+        this.overlayImagesAssetsPath = overlayImagesAssetsPath;
         this.listener = listener;
+
+        this.widthDp = (int) context.getResources().getDimension(R.dimen.settings_screen_recycler_item_width);
+        this.heightDp = (int) context.getResources().getDimension(R.dimen.settings_screen_recycler_item_height);
+        this.layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -45,10 +55,12 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        String name = images.get(position).getName();
+        String name = imageNames.get(position);
         holder.textView.setText(name.contains(".") ? name.substring(0, name.indexOf(".")) : name);
-        if (images.get(position).getBitmap() != null) {
-            holder.imageView.setImageBitmap(images.get(position).getBitmap());
+        Bitmap bitmap = Utils.getAdoptedBitmapFromAssets(context,
+                overlayImagesAssetsPath + "/" + imageNames.get(position), widthDp, heightDp);
+        if (bitmap != null) {
+            holder.imageView.setImageBitmap(bitmap);
         }
         holder.textView.setSelected(position == selectedPosition);
         holder.borderView.setSelected(position == selectedPosition);
@@ -66,7 +78,7 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return imageNames.size();
     }
 
     public void setSelectedPosition(int newSelectedPosition) {
