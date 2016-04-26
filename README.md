@@ -4,7 +4,7 @@ PixelPerfect is aimed to help you to create pixel perfect UI for Android apps. I
 
 ![Pixel Perfect Sample](https://s3.amazonaws.com/f.cl.ly/items/1L3b1C3h1s2k2t350C2D/ezgif.com-resize.gif?v=391643b5 "Pixel Perfect Sample")
 
-Supported features:
+#### Supported features:
 - Pick overlay image. 
 - Adjust transparency.
 - Move overlay.
