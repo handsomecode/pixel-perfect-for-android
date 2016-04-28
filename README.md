@@ -5,10 +5,10 @@ PixelPerfect is aimed to help you to create pixel perfect UI for Android apps. I
 ![Pixel Perfect Sample](https://s3.amazonaws.com/f.cl.ly/items/1L3b1C3h1s2k2t350C2D/ezgif.com-resize.gif?v=391643b5 "Pixel Perfect Sample")
 
 #### Supported features:
-- Pick overlay image. 
-- Adjust transparency.
-- Move overlay.
-- Measure offset.
+- Picking overlay image. 
+- Adjustment transparency.
+- Moving overlay.
+- Measuring offset.
 - Inverse mode.
 
 ## Getting started
@@ -47,6 +47,6 @@ In default configuration PixelPerfect will be linked with 'pixelperfect' assets 
 
 ## Permissions and Android Marshmallow+
 
-PixelPerfect requires SYSTEM_ALERT_WINDOW permission to run properly. So for Marshmallow and later versions you have to handle permissions with `PixelPerfect.hasPermission(context)` and `PixelPerfect.askForPermission(context)` methods.
+PixelPerfect requires SYSTEM_ALERT_WINDOW permission to run properly. So, for Marshmallow and later versions you have to handle permissions with `PixelPerfect.hasPermission(context)` and `PixelPerfect.askForPermission(context)` methods.
 
 You can find demonstartion of its usage in Sample app.
