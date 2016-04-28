@@ -27,6 +27,7 @@ Update your `build.gradle` file:
 ```
 
 In default configuration PixelPerfect will be linked with 'pixelperfect' assets folder.
+
 ![Assets](https://s3.amazonaws.com/f.cl.ly/items/3m231E1W312M0U0X2t3U/assets.png?v=630e4d1b "Assets")
 
 If you want to use different folder, please read `Configuration` section.
