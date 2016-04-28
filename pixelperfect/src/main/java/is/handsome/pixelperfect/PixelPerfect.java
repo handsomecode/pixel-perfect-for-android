@@ -15,12 +15,12 @@ public class PixelPerfect {
     public static class Config {
 
         private String overlayImageAssetsPath;
-        private String overlayInitialImageName;
+        private String overlayActiveImageName;
         private float overlayScaleFactor;
 
         private Config(Config.Builder configBuilder) {
             this.overlayImageAssetsPath = configBuilder.overlayImageAssetsPath;
-            this.overlayInitialImageName = configBuilder.overlayInitialImageName;
+            this.overlayActiveImageName = configBuilder.overlayActiveImageName;
             this.overlayScaleFactor = configBuilder.overlayScaleFactor;
         }
 
@@ -28,8 +28,8 @@ public class PixelPerfect {
             return overlayImageAssetsPath;
         }
 
-        public String getOverlayInitialImageName() {
-            return overlayInitialImageName;
+        public String overlayActiveImageName() {
+            return overlayActiveImageName;
         }
 
         public float getOverlayScaleFactor() {
@@ -39,15 +39,15 @@ public class PixelPerfect {
         public static class Builder {
 
             private String overlayImageAssetsPath;
-            private String overlayInitialImageName;
+            private String overlayActiveImageName;
             private float overlayScaleFactor = 1;
 
             public Builder overlayImagesAssetsPath(String overlayImagesAssetsPath) {
                 this.overlayImageAssetsPath = overlayImagesAssetsPath;
                 return this;
             }
-            public Builder overlayInitialImageName(String overlayInitialImageName) {
-                this.overlayInitialImageName = overlayInitialImageName;
+            public Builder overlayActiveImageName(String overlayActiveImageName) {
+                this.overlayActiveImageName = overlayActiveImageName;
                 return this;
             }
             public Builder overlayScaleFactor(float overlayScaleFactor) {

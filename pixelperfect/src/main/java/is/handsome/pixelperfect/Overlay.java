@@ -83,8 +83,8 @@ class Overlay {
         if (!TextUtils.isEmpty(config.getOverlayImageAssetsPath())) {
             settingsView.setImageAssetsPath(config.getOverlayImageAssetsPath());
         }
-        if (!TextUtils.isEmpty(config.getOverlayInitialImageName())) {
-            settingsView.setImageOverlay(config.getOverlayInitialImageName());
+        if (!TextUtils.isEmpty(config.overlayActiveImageName())) {
+            settingsView.setImageOverlay(config.overlayActiveImageName());
         }
         show();
     }
