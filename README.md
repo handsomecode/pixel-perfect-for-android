@@ -17,7 +17,7 @@ Update your `build.gradle` file:
 
 ```gradle
  dependencies {
-   compile 'is.handsome.pixelperfect:pixelperfect:0.2.2'
+   compile 'is.handsome.pixelperfect:pixelperfect:1.0.0'
  }
 ```
 
