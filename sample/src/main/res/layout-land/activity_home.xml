@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/home_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/black_50_alpha"
+            android:scaleType="center"/>
+    </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/pixel_perfect_checkbox"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:checked="false"
+        android:gravity="left"
+        android:hint="@string/pixel_perfect"
+        android:padding="5dp"
+        android:textSize="20sp"/>
+
+    <LinearLayout
+        android:id="@+id/pixel_perfect_permission_linear_layout"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/permission_text"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/pixel_perfect_go_to_settings_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="openPermissionSettings"
+            android:text="@string/button_go_to_settings"
+            android:textColor="@color/blue"
+            android:textSize="16sp"/>
+    </LinearLayout>
+</LinearLayout>

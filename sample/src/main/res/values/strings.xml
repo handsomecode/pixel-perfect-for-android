@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PixelPerfectSample</string>
-    <string name="action_settings">Settings</string>
-    <string name="greetings">Hi There!</string>
+    <string name="pixel_perfect">Pixel Perfect</string>
+    <string name="permission_text">Please go to Settings and turn on \'Drawing over other apps\' option to enable Pixel Perfect.</string>
+    <string name="button_go_to_settings">Go to settings</string>
 </resources>

@@ -4,31 +4,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/home_image_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:onClick="onImageClick"
-        android:scaleType="centerCrop"
-        android:src="@drawable/cute_image"/>
+        android:layout_weight="1">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="50dp"
-        android:background="@color/colorPrimaryDark"/>
+        <ImageView
+            android:id="@+id/home_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleType="center"/>
+    </FrameLayout>
 
-    <TextView
+    <CheckBox
+        android:id="@+id/pixel_perfect_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="@string/greetings"
-        android:textSize="50sp"
-        android:textStyle="bold"/>
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/transparent"
+        android:checked="false"
+        android:gravity="top"
+        android:hint="@string/pixel_perfect"
+        android:padding="4dp"
+        android:textSize="20sp"/>
 
+    <LinearLayout
+        android:id="@+id/pixel_perfect_permission_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/permission_text"/>
+
+        <TextView
+            android:id="@+id/pixel_perfect_go_to_settings_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="openPermissionSettings"
+            android:text="@string/button_go_to_settings"
+            android:textColor="@color/blue"
+            android:textSize="15sp"/>
+    </LinearLayout>
 </LinearLayout>

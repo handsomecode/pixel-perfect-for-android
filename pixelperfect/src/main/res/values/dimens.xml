@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="pixel_perfect_action_button_size">60dp</dimen>
-    <dimen name="pixel_perfect_options_cancel_size">30dp</dimen>
-    <dimen name="pixel_perfect_options_view_width">220dp</dimen>
-    <dimen name="pixel_perfect_options_view_height">220dp</dimen>
-    <dimen name="pixel_perfect_options_radius_size">90dp</dimen>
-    <dimen name="pixel_perfect_floating_button_margin">25dp</dimen>
-    <dimen name="pixel_perfect_magnifier_view_width">170dp</dimen>
+    <dimen name="overlay_border_size">1dp</dimen>
+    <dimen name="overlay_minimum_visible_size">50dp</dimen>
+    <dimen name="stub_overlay_margin_portion">25dp</dimen>
+    <dimen name="settings_screen_recycler_item_width">90dp</dimen>
+    <dimen name="settings_screen_recycler_item_height">150dp</dimen>
 </resources>

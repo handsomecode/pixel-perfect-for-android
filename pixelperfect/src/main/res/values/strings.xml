@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">PixelPerfect</string>
+    <string name="no_overlay_image_text">Tap to set\noverlay image</string>
+    <string name="offset_text">%d px</string>
+
+    <string name="settings_name">Pixel Perfect</string>
+    <string name="settings_image">Image</string>
+    <string name="settings_transparency">Transparency</string>
+    <string name="settings_inverse">Inverse</string>
+    <string name="settings_fix_offset_text">Fix offset as reference</string>
+    <string name="settings_offset_text">(%1$dpx, %2$dpx)</string>
+    <string name="settings_empty_list_message">Please, add overlay imageNames to\n\'%s\' assets folder</string>
 </resources>

@@ -2,7 +2,35 @@
 <resources>
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="black_30_alpha">#4D000000</color>
     <color name="black_40_alpha">#66000000</color>
     <color name="black_50_alpha">#80000000</color>
     <color name="black_70_alpha">#B3000000</color>
+    <color name="black">#000000</color>
+    <color name="gray_dd">#dddddd</color>
+
+    <color name="pixel_perfect_color">#00a5c4</color>
+    <color name="pixel_perfect_color_85_alpha">#D900a5c4</color>
+
+    <!--100% — FF-->
+    <!--95% — F2-->
+    <!--90% — E6-->
+    <!--85% — D9-->
+    <!--80% — CC-->
+    <!--75% — BF-->
+    <!--70% — B3-->
+    <!--65% — A6-->
+    <!--60% — 99-->
+    <!--55% — 8C-->
+    <!--50% — 80-->
+    <!--45% — 73-->
+    <!--40% — 66-->
+    <!--35% — 59-->
+    <!--30% — 4D-->
+    <!--25% — 40-->
+    <!--20% — 33-->
+    <!--15% — 26-->
+    <!--10% — 1A-->
+    <!--5% — 0D-->
+    <!--0% — 00-->
 </resources>
