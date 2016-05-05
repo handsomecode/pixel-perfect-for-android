@@ -42,14 +42,38 @@ public class PixelPerfect {
             private String overlayActiveImageName;
             private float overlayScaleFactor = 1;
 
+            /**
+             * Set custom path in assets folder
+             * to overlay images
+             *
+             * @param overlayImagesAssetsPath
+             * @return builder
+             */
             public Builder overlayImagesAssetsPath(String overlayImagesAssetsPath) {
                 this.overlayImageAssetsPath = overlayImagesAssetsPath;
                 return this;
             }
+
+            /**
+             * Set active image name for overlay
+             * that will be visible right after
+             * creating PixelPerfect tool
+             *
+             * @param overlayActiveImageName
+             * @return builder
+             */
             public Builder overlayActiveImageName(String overlayActiveImageName) {
                 this.overlayActiveImageName = overlayActiveImageName;
                 return this;
             }
+
+            /**
+             * Add overlay scale factor that
+             * is used for all overlay
+             *
+             * @param overlayScaleFactor
+             * @return builder
+             */
             public Builder overlayScaleFactor(float overlayScaleFactor) {
                 this.overlayScaleFactor = overlayScaleFactor;
                 return this;
@@ -82,28 +106,40 @@ public class PixelPerfect {
     };
 
     /**
-     * shows pixel perfect tool that
+     * Show pixel perfect tool that
      * displays screen overlay and settings view
      *
      * @param context
-     * @return
      */
     public static void show(@NonNull Context context) {
         showOverlay(context, null);
     }
 
+    /**
+     * Show pixel perfect tool
+     * according to Config settings that
+     * displays screen overlay and settings view
+     *
+     * @param context
+     * @param config
+     */
     public static void show(@NonNull Context context, PixelPerfect.Config config) {
         showOverlay(context, config);
     }
 
+    /**
+     * Check if PixelPerfect overlay is created
+     * and is shown
+     *
+     * @return PixelPerfect overlay is shown or not
+     */
     public static boolean isShown() {
         return overlay != null && overlay.isShown();
     }
 
     /**
-     * stops foreground listener
-     * removes views from the window
-     * nulls all static variables
+     * Stop foreground listener and
+     * remove overlay views from the window
      */
     public static void hide() {
         try {
@@ -118,6 +154,13 @@ public class PixelPerfect {
         }
     }
 
+    /**
+     * Check if app has SYSTEM_ALERT_WINDOW for
+     * Android M
+     *
+     * @param context
+     * @return Is app has permission or not
+     */
     @TargetApi(Build.VERSION_CODES.M)
     public static boolean hasPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -126,6 +169,12 @@ public class PixelPerfect {
         return true;
     }
 
+    /**
+     * Ask for SYSTEM_ALERT_WINDOW permission
+     * Android M
+     *
+     * @param context
+     */
     @TargetApi(Build.VERSION_CODES.M)
     public static void askForPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
