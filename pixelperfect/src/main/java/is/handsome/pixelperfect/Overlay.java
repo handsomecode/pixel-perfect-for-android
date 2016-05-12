@@ -125,7 +125,6 @@ class Overlay {
     public void saveState(Activity activity) {
         overlayStateStore.savePixelPerfectActive(true);
         overlayStateStore.saveSize(overlayView.getWidth(), overlayView.getHeight());
-        overlayPositionStore.saveOrientation(activity.getResources().getConfiguration().orientation);
         overlayPositionStore.savePosition(overlayParams.x, overlayParams.y);
         overlayPositionStore.saveFixedOffset(fixedOffsetX, fixedOffsetY);
         if (overlayView.isNoImageOverlay()) {
@@ -195,6 +194,7 @@ class Overlay {
                 calculatePositionAfterRotation();
             }
         }
+        overlayPositionStore.saveOrientation(context.getResources().getConfiguration().orientation);
     }
 
     private void initOverlay(final Context context, boolean restoreState) {
