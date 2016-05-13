@@ -400,6 +400,7 @@ class Overlay {
                 overlayView.updateImage(bitmap, overlayScaleFactor);
                 if (resetPosition) {
                     overlayPositionStore.reset();
+                    overlayPositionStore.saveOrientation(overlayView.getResources().getConfiguration().orientation);
                 }
             }
 
