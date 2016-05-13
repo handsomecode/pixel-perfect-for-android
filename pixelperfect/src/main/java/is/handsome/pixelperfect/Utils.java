@@ -98,61 +98,6 @@ class Utils {
         }
     }
 
-    public static Bitmap getAdoptedBitmapFromAssets(Context context, String fullName,
-                                                    int reqWidth, int reqHeight) {
-        InputStream inputStream = null;
-        try {
-            inputStream = context.getAssets().open(fullName);
-            int reqWidthPixels = convertDipsToPixels(context, reqWidth);
-            int reqHeightPixels = convertDipsToPixels(context, reqHeight);
-            return decodeBitmapFromInputStream(inputStream, reqWidthPixels, reqHeightPixels);
-        } catch (IOException e) {
-            return null;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private static Bitmap decodeBitmapFromInputStream(InputStream inputStream, int reqWidth, int reqHeight) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(inputStream, null, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        options.inJustDecodeBounds = false;
-        try {
-            inputStream.reset();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return BitmapFactory.decodeStream(inputStream, null, options);
-    }
-
-    private static int calculateInSampleSize(BitmapFactory.Options options,
-                                           int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize * 2;
-    }
-
     private Utils() {
         throw new AssertionError("no instances");
     }
