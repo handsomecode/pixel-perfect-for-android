@@ -5,6 +5,7 @@
 
     <string name="settings_name">Pixel Perfect</string>
     <string name="settings_image">Image</string>
+    <string name="settings_no_image">No overlay image</string>
     <string name="settings_transparency">Transparency</string>
     <string name="settings_inverse">Inverse</string>
     <string name="settings_fix_offset_text">Fix offset as reference</string>

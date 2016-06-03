@@ -119,6 +119,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:text="@string/settings_no_image"
                         android:maxLines="1"
                         android:textColor="#6b6f72"/>
 
